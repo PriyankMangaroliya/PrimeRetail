@@ -1,0 +1,241 @@
+.roles-container {
+    padding: 24px;
+}
+
+/* Header */
+.roles-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.roles-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.roles-header p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Loading State */
+.roles-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+}
+
+.roles-loading p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* Roles Table Card */
+.roles-table-card {
+    overflow-x: auto;
+}
+
+.roles-table {
+    min-width: 700px;
+}
+
+/* Role Name Cell */
+.role-name-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.role-description {
+    color: var(--gray-600);
+    font-size: 12px;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.role-id {
+    color: var(--gray-600);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    padding: 6px 10px;
+    font-size: 14px;
+}
+
+.action-buttons .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Modal Styles */
+.role-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-info {
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--gray-600);
+    border-left: 3px solid var(--primary-color);
+}
+
+/* Delete Confirmation */
+.delete-confirmation {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.delete-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.delete-confirmation p {
+    font-size: 16px;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.delete-warning {
+    color: var(--danger-color) !important;
+    font-size: 14px !important;
+    font-weight: 500;
+}
+
+.delete-error {
+    color: var(--danger-color) !important;
+    font-size: 14px !important;
+    margin-top: 12px !important;
+    padding: 10px;
+    background: rgba(247, 37, 133, 0.1);
+    border-radius: 6px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .roles-container {
+        padding: 16px;
+    }
+
+    .roles-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions .btn {
+        width: 100%;
+    }
+
+    .action-buttons {
+        flex-wrap: nowrap;
+    }
+
+    .action-buttons .btn {
+        padding: 6px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .action-buttons {
+        flex-wrap: wrap;
+    }
+}
+
+/* Action Menu Dropdown */
+.action-menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.action-menu-trigger {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 8px;
+    color: var(--gray-600);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.action-menu-trigger:hover {
+    background-color: var(--gray-200);
+    color: var(--gray-800);
+}
+
+.action-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: white;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+}
+
+.action-menu-dropdown button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.action-menu-dropdown button:hover {
+    background-color: var(--gray-100);
+}
+
+.action-menu-dropdown button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.action-menu-dropdown .delete-action-btn:hover:not(:disabled) {
+    background-color: #fee2e2;
+    color: #ef4444;
+}

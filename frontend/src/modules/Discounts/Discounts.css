@@ -1,0 +1,363 @@
+/* ─── Discounts Module CSS ───────────────────────────────────────────────────
+   Mirrors the Warehouses module styles with discount-specific naming
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Container */
+.discounts-container {
+    padding: 24px;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+.discounts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.discounts-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.discounts-header p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* ─── Loading State ──────────────────────────────────────────────────────── */
+.discounts-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+}
+
+.discounts-loading p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* ─── Table Card ─────────────────────────────────────────────────────────── */
+.discounts-table-card {
+    overflow-x: auto;
+}
+
+.discounts-table {
+    min-width: 900px;
+}
+
+/* ─── Row Number ─────────────────────────────────────────────────────────── */
+.dc-row-no {
+    color: var(--gray-800);
+    font-size: 13px;
+}
+
+/* ─── Name ───────────────────────────────────────────────────────────────── */
+.dc-name {
+    font-weight: 500;
+    color: var(--gray-800);
+}
+
+/* ─── Type Badge ─────────────────────────────────────────────────────────── */
+.dc-type-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ─── Value ──────────────────────────────────────────────────────────────── */
+.dc-value {
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 14px;
+}
+
+/* ─── View Button (for non-owners) ──────────────────────────────────────── */
+.dc-view-btn {
+    background: none;
+    border: 1px solid var(--gray-300);
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--gray-700);
+    transition: background-color 0.2s;
+}
+
+.dc-view-btn:hover {
+    background-color: var(--gray-100);
+}
+
+/* ─── Action Menu Dropdown ───────────────────────────────────────────────── */
+.action-menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.action-menu-trigger {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 8px;
+    color: var(--gray-600);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.action-menu-trigger:hover {
+    background-color: var(--gray-200);
+    color: var(--gray-800);
+}
+
+.action-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: white;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius, 6px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+}
+
+.action-menu-dropdown button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.action-menu-dropdown button:hover {
+    background-color: var(--gray-100);
+}
+
+.action-menu-dropdown button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.action-menu-dropdown .delete-action-btn:hover:not(:disabled) {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+/* ─── Status Badge ───────────────────────────────────────────────────────── */
+.status-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    min-width: 70px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* ─── Form ───────────────────────────────────────────────────────────────── */
+.discount-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.required-star {
+    color: var(--danger-color, #ef4444);
+    margin-left: 2px;
+}
+
+.form-select {
+    padding: 8px 12px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius, 6px);
+    font-size: 14px;
+    color: var(--gray-800);
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    width: 100%;
+    height: 42px;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 99, 102, 241), 0.1);
+}
+
+.form-select.input-error {
+    border-color: var(--danger-color, #ef4444);
+}
+
+.error-text {
+    font-size: 12px;
+    color: var(--danger-color, #ef4444);
+}
+
+/* ─── Delete Confirmation ────────────────────────────────────────────────── */
+.delete-confirmation {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.delete-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.delete-confirmation p {
+    font-size: 16px;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.delete-warning {
+    color: var(--danger-color) !important;
+    font-size: 14px !important;
+    font-weight: 500;
+}
+
+/* ─── Discount View Modal ────────────────────────────────────────────────── */
+.dc-details-view {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.dc-brand-icon {
+    flex-shrink: 0;
+}
+
+.dc-icon-large {
+    font-size: 40px;
+    background: var(--primary-light, #ede9fe);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.dc-info-text h3 {
+    margin: 0 0 8px 0;
+    font-size: 22px;
+    color: var(--gray-800);
+}
+
+.dc-info-text p {
+    margin: 4px 0;
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.dc-value-large {
+    font-size: 20px !important;
+    font-weight: 700;
+    color: var(--primary-color) !important;
+}
+
+.view-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.view-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.view-group p {
+    font-size: 14px;
+    color: var(--gray-800);
+    margin: 0;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .discounts-container {
+        padding: 16px;
+    }
+
+    .discounts-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions .btn {
+        width: 100%;
+    }
+
+    .action-menu-dropdown {
+        right: auto;
+        left: 0;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .view-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .action-menu-dropdown {
+        left: unset;
+        right: 0;
+    }
+
+    .dc-type-badge,
+    .status-badge {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+}

@@ -1,0 +1,410 @@
+.dashboard {
+    padding: 24px;
+}
+
+.dashboard-header {
+    margin-bottom: 24px;
+}
+
+.dashboard-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.dashboard-header p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--gray-100);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: var(--primary-color);
+}
+
+.stat-info h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-600);
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 4px;
+}
+
+/* Revenue Chart */
+.revenue-chart {
+    margin-bottom: 24px;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chart-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.chart-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.chart-bars {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 250px;
+}
+
+.chart-bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.bar-container {
+    width: 40px;
+    height: 200px;
+    background: var(--gray-100);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.bar {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    border-radius: 20px;
+    transition: height 0.3s ease;
+}
+
+.month-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.amount-label {
+    font-size: 12px;
+    color: var(--gray-600);
+}
+
+/* Recent Activity */
+.recent-activity {
+    margin-bottom: 24px;
+}
+
+.recent-activity h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: 8px;
+}
+
+.activity-icon {
+    font-size: 20px;
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-text {
+    font-size: 14px;
+    color: var(--gray-800);
+    margin-bottom: 4px;
+}
+
+.activity-time {
+    font-size: 12px;
+    color: var(--gray-500);
+}
+
+/* Store Owner Specific */
+.stores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.store-card {
+    text-align: center;
+}
+
+.store-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--primary-color);
+}
+
+.store-metrics {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.metric span {
+    font-size: 12px;
+    color: var(--gray-600);
+}
+
+.metric strong {
+    font-size: 16px;
+    color: var(--gray-800);
+}
+
+/* Cashier Dashboard */
+.cashier-dashboard .pos-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 20px;
+}
+
+.pos-products {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.scanner-input {
+    display: flex;
+    gap: 10px;
+}
+
+.scanner-input .input-wrapper {
+    flex: 1;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.pos-cart {
+    height: fit-content;
+    position: sticky;
+    top: 90px;
+}
+
+.cart-items {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 20px 0;
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 0.5fr 1fr 0.5fr;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 14px;
+}
+
+.remove-item {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.cart-totals {
+    background: var(--gray-50);
+    padding: 16px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.grand-total {
+    font-weight: 600;
+    font-size: 18px;
+    border-top: 2px solid var(--gray-300);
+    padding-top: 8px;
+    margin-top: 8px;
+}
+
+.payment-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Inventory Tables */
+.recent-orders,
+.low-stock {
+    overflow-x: auto;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.orders-table,
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.orders-table th,
+.inventory-table th {
+    text-align: left;
+    padding: 12px;
+    background: var(--gray-50);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--gray-700);
+}
+
+.orders-table td,
+.inventory-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 14px;
+}
+
+.stock-low {
+    color: var(--danger-color);
+    font-weight: 600;
+}
+
+/* Warehouse Tasks */
+.tasks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.tasks-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--gray-50);
+    border-radius: 8px;
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.task-info strong {
+    font-size: 14px;
+    color: var(--gray-800);
+}
+
+.task-info span {
+    font-size: 12px;
+    color: var(--gray-600);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .cashier-dashboard .pos-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .tasks-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 16px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stores-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

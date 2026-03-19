@@ -1,0 +1,433 @@
+/* ─── Employees Module CSS ───────────────────────────────────────────────────
+   Two-tab employee management module (Store / Warehouse employees)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.employees-container {
+    padding: 24px;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+.employees-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.employees-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 6px;
+}
+
+.employees-header p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* ─── Loading ────────────────────────────────────────────────────────────── */
+.employees-loading,
+.emp-table-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    gap: 12px;
+}
+
+.emp-table-loading p,
+.employees-loading p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* ─── Tabs ───────────────────────────────────────────────────────────────── */
+.emp-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.emp-tab {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-600);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: -2px;
+}
+
+.emp-tab:hover {
+    color: var(--primary-color);
+    background: var(--gray-50);
+}
+
+.emp-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    font-weight: 600;
+}
+
+.tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 11px;
+}
+
+/* ─── Selector Card ──────────────────────────────────────────────────────── */
+.emp-selector-card {
+    margin-bottom: 20px;
+    padding: 16px 20px !important;
+}
+
+.emp-selector-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.emp-selector-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-700);
+    white-space: nowrap;
+    min-width: 130px;
+}
+
+.emp-selector-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Native select styling */
+.emp-native-select,
+.emp-store-select {
+    height: 40px;
+    min-width: 260px;
+    max-width: 380px;
+    padding: 0 12px;
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    background: white;
+    color: var(--gray-800);
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: auto;
+}
+
+.emp-native-select:hover,
+.emp-store-select:hover {
+    border-color: var(--primary-color);
+}
+
+.emp-native-select:focus,
+.emp-store-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(109, 77, 209, 0.12);
+}
+
+.emp-native-select.select-error {
+    border-color: var(--danger-color);
+}
+
+
+.emp-context-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.emp-context-info {
+    font-size: 12px;
+    color: var(--gray-500);
+}
+
+.emp-role-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--gray-600);
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+.emp-no-context {
+    font-size: 13px;
+    color: var(--gray-500);
+    font-style: italic;
+}
+
+/* ─── Table ──────────────────────────────────────────────────────────────── */
+.employees-table-card {
+    overflow-x: auto;
+}
+
+.employees-table {
+    min-width: 760px;
+}
+
+/* ─── Employee cell ──────────────────────────────────────────────────────── */
+.emp-index {
+    font-size: 12px;
+    color: var(--gray-500);
+    font-weight: 500;
+}
+
+.emp-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.emp-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark, #5a3fc0));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.emp-info-cell strong {
+    display: block;
+    font-size: 14px;
+    color: var(--gray-800);
+    line-height: 1.3;
+}
+
+.emp-info-cell small {
+    display: block;
+    font-size: 12px;
+    color: var(--gray-500);
+}
+
+.emp-na {
+    color: var(--gray-400);
+    font-size: 13px;
+}
+
+/* ─── Role badge ─────────────────────────────────────────────────────────── */
+.role-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    white-space: nowrap;
+}
+
+/* ─── Actions ────────────────────────────────────────────────────────────── */
+.action-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    padding: 6px 10px;
+    font-size: 14px;
+}
+
+/* ─── Status badge ───────────────────────────────────────────────────────── */
+.status-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    min-width: 70px;
+    text-align: center;
+}
+
+/* ─── Form ───────────────────────────────────────────────────────────────── */
+.emp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.emp-context-banner {
+    padding: 10px 14px;
+    background: var(--primary-light, rgba(109, 77, 209, 0.08));
+    border-left: 3px solid var(--primary-color);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--gray-700);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.required-star {
+    color: var(--danger-color);
+    margin-left: 2px;
+}
+
+.select-error {
+    border-color: var(--danger-color) !important;
+}
+
+.error-text {
+    font-size: 12px;
+    color: var(--danger-color);
+    margin-top: 2px;
+}
+
+.field-note {
+    font-size: 11px;
+    color: var(--gray-500);
+    margin-top: 2px;
+}
+
+.form-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 14px;
+    background: var(--gray-50);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--gray-600);
+    border-left: 3px solid var(--primary-color);
+}
+
+/* ─── View details ───────────────────────────────────────────────────────── */
+.emp-view-details {
+    text-align: center;
+    padding-bottom: 8px;
+}
+
+.emp-view-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark, #5a3fc0));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 auto 12px;
+}
+
+.emp-view-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.emp-view-role {
+    font-size: 13px;
+    padding: 4px 12px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    text-align: left;
+    margin-top: 20px;
+}
+
+.detail-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-group label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-group p {
+    font-size: 14px;
+    color: var(--gray-800);
+}
+
+/* ─── Delete confirmation ────────────────────────────────────────────────── */
+.delete-confirmation {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.delete-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.delete-confirmation p {
+    font-size: 16px;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.delete-warning {
+    color: var(--danger-color) !important;
+    font-size: 14px !important;
+    font-weight: 500;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .employees-container { padding: 16px; }
+    .employees-header     { flex-direction: column; align-items: flex-start; }
+    .header-actions .btn  { width: 100%; }
+    .emp-selector-row     { flex-direction: column; align-items: flex-start; }
+    .emp-role-info        { margin-left: 0; }
+    .form-row             { grid-template-columns: 1fr; }
+    .detail-grid          { grid-template-columns: 1fr; }
+    .emp-store-select     { min-width: 100%; max-width: 100%; }
+    .emp-tabs             { overflow-x: auto; }
+    .emp-tab              { padding: 10px 16px; font-size: 13px; white-space: nowrap; }
+}

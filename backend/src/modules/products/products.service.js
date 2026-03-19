@@ -1,0 +1,332 @@
+const productModel = require('./products.model');
+
+const productService = {
+    // Create new product (Store Owner only)
+    createProduct: async (productData, ownerId) => {
+        try {
+            // Check if SKU already exists for this owner
+            const existingSKU = await productModel.getProductBySKU(productData.sku, ownerId);
+            if (existingSKU.rows.length > 0) {
+                throw new Error('SKU already exists');
+            }
+
+            // Check if barcode already exists (if provided)
+            if (productData.barcode) {
+                const existingBarcode = await productModel.getProductByBarcode(productData.barcode, ownerId);
+                if (existingBarcode.rows.length > 0) {
+                    throw new Error('Barcode already exists');
+                }
+            }
+
+            // Verify category belongs to owner
+            const db = require('../../config/database.config');
+            const categoryCheck = await db.query(
+                'SELECT id FROM category_master WHERE id = $1 AND owner_id = $2',
+                [productData.category_id, ownerId]
+            );
+            if (!categoryCheck.rows.length) {
+                throw new Error('Category not found or does not belong to you');
+            }
+
+            const data = {
+                ...productData,
+                owner_id: ownerId
+            };
+
+            const result = await productModel.createProduct(data);
+            return result.rows[0];
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Update product (Store Owner only)
+    updateProduct: async (id, productData, ownerId) => {
+        try {
+            // Check if product exists and belongs to owner
+            const db = require('../../config/database.config');
+            const productCheck = await db.query(
+                'SELECT * FROM product_master WHERE id = $1 AND owner_id = $2 AND is_deleted = false',
+                [id, ownerId]
+            );
+
+            if (!productCheck.rows.length) {
+                throw new Error('Product not found or you do not have permission');
+            }
+
+            // Check if SKU already exists (if updating)
+            if (productData.sku && productData.sku !== productCheck.rows[0].sku) {
+                const existingSKU = await productModel.getProductBySKU(productData.sku, ownerId, id);
+                if (existingSKU.rows.length > 0) {
+                    throw new Error('SKU already exists');
+                }
+            }
+
+            // Check if barcode already exists (if updating)
+            if (productData.barcode && productData.barcode !== productCheck.rows[0].barcode) {
+                const existingBarcode = await productModel.getProductByBarcode(productData.barcode, ownerId, id);
+                if (existingBarcode.rows.length > 0) {
+                    throw new Error('Barcode already exists');
+                }
+            }
+
+            // Verify category belongs to owner (if updating)
+            if (productData.category_id) {
+                const categoryCheck = await db.query(
+                    'SELECT id FROM category_master WHERE id = $1 AND owner_id = $2',
+                    [productData.category_id, ownerId]
+                );
+                if (!categoryCheck.rows.length) {
+                    throw new Error('Category not found or does not belong to you');
+                }
+            }
+
+            const result = await productModel.updateProduct(id, productData);
+            return result.rows[0];
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Delete product (Store Owner only)
+    deleteProduct: async (id, ownerId) => {
+        try {
+            // Check if product exists and belongs to owner
+            const db = require('../../config/database.config');
+            const productCheck = await db.query(
+                'SELECT id FROM product_master WHERE id = $1 AND owner_id = $2 AND is_deleted = false',
+                [id, ownerId]
+            );
+
+            if (!productCheck.rows.length) {
+                throw new Error('Product not found or you do not have permission');
+            }
+
+            // Check if product has any stock
+            const stockCheck = await db.query(
+                'SELECT COUNT(*) as count FROM stock_master WHERE product_id = $1',
+                [id]
+            );
+
+            if (parseInt(stockCheck.rows[0].count) > 0) {
+                throw new Error('Cannot delete product with existing stock');
+            }
+
+            const result = await productModel.deleteProduct(id);
+            return result.rows[0];
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Get all products based on user role
+    getAllProducts: async (userRole, userId) => {
+        try {
+            let ownerId = null;
+            let storeId = null;
+
+            if (userRole === 'Store Owner') {
+                ownerId = userId;
+            } else if (userRole === 'Store Manager' || userRole === 'Cashier' || userRole === 'Inventory Staff') {
+                storeId = userId; // userId is store_id for these roles
+                // Get owner_id from store
+                const db = require('../../config/database.config');
+                const storeResult = await db.query(
+                    'SELECT owner_id FROM store_master WHERE id = $1',
+                    [storeId]
+                );
+                ownerId = storeResult.rows[0]?.owner_id;
+            } else if (userRole === 'Warehouse Staff') {
+                // Get owner_id from warehouse
+                const db = require('../../config/database.config');
+                const warehouseResult = await db.query(
+                    'SELECT owner_id FROM warehouse_master WHERE id = $1',
+                    [userId]
+                );
+                ownerId = warehouseResult.rows[0]?.owner_id;
+            }
+
+            if (!ownerId) {
+                return [];
+            }
+
+            const result = await productModel.getAllProducts(userRole, ownerId, storeId);
+            return result.rows;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Get product by ID
+    getProductById: async (id, userRole, userId) => {
+        try {
+            let ownerId = null;
+
+            if (userRole === 'Store Owner') {
+                ownerId = userId;
+            } else if (userRole === 'Store Manager' || userRole === 'Cashier' ||
+                userRole === 'Inventory Staff' || userRole === 'Warehouse Staff') {
+                const db = require('../../config/database.config');
+                let query;
+
+                if (userRole === 'Warehouse Staff') {
+                    query = {
+                        text: 'SELECT owner_id FROM warehouse_master WHERE id = $1',
+                        values: [userId]
+                    };
+                } else {
+                    query = {
+                        text: 'SELECT owner_id FROM store_master WHERE id = $1',
+                        values: [userId]
+                    };
+                }
+
+                const result = await db.query(query);
+                ownerId = result.rows[0]?.owner_id;
+            }
+
+            const result = await productModel.getProductById(id, userRole, ownerId);
+
+            if (result.rows.length === 0) {
+                throw new Error('Product not found');
+            }
+
+            return result.rows[0];
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Get products by category
+    getProductsByCategory: async (categoryId, userRole, userId) => {
+        try {
+            let ownerId = null;
+
+            if (userRole === 'Store Owner') {
+                ownerId = userId;
+            } else {
+                const db = require('../../config/database.config');
+                let query;
+
+                if (userRole === 'Warehouse Staff') {
+                    query = {
+                        text: 'SELECT owner_id FROM warehouse_master WHERE id = $1',
+                        values: [userId]
+                    };
+                } else {
+                    query = {
+                        text: 'SELECT owner_id FROM store_master WHERE id = $1',
+                        values: [userId]
+                    };
+                }
+
+                const result = await db.query(query);
+                ownerId = result.rows[0]?.owner_id;
+            }
+
+            const result = await productModel.getProductsByCategory(categoryId, ownerId);
+            return result.rows;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Get products for sale (Cashier view)
+    getProductsForSale: async (storeId) => {
+        try {
+            const result = await productModel.getProductsForSale(storeId);
+            return result.rows;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Get product statistics
+    getProductStats: async (userRole, userId) => {
+        try {
+            let ownerId = null;
+
+            if (userRole === 'Store Owner') {
+                ownerId = userId;
+            } else if (userRole === 'Store Manager' || userRole === 'Cashier' ||
+                userRole === 'Inventory Staff' || userRole === 'Warehouse Staff') {
+                const db = require('../../config/database.config');
+                let query;
+
+                if (userRole === 'Warehouse Staff') {
+                    query = {
+                        text: 'SELECT owner_id FROM warehouse_master WHERE id = $1',
+                        values: [userId]
+                    };
+                } else {
+                    query = {
+                        text: 'SELECT owner_id FROM store_master WHERE id = $1',
+                        values: [userId]
+                    };
+                }
+
+                const result = await db.query(query);
+                ownerId = result.rows[0]?.owner_id;
+            }
+
+            const result = await productModel.getProductStats(userRole, ownerId);
+            return result.rows[0] || {};
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Check SKU availability
+    checkSKU: async (sku, ownerId, excludeId = null) => {
+        try {
+            const result = await productModel.getProductBySKU(sku, ownerId, excludeId);
+            return {
+                available: result.rows.length === 0,
+                message: result.rows.length === 0 ? 'SKU is available' : 'SKU already exists'
+            };
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Check barcode availability
+    checkBarcode: async (barcode, ownerId, excludeId = null) => {
+        try {
+            const result = await productModel.getProductByBarcode(barcode, ownerId, excludeId);
+            return {
+                available: result.rows.length === 0,
+                message: result.rows.length === 0 ? 'Barcode is available' : 'Barcode already exists'
+            };
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Toggle product status (Store Owner only)
+    toggleProductStatus: async (id, ownerId) => {
+        try {
+            const db = require('../../config/database.config');
+            const productCheck = await db.query(
+                'SELECT is_active FROM product_master WHERE id = $1 AND owner_id = $2 AND is_deleted = false',
+                [id, ownerId]
+            );
+
+            if (!productCheck.rows.length) {
+                throw new Error('Product not found or you do not have permission');
+            }
+
+            const newStatus = !productCheck.rows[0].is_active;
+            const result = await productModel.toggleProductStatus(id, newStatus);
+
+            return {
+                id: result.rows[0].id,
+                is_active: result.rows[0].is_active,
+                message: `Product ${newStatus ? 'activated' : 'deactivated'} successfully`
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+};
+
+module.exports = productService;

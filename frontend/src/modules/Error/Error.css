@@ -1,0 +1,379 @@
+/* Error Pages Container */
+.error-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+    padding: 20px;
+}
+
+.error-content {
+    position: relative;
+    z-index: 10;
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 60px 40px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.6s ease;
+}
+
+/* Error Animation */
+.error-animation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    font-size: 120px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.error-number {
+    color: var(--primary-color);
+    text-shadow: 5px 5px 0 rgba(67, 97, 238, 0.2);
+    animation: float 3s ease-in-out infinite;
+}
+
+.error-number.server {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.error-number:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.error-number:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.error-zero {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zero-inner {
+    width: 100px;
+    height: 100px;
+    border: 8px solid var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    font-weight: 800;
+    color: var(--primary-color);
+    animation: rotate 6s linear infinite;
+}
+
+/* Error Text */
+.error-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+}
+
+.error-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 2px;
+}
+
+.error-message {
+    font-size: 16px;
+    color: var(--gray-600);
+    line-height: 1.8;
+    margin-bottom: 30px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Error Actions */
+.error-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.btn-icon {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+/* Help Link */
+.error-help {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.error-help p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.error-help a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.error-help a:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+/* Decorative Elements */
+.error-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 8s ease-in-out infinite;
+}
+
+.circle-1 {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    right: -100px;
+}
+
+.circle-2 {
+    width: 400px;
+    height: 400px;
+    bottom: -150px;
+    left: -150px;
+    animation-delay: -2s;
+}
+
+.circle-3 {
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    left: 20%;
+    background: rgba(255, 255, 255, 0.05);
+    animation-delay: -4s;
+}
+
+.decoration-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+            linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* Server Error Specific Styles */
+.server-error .error-content {
+    background: rgba(255, 255, 255, 0.98);
+}
+
+.error-graph {
+    position: absolute;
+    bottom: 20%;
+    right: 5%;
+    width: 200px;
+    height: 100px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    opacity: 0.1;
+}
+
+.graph-line {
+    width: 30px;
+    background: var(--danger-color);
+    border-radius: 5px 5px 0 0;
+    animation: graphWave 2s ease-in-out infinite;
+}
+
+.line-1 { height: 40px; animation-delay: 0s; }
+.line-2 { height: 70px; animation-delay: 0.2s; }
+.line-3 { height: 50px; animation-delay: 0.4s; }
+.line-4 { height: 90px; animation-delay: 0.6s; }
+
+.error-code-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 300px;
+    font-weight: 900;
+    color: rgba(247, 37, 133, 0.03);
+    white-space: nowrap;
+    z-index: 0;
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes graphWave {
+    0%, 100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(1.2);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .error-content {
+        padding: 40px 20px;
+    }
+
+    .error-animation {
+        font-size: 80px;
+    }
+
+    .error-zero {
+        width: 80px;
+        height: 80px;
+    }
+
+    .zero-inner {
+        width: 60px;
+        height: 60px;
+        font-size: 40px;
+    }
+
+    .error-title {
+        font-size: 28px;
+    }
+
+    .error-message {
+        font-size: 14px;
+    }
+
+    .error-actions {
+        flex-direction: column;
+    }
+
+    .error-code-bg {
+        font-size: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .error-animation {
+        font-size: 60px;
+    }
+
+    .error-zero {
+        width: 60px;
+        height: 60px;
+    }
+
+    .zero-inner {
+        width: 45px;
+        height: 45px;
+        font-size: 30px;
+    }
+
+    .error-title {
+        font-size: 24px;
+    }
+
+    .decoration-circle {
+        display: none;
+    }
+}
+
+/* Dark Mode Support (if needed) */
+@media (prefers-color-scheme: dark) {
+    .error-content {
+        background: rgba(30, 30, 47, 0.95);
+    }
+
+    .error-title {
+        color: white;
+    }
+
+    .error-message {
+        color: var(--gray-400);
+    }
+
+    .error-help p {
+        color: var(--gray-400);
+    }
+
+    .error-help a {
+        color: var(--primary-color);
+    }
+}

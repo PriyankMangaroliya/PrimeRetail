@@ -1,0 +1,233 @@
+/* ─── Products Module CSS ───────────────────────────────────────────────────
+   Tabbed interface styles and consistent action menu
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.products-container {
+    padding: 24px;
+}
+
+.products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.products-header h1 {
+    font-size: 28px;
+    margin-bottom: 4px;
+    color: var(--gray-800);
+}
+
+.products-header p {
+    color: var(--gray-600);
+}
+
+/* ─── Tabs Navigation ────────────────────────────────────────────────────── */
+.tabs-card {
+    border-radius: 8px;
+}
+
+.tabs-navigation {
+    display: flex;
+    border-bottom: 1px solid var(--gray-200);
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--gray-600);
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    color: var(--primary-color);
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* ─── Table Items ────────────────────────────────────────────────────────── */
+.item-name {
+    font-weight: 500;
+    color: var(--gray-800);
+}
+
+.sku-badge {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 11px;
+}
+
+/* ─── Action Menu ─────────────────────────────────────────────────────────── */
+.action-menu-container {
+    position: relative;
+}
+
+.action-menu-trigger {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 8px;
+    border-radius: 4px;
+}
+
+.action-menu-trigger:hover {
+    background: var(--gray-100);
+}
+
+.action-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 100;
+    min-width: 140px;
+    padding: 5px 0;
+}
+
+.action-menu-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.action-menu-dropdown button:hover {
+    background: var(--gray-50);
+}
+
+.action-menu-dropdown .delete-action-btn:hover {
+    color: #ef4444;
+    background: #fef2f2;
+}
+
+/* ─── Modal Content ──────────────────────────────────────────────────────── */
+.item-view {
+    padding: 10px 0;
+}
+
+.view-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.view-icon {
+    font-size: 32px;
+    background: var(--gray-100);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.view-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.view-item label {
+    display: block;
+    font-size: 12px;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.view-item p {
+    margin: 0;
+    font-weight: 500;
+}
+
+.item-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-field select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    background: white;
+}
+
+.required-star {
+    color: #ef4444;
+}
+
+.error-text {
+    font-size: 12px;
+    color: #ef4444;
+}
+
+.delete-confirmation {
+    text-align: center;
+}
+
+.delete-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.delete-warning {
+    color: #ef4444;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.products-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .view-grid, .form-row {
+        grid-template-columns: 1fr;
+    }
+    .products-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .header-actions {
+        width: 100%;
+    }
+    .header-actions button {
+        width: 100%;
+    }
+}

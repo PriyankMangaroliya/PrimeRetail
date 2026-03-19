@@ -1,0 +1,327 @@
+.owners-container {
+    padding: 24px;
+}
+
+/* Header */
+.owners-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.owners-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.owners-header p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Loading State */
+.owners-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+}
+
+.owners-loading p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* Owners Table Card */
+.owners-table-card {
+    overflow-x: auto;
+}
+
+.owners-table {
+    min-width: 900px;
+}
+
+/* Owner Info Cell */
+.owner-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.owner-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.owner-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.owner-initials {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.owner-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.owner-details strong {
+    font-size: 14px;
+    color: var(--gray-800);
+}
+
+.owner-details small {
+    font-size: 12px;
+    color: var(--gray-800);
+}
+
+.owner-phone {
+    color: var(--gray-800) !important;
+}
+
+.owner-id {
+    color: var(--gray-600);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Action Menu Dropdown */
+.action-menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.action-menu-trigger {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 8px;
+    color: var(--gray-600);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.action-menu-trigger:hover {
+    background-color: var(--gray-200);
+    color: var(--gray-800);
+}
+
+.action-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: white;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius, 6px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+}
+
+.action-menu-dropdown button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.action-menu-dropdown button:hover {
+    background-color: var(--gray-100);
+}
+
+.action-menu-dropdown button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.action-menu-dropdown .delete-action-btn:hover:not(:disabled) {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+/* Modal Form */
+.owner-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.owner-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: var(--gray-500);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--gray-600);
+    border-left: 3px solid var(--primary-color);
+}
+
+.form-info small {
+    color: var(--gray-600);
+}
+
+/* Delete Confirmation */
+.delete-confirmation {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.delete-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.delete-confirmation p {
+    font-size: 16px;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.delete-warning {
+    color: var(--danger-color) !important;
+    font-size: 14px !important;
+    font-weight: 500;
+}
+
+.delete-error {
+    color: var(--danger-color) !important;
+    font-size: 14px !important;
+    margin-top: 12px !important;
+    padding: 10px;
+    background: rgba(247, 37, 133, 0.1);
+    border-radius: 6px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .owners-container {
+        padding: 16px;
+    }
+
+    .owners-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions .btn {
+        width: 100%;
+    }
+
+    .action-menu-dropdown {
+        right: auto;
+        left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .action-menu-dropdown {
+        left: unset;
+        right: 0;
+    }
+
+    .owner-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+/* Owner View Modal */
+.owner-details-view {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.owner-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.owner-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.owner-initials-large {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.owner-info-text h3 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    color: var(--gray-800);
+}
+
+.owner-info-text p {
+    margin: 4px 0;
+    color: var(--gray-600);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}

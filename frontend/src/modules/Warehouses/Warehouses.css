@@ -1,0 +1,387 @@
+/* ─── Warehouses Module CSS ─────────────────────────────────────────────────
+   Mirrors the Stores module styles with warehouse-specific naming
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Container */
+.warehouses-container {
+    padding: 24px;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+.warehouses-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.warehouses-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.warehouses-header p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* ─── Loading State ──────────────────────────────────────────────────────── */
+.warehouses-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+}
+
+.warehouses-loading p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* ─── Table Card ─────────────────────────────────────────────────────────── */
+.warehouses-table-card {
+    overflow-x: auto;
+}
+
+.warehouses-table {
+    min-width: 900px;
+}
+
+/* ─── Warehouse Code Badge ───────────────────────────────────────────────── */
+.wh-code-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* ─── Warehouse Info Cell ────────────────────────────────────────────────── */
+.wh-info-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.wh-location {
+    color: var(--gray-500);
+    font-size: 11px;
+    background: var(--gray-100);
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    width: fit-content;
+    max-width: 220px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* ─── Contact ────────────────────────────────────────────────────────────── */
+.wh-contact {
+    font-weight: 500;
+    color: var(--gray-800);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* ─── Count Badge ────────────────────────────────────────────────────────── */
+.wh-count-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* ─── Action Menu Dropdown ───────────────────────────────────────────────── */
+.action-menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.action-menu-trigger {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 8px;
+    color: var(--gray-600);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.action-menu-trigger:hover {
+    background-color: var(--gray-200);
+    color: var(--gray-800);
+}
+
+.action-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: white;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius, 6px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+}
+
+.action-menu-dropdown button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.action-menu-dropdown button:hover {
+    background-color: var(--gray-100);
+}
+
+.action-menu-dropdown button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.action-menu-dropdown .delete-action-btn:hover:not(:disabled) {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+/* ─── Status Badge ───────────────────────────────────────────────────────── */
+.status-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    min-width: 70px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* ─── Form ───────────────────────────────────────────────────────────────── */
+.warehouse-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.field-note {
+    font-size: 11px;
+    color: var(--gray-500);
+    margin-top: -8px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--gray-600);
+    border-left: 3px solid var(--primary-color);
+}
+
+.form-info small {
+    color: var(--gray-600);
+}
+
+/* ─── Delete Confirmation ────────────────────────────────────────────────── */
+.delete-confirmation {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.delete-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.delete-confirmation p {
+    font-size: 16px;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.delete-warning {
+    color: var(--danger-color) !important;
+    font-size: 14px !important;
+    font-weight: 500;
+}
+
+.delete-error {
+    color: var(--danger-color) !important;
+    font-size: 14px !important;
+    margin-top: 12px !important;
+    padding: 10px;
+    background: rgba(247, 37, 133, 0.1);
+    border-radius: 6px;
+}
+
+/* ─── Warehouse View Modal ───────────────────────────────────────────────── */
+.warehouse-details-view {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.warehouse-icon-large {
+    font-size: 40px;
+    background: var(--primary-light);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.warehouse-info-text h3 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    color: var(--gray-800);
+}
+
+.warehouse-info-text p {
+    margin: 4px 0;
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.view-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.view-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.view-group p {
+    font-size: 15px;
+    color: var(--gray-800);
+    margin: 0;
+}
+
+/* ─── Staff Section (reuses store-employees styles) ─────────────────────── */
+.store-employees {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.store-employees h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 16px;
+}
+
+.employee-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+}
+
+.employee-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--gray-50);
+    border-radius: 6px;
+}
+
+.employee-name {
+    font-weight: 500;
+    color: var(--gray-800);
+    font-size: 14px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .warehouses-container {
+        padding: 16px;
+    }
+
+    .warehouses-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions .btn {
+        width: 100%;
+    }
+
+    .action-menu-dropdown {
+        right: auto;
+        left: 0;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-group.full-width {
+        grid-column: span 1;
+    }
+
+    .employee-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .action-menu-dropdown {
+        left: unset;
+        right: 0;
+    }
+
+    .wh-code-badge,
+    .status-badge,
+    .wh-count-badge {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+}

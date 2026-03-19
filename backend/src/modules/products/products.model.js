@@ -1,0 +1,232 @@
+const db = require('../../config/database.config');
+
+const productModel = {
+    // Create new product (Store Owner only)
+    createProduct: (productData) => {
+        const { owner_id, product_name, sku, barcode, category_id, tax_id, price, unit } = productData;
+        const query = {
+            text: `INSERT INTO product_master
+                   (owner_id, product_name, sku, barcode, category_id, tax_id, price, unit)
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+            values: [owner_id, product_name, sku, barcode, category_id, tax_id, price, unit]
+        };
+        return db.query(query);
+    },
+
+    // Update product (Store Owner only)
+    updateProduct: (id, productData) => {
+        const { product_name, sku, barcode, category_id, tax_id, price, unit, is_active } = productData;
+        const query = {
+            text: `UPDATE product_master
+                   SET product_name = COALESCE($1, product_name),
+                       sku = COALESCE($2, sku),
+                       barcode = COALESCE($3, barcode),
+                       category_id = COALESCE($4, category_id),
+                       tax_id = COALESCE($5, tax_id),
+                       price = COALESCE($6, price),
+                       unit = COALESCE($7, unit),
+                       is_active = COALESCE($8, is_active),
+                       updated_at = CURRENT_TIMESTAMP
+                   WHERE id = $9 AND is_deleted = false RETURNING *`,
+            values: [product_name, sku, barcode, category_id, tax_id, price, unit, is_active, id]
+        };
+        return db.query(query);
+    },
+
+    // Soft delete product (Store Owner only)
+    deleteProduct: (id) => {
+        const query = {
+            text: `UPDATE product_master
+                   SET is_deleted = true,
+                       updated_at = CURRENT_TIMESTAMP
+                   WHERE id = $1 AND is_deleted = false RETURNING *`,
+            values: [id]
+        };
+        return db.query(query);
+    },
+
+    // Get all products based on user role
+    getAllProducts: (userRole, ownerId, storeId) => {
+        let query;
+
+        if (userRole === 'Store Owner') {
+            // Store Owner sees all their products
+            query = {
+                text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate,
+                              COALESCE(s.quantity, 0) as stock_quantity
+                       FROM product_master p
+                       LEFT JOIN category_master c ON p.category_id = c.id
+                       LEFT JOIN tax_master t ON p.tax_id = t.id
+                       LEFT JOIN stock_master s ON p.id = s.product_id AND s.location_type = 'Store' AND s.location_id = ANY(
+                           SELECT id FROM store_master WHERE owner_id = $1
+                       )
+                       WHERE p.owner_id = $1 AND p.is_deleted = false
+                       ORDER BY p.id DESC`,
+                values: [ownerId]
+            };
+        } else {
+            // Other roles see products from their store's owner
+            query = {
+                text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate,
+                              COALESCE(s.quantity, 0) as stock_quantity
+                       FROM product_master p
+                       LEFT JOIN category_master c ON p.category_id = c.id
+                       LEFT JOIN tax_master t ON p.tax_id = t.id
+                       LEFT JOIN stock_master s ON p.id = s.product_id AND s.location_type = 'Store' AND s.location_id = $2
+                       WHERE p.owner_id = $1 AND p.is_active = true AND p.is_deleted = false
+                       ORDER BY p.product_name`,
+                values: [ownerId, storeId]
+            };
+        }
+
+        return db.query(query);
+    },
+
+    // Get product by ID
+    getProductById: (id, userRole, ownerId) => {
+        let query;
+
+        if (userRole === 'Store Owner') {
+            query = {
+                text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate,
+                              JSON_AGG(
+                                  JSON_BUILD_OBJECT(
+                                      'store_id', s.location_id,
+                                      'quantity', s.quantity
+                                  ) FILTER (WHERE s.id IS NOT NULL)
+                              ) as stock_by_store
+                       FROM product_master p
+                       LEFT JOIN category_master c ON p.category_id = c.id
+                       LEFT JOIN tax_master t ON p.tax_id = t.id
+                       LEFT JOIN stock_master s ON p.id = s.product_id AND s.location_type = 'Store'
+                       WHERE p.id = $1 AND p.owner_id = $2 AND p.is_deleted = false
+                       GROUP BY p.id, c.category_name, t.tax_name, t.tax_rate`,
+                values: [id, ownerId]
+            };
+        } else {
+            query = {
+                text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate
+                       FROM product_master p
+                       LEFT JOIN category_master c ON p.category_id = c.id
+                       LEFT JOIN tax_master t ON p.tax_id = t.id
+                       WHERE p.id = $1 AND p.is_active = true AND p.is_deleted = false`,
+                values: [id]
+            };
+        }
+
+        return db.query(query);
+    },
+
+    // Get product by SKU
+    getProductBySKU: (sku, ownerId, excludeId = null) => {
+        let query;
+        if (excludeId) {
+            query = {
+                text: `SELECT id FROM product_master 
+                       WHERE sku = $1 AND owner_id = $2 AND id != $3 AND is_deleted = false`,
+                values: [sku, ownerId, excludeId]
+            };
+        } else {
+            query = {
+                text: `SELECT id FROM product_master 
+                       WHERE sku = $1 AND owner_id = $2 AND is_deleted = false`,
+                values: [sku, ownerId]
+            };
+        }
+        return db.query(query);
+    },
+
+    // Get product by barcode
+    getProductByBarcode: (barcode, ownerId, excludeId = null) => {
+        let query;
+        if (excludeId) {
+            query = {
+                text: `SELECT id FROM product_master 
+                       WHERE barcode = $1 AND owner_id = $2 AND id != $3 AND is_deleted = false`,
+                values: [barcode, ownerId, excludeId]
+            };
+        } else {
+            query = {
+                text: `SELECT id FROM product_master 
+                       WHERE barcode = $1 AND owner_id = $2 AND is_deleted = false`,
+                values: [barcode, ownerId]
+            };
+        }
+        return db.query(query);
+    },
+
+    // Get products by category
+    getProductsByCategory: (categoryId, ownerId) => {
+        const query = {
+            text: `SELECT * FROM product_master
+                   WHERE category_id = $1 AND owner_id = $2 AND is_deleted = false
+                   ORDER BY product_name`,
+            values: [categoryId, ownerId]
+        };
+        return db.query(query);
+    },
+
+    // Get products for dropdown (Cashier view)
+    getProductsForSale: (storeId) => {
+        const query = {
+            text: `SELECT p.id, p.product_name, p.sku, p.price, p.unit,
+                          c.category_name,
+                          COALESCE(s.quantity, 0) as stock_quantity
+                   FROM product_master p
+                            JOIN category_master c ON p.category_id = c.id
+                            LEFT JOIN stock_master s ON p.id = s.product_id
+                       AND s.location_type = 'Store' AND s.location_id = $1
+                   WHERE p.is_active = true AND p.is_deleted = false
+                   ORDER BY p.product_name`,
+            values: [storeId]
+        };
+        return db.query(query);
+    },
+
+    // Get product statistics
+    getProductStats: (userRole, ownerId) => {
+        let query;
+
+        if (userRole === 'Store Owner') {
+            query = {
+                text: `SELECT 
+                           COUNT(*) as total_products,
+                           COUNT(CASE WHEN is_active THEN 1 END) as active_products,
+                           COUNT(CASE WHEN NOT is_active THEN 1 END) as inactive_products,
+                           MIN(price) as min_price,
+                           MAX(price) as max_price,
+                           AVG(price) as avg_price,
+                           COUNT(DISTINCT category_id) as total_categories
+                       FROM product_master 
+                       WHERE owner_id = $1 AND is_deleted = false`,
+                values: [ownerId]
+            };
+        } else {
+            query = {
+                text: `SELECT 
+                           COUNT(*) as total_products,
+                           MIN(price) as min_price,
+                           MAX(price) as max_price,
+                           AVG(price) as avg_price,
+                           COUNT(DISTINCT category_id) as total_categories
+                       FROM product_master 
+                       WHERE is_active = true AND is_deleted = false`
+            };
+        }
+
+        return db.query(query);
+    },
+
+    // Toggle product status (Store Owner only)
+    toggleProductStatus: (id, is_active) => {
+        const query = {
+            text: `UPDATE product_master 
+                   SET is_active = $1, updated_at = CURRENT_TIMESTAMP
+                   WHERE id = $2 AND is_deleted = false RETURNING *`,
+            values: [is_active, id]
+        };
+        return db.query(query);
+    }
+};
+
+module.exports = productModel;
