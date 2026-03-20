@@ -15,7 +15,7 @@ const userModel = {
 
     // Update user
     updateUser: (id, userData) => {
-        const { role_id, store_id, warehouse_id, name, email, phone, profile_image, is_active, updated_by } = userData;
+        const { role_id, store_id, warehouse_id, name, email, phone, profile_image, is_active, updated_by, password } = userData;
         const query = {
             text: `UPDATE user_master 
              SET role_id = COALESCE($1, role_id),
@@ -26,11 +26,12 @@ const userModel = {
                  phone = COALESCE($6, phone),
                  profile_image = COALESCE($7, profile_image),
                  is_active = COALESCE($8, is_active),
-                 updated_by = $9,
+                 password = COALESCE($9, password),
+                 updated_by = $10,
                  updated_at = CURRENT_TIMESTAMP
-             WHERE id = $10 AND is_deleted = false 
+             WHERE id = $11 AND is_deleted = false 
              RETURNING id, role_id, store_id, warehouse_id, name, email, phone, profile_image, is_active`,
-            values: [role_id, store_id, warehouse_id, name, email, phone, profile_image, is_active, updated_by, id]
+            values: [role_id, store_id, warehouse_id, name, email, phone, profile_image, is_active, password, updated_by, id]
         };
         return db.query(query);
     },
@@ -51,9 +52,13 @@ const userModel = {
     // Get all users
     getAllUsers: () => {
         const query = {
-            text: `SELECT u.*, r.role_name 
+            text: `SELECT u.*, r.role_name, 
+                    cb.name as created_by_name, 
+                    ub.name as updated_by_name
              FROM user_master u
              LEFT JOIN role_master r ON u.role_id = r.id
+             LEFT JOIN user_master cb ON u.created_by = cb.id
+             LEFT JOIN user_master ub ON u.updated_by = ub.id
              WHERE u.is_deleted = false 
              ORDER BY u.id DESC`
         };
@@ -65,11 +70,15 @@ const userModel = {
         const query = {
             text: `SELECT u.*, r.role_name, 
                     s.store_name, s.store_code, 
-                    w.warehouse_name, w.warehouse_code
+                    w.warehouse_name, w.warehouse_code,
+                    cb.name as created_by_name, 
+                    ub.name as updated_by_name
              FROM user_master u
              LEFT JOIN role_master r ON u.role_id = r.id
              LEFT JOIN store_master s ON u.store_id = s.id
              LEFT JOIN warehouse_master w ON u.warehouse_id = w.id
+             LEFT JOIN user_master cb ON u.created_by = cb.id
+             LEFT JOIN user_master ub ON u.updated_by = ub.id
              WHERE u.id = $1 AND u.is_deleted = false`,
             values: [id]
         };
@@ -106,9 +115,15 @@ const userModel = {
     // Get users by store
     getUsersByStore: (store_id) => {
         const query = {
-            text: `SELECT * FROM user_master 
-             WHERE store_id = $1 AND is_deleted = false 
-             ORDER BY id DESC`,
+            text: `SELECT u.*, r.role_name, 
+                    cb.name as created_by_name, 
+                    ub.name as updated_by_name
+             FROM user_master u
+             LEFT JOIN role_master r ON u.role_id = r.id
+             LEFT JOIN user_master cb ON u.created_by = cb.id
+             LEFT JOIN user_master ub ON u.updated_by = ub.id
+             WHERE u.store_id = $1 AND u.is_deleted = false 
+             ORDER BY u.id DESC`,
             values: [store_id]
         };
         return db.query(query);
@@ -117,9 +132,15 @@ const userModel = {
     // Get users by warehouse
     getUsersByWarehouse: (warehouse_id) => {
         const query = {
-            text: `SELECT * FROM user_master 
-             WHERE warehouse_id = $1 AND is_deleted = false 
-             ORDER BY id DESC`,
+            text: `SELECT u.*, r.role_name, 
+                    cb.name as created_by_name, 
+                    ub.name as updated_by_name
+             FROM user_master u
+             LEFT JOIN role_master r ON u.role_id = r.id
+             LEFT JOIN user_master cb ON u.created_by = cb.id
+             LEFT JOIN user_master ub ON u.updated_by = ub.id
+             WHERE u.warehouse_id = $1 AND u.is_deleted = false 
+             ORDER BY u.id DESC`,
             values: [warehouse_id]
         };
         return db.query(query);

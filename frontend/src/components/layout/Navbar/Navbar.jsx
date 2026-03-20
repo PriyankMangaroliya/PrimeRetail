@@ -46,10 +46,10 @@ const Navbar = () => {
             </div>
 
             <div className="navbar-right">
-                <div className="notification-icon">
+                {/* <div className="notification-icon">
                     <span className="badge">3</span>
-                    <Icons.Bell size={20} />
-                </div>
+                    <Icons.Notification size={20} strokeWidth={2.5} />
+                </div> */}
 
                 <div className="profile-container" ref={dropdownRef}>
                     <div
@@ -60,11 +60,12 @@ const Navbar = () => {
                             {user?.profile_image ? (
                                 <img src={user.profile_image} alt={user.name} />
                             ) : (
-                                <span className="profile-initials">{getUserInitials()}</span>
+                                <Icons.User size={20} strokeWidth={2.5} />
                             )}
                         </div>
-                        <Icons.ChevronDown
+                        <Icons.Dropdown
                             size={12}
+                            strokeWidth={3}
                             className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}
                         />
                     </div>
@@ -79,12 +80,12 @@ const Navbar = () => {
                             </div>
                             <div className="dropdown-divider"></div>
                             <div className="dropdown-item" onClick={handleProfile}>
-                                <span className="dropdown-icon"><Icons.User size={16} /></span>
-                                <span>Profile</span>
+                                <span className="dropdown-icon"><b><Icons.User size={18} strokeWidth={2.5} /></b></span>
+                                <span><b>Profile</b></span>
                             </div>
                             <div className="dropdown-item" onClick={handleLogout}>
-                                <span className="dropdown-icon"><Icons.LogOut size={16} /></span>
-                                <span>Logout</span>
+                                <span className="dropdown-icon"><b><Icons.Logout size={18} strokeWidth={2.5} /></b></span>
+                                <span><b>Logout</b></span>
                             </div>
                         </div>
                     )}

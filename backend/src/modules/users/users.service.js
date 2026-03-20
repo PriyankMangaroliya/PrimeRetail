@@ -115,11 +115,15 @@ const userService = {
                 query = {
                     text: `SELECT u.*, r.role_name,
                                   s.store_name,
-                                  w.warehouse_name
+                                  w.warehouse_name,
+                                  cb.name as created_by_name,
+                                  ub.name as updated_by_name
                            FROM user_master u
                            LEFT JOIN role_master r ON u.role_id = r.id
                            LEFT JOIN store_master s ON u.store_id = s.id
                            LEFT JOIN warehouse_master w ON u.warehouse_id = w.id
+                           LEFT JOIN user_master cb ON u.created_by = cb.id
+                           LEFT JOIN user_master ub ON u.updated_by = ub.id
                            WHERE u.is_deleted = false 
                              AND (
                                  u.store_id IN (SELECT id FROM store_master WHERE owner_id = $1)
@@ -136,9 +140,13 @@ const userService = {
                 // Store Manager sees employees from their store only
                 const db = require('../../config/database.config');
                 query = {
-                    text: `SELECT u.*, r.role_name
+                    text: `SELECT u.*, r.role_name,
+                                  cb.name as created_by_name,
+                                  ub.name as updated_by_name
                            FROM user_master u
                            LEFT JOIN role_master r ON u.role_id = r.id
+                           LEFT JOIN user_master cb ON u.created_by = cb.id
+                           LEFT JOIN user_master ub ON u.updated_by = ub.id
                            WHERE u.is_deleted = false 
                              AND u.store_id = $1
                            ORDER BY u.id DESC`,
@@ -244,6 +252,11 @@ const userService = {
                         throw new Error('You can only assign Cashier or Inventory Staff roles');
                     }
                 }
+            }
+
+            // Hash password if provided
+            if (userData.password) {
+                userData.password = await userService.hashPassword(userData.password);
             }
 
             // Add updated_by

@@ -237,7 +237,7 @@ const Discounts = () => {
             key: 'discount_type',
             render: (value) => (
                 <Badge variant={value === 'Percentage' ? 'primary' : 'secondary'} className="dc-type-badge">
-                    {value === 'Percentage' ? <Icons.Percent size={14} style={{ marginRight: '4px' }} /> : <Icons.DollarSign size={14} style={{ marginRight: '4px' }} />}
+                    {value === 'Percentage' ? <Icons.Percent size={14} style={{ marginRight: '4px' }} /> : `₹ ` }
                     {value}
                 </Badge>
             )

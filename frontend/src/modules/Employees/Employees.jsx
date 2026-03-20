@@ -53,6 +53,14 @@ const Employees = () => {
     const [formData, setFormData] = useState({...emptyForm});
     const [formErrors, setFormErrors] = useState({});
     const [alert, setAlert] = useState({show: false, type: '', message: ''});
+    const [activeDropdown, setActiveDropdown] = useState(null);
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = () => setActiveDropdown(null);
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, []);
 
     // ── All hooks unconditional ───────────────────────────────────────────────
     useEffect(() => {
@@ -129,7 +137,6 @@ const Employees = () => {
             const roles = Array.isArray(res) ? res
                 : Array.isArray(res?.data) ? res.data
                     : [];
-            console.log('Fetched roles for dropdown:', roles);
             setAllRoles(roles);
         } catch (err) {
             console.error('Failed to load roles:', err);
@@ -142,7 +149,6 @@ const Employees = () => {
             const res = await employeeApi.getEmployeesByStore(storeId);
             setEmployees(res.data || []);
         } catch (err) {
-            // Silently handle — empty state shows instead of alert
             console.error('Load store employees error:', err);
             setEmployees([]);
         } finally {
@@ -156,7 +162,6 @@ const Employees = () => {
             const res = await employeeApi.getEmployeesByWarehouse(warehouseId);
             setEmployees(res.data || []);
         } catch (err) {
-            // Silently handle — empty state shows instead of alert
             console.error('Load warehouse employees error:', err);
             setEmployees([]);
         } finally {
@@ -175,11 +180,9 @@ const Employees = () => {
         setEmployees([]);
         setSelectedEmployee(null);
         setShowModal(false);
-        // Clear any leftover alert when switching tabs
         setAlert({show: false, type: '', message: ''});
     };
 
-    // Roles available in current context
     const availableRoles = allRoles.filter(r => {
         if (activeTab === 'store') {
             const ownerStoreRoles = ['Store Manager', 'Cashier', 'Inventory Staff'];
@@ -235,11 +238,12 @@ const Employees = () => {
         if (modalType === 'add') {
             if (!formData.password) errors.password = 'Password is required';
             else if (formData.password.length < 6) errors.password = 'Minimum 6 characters';
+        } else if (modalType === 'edit' && formData.password) {
+            if (formData.password.length < 6) errors.password = 'Minimum 6 characters';
         }
 
         if (!formData.role_id) errors.role_id = 'Role is required';
 
-        // Match backend: exactly 10 digits
         if (formData.phone) {
             if (!/^[0-9]{10}$/.test(formData.phone)) {
                 errors.phone = 'Phone number must be exactly 10 digits';
@@ -279,10 +283,12 @@ const Employees = () => {
                     role_id: parseInt(formData.role_id),
                     updated_by: user.id
                 };
+                if (formData.password) {
+                    payload.password = formData.password;
+                }
                 await employeeApi.updateEmployee(selectedEmployee.id, payload);
                 showAlert('success', 'Employee updated successfully');
             }
-            // Reload table
             if (activeTab === 'store' && selectedStoreId) loadStoreEmployees(selectedStoreId);
             else if (activeTab === 'warehouse' && selectedWarehouseId) loadWarehouseEmployees(selectedWarehouseId);
             handleCloseModal();
@@ -291,7 +297,6 @@ const Employees = () => {
         }
     };
 
-    // ── Delete ────────────────────────────────────────────────────────────────
     const handleDelete = async () => {
         try {
             await employeeApi.deleteEmployee(selectedEmployee.id);
@@ -304,7 +309,6 @@ const Employees = () => {
         }
     };
 
-    // ── Toggle Status ─────────────────────────────────────────────────────────
     const handleToggleStatus = async (emp) => {
         try {
             await employeeApi.toggleEmployeeStatus(emp.id);
@@ -319,9 +323,9 @@ const Employees = () => {
     // ── Table columns ─────────────────────────────────────────────────────────
     const columns = [
         {
-            title: '#',
+            title: 'ID',
             key: 'id',
-            render: (_, __, idx) => <span className="emp-index">{idx + 1}</span>
+            render: (value) => <span className="emp-id">#{value}</span>
         },
         {
             title: 'Employee',
@@ -346,7 +350,7 @@ const Employees = () => {
         {
             title: 'Phone',
             key: 'phone',
-            render: (value) => value ? <><Icons.Phone size={14} style={{marginRight: '4px'}}/> {value}</> :
+            render: (value) => value ? <> {value}</> :
                 <span className="emp-na">—</span>
         },
         {
@@ -359,25 +363,67 @@ const Employees = () => {
             )
         },
         {
+            title: 'Created',
+            key: 'created_at',
+            render: (value, record) => (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span>{new Date(value).toLocaleDateString()}</span>
+                    <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                        {record.created_by_name ? `By ${record.created_by_name}` : (record.created_by ? `By User #${record.created_by}` : 'By System')}
+                    </small>
+                </div>
+            )
+        },
+        {
+            title: 'Updated',
+            key: 'updated_at',
+            render: (value, record) => (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span>{new Date(value).toLocaleDateString()}</span>
+                    <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                        {record.updated_by_name ? `By ${record.updated_by_name}` : (record.updated_by ? `By User #${record.updated_by}` : 'By System')}
+                    </small>
+                </div>
+            )
+        },
+        {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className="action-buttons">
-                    <Button size="small" variant="outline" onClick={() => handleOpenModal('view', record)} title="View"><Icons.View
-                        size={14}/></Button>
-                    <Button size="small" variant="outline" onClick={() => handleToggleStatus(record)}
-                            title={record.is_active ? 'Deactivate' : 'Activate'}><Icons.Status size={14}
-                                                                                               color={record.is_active ? 'var(--danger-color)' : 'var(--success-color)'}/></Button>
-                    <Button size="small" variant="outline" onClick={() => handleOpenModal('edit', record)} title="Edit"><Icons.Edit
-                        size={14}/></Button>
-                    <Button size="small" variant="outline" onClick={() => handleOpenModal('delete', record)}
-                            title="Delete"><Icons.Delete size={14}/></Button>
+                <div className="action-menu-container" onClick={(e) => { e.stopPropagation(); }}>
+                    <button 
+                        className="action-menu-trigger" 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveDropdown(activeDropdown === record.id ? null : record.id);
+                        }}
+                    >
+                        <Icons.Actions size={16} />
+                    </button>
+                    {activeDropdown === record.id && (
+                        <div className="action-menu-dropdown">
+                            <button onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
+                                <Icons.View size={16} /> View
+                            </button>
+                            <button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
+                                {record.is_active ? <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> : <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
+                            </button>
+                            <button onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
+                                <Icons.Edit size={16} /> Edit
+                            </button>
+                            <button 
+                                onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }}
+                                className="delete-action-btn"
+                            >
+                                <Icons.Delete size={16} /> Delete
+                            </button>
+                        </div>
+                    )}
                 </div>
             )
         }
     ];
 
-    // ── Loading screen ────────────────────────────────────────────────────────
     if (loading) {
         return (
             <MainLayout>
@@ -388,16 +434,12 @@ const Employees = () => {
         );
     }
 
-    // ── Current context name for display ──────────────────────────────────────
     const currentStore = stores.find(s => String(s.id) === selectedStoreId);
     const currentWarehouse = warehouses.find(w => String(w.id) === selectedWarehouseId);
 
-    // ── Render ────────────────────────────────────────────────────────────────
     return (
         <MainLayout>
             <div className="employees-container">
-
-                {/* Header */}
                 <div className="employees-header">
                     <div>
                         <h1>Employee Management</h1>
@@ -410,10 +452,8 @@ const Employees = () => {
                     </div>
                 </div>
 
-                {/* Alert */}
                 {alert.show && <Alert type={alert.type} dismissible>{alert.message}</Alert>}
 
-                {/* ── Tabs ─────────────────────────────────────────────────── */}
                 <div className="emp-tabs">
                     <button
                         className={`emp-tab ${activeTab === 'store' ? 'active' : ''}`}
@@ -437,7 +477,6 @@ const Employees = () => {
                     )}
                 </div>
 
-                {/* ── Context Selector ────────────────────────────────────── */}
                 <Card className="emp-selector-card">
                     {activeTab === 'store' ? (
                         <div className="emp-selector-row">
@@ -467,8 +506,6 @@ const Employees = () => {
                                         <Badge variant={currentStore.is_active ? 'success' : 'danger'} size="small">
                                             {currentStore.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                        <span className="emp-context-info"><Icons.Location
-                                            size={14}/> {currentStore.city || 'N/A'}</span>
                                     </div>
                                 )}
                             </div>
@@ -476,11 +513,11 @@ const Employees = () => {
                                 <span>Manages:</span>
                                 {isStoreOwner ? (
                                     ['Store Manager', 'Cashier', 'Inventory Staff'].map(r => <Badge key={r}
-                                                                                                    variant="info"
-                                                                                                    size="small">{r}</Badge>)
+                                                                                                     variant="info"
+                                                                                                     size="small">{r}</Badge>)
                                 ) : (
                                     ['Cashier', 'Inventory Staff'].map(r => <Badge key={r} variant="info"
-                                                                                   size="small">{r}</Badge>)
+                                                                                    size="small">{r}</Badge>)
                                 )}
                             </div>
                         </div>
@@ -523,7 +560,6 @@ const Employees = () => {
                     )}
                 </Card>
 
-                {/* ── Employee Table ──────────────────────────────────────── */}
                 <Card className="employees-table-card">
                     {tableLoading ? (
                         <div className="emp-table-loading"><Loader/><p>Loading...</p></div>
@@ -531,7 +567,13 @@ const Employees = () => {
                         <EmptyState icon={<Icons.Filter size={48}/>} title="Select a Location"
                                     description={`Choose a ${activeTab === 'store' ? 'store' : 'warehouse'} above to view its employees.`}/>
                     ) : employees.length > 0 ? (
-                        <Table columns={columns} data={employees} className="employees-table"/>
+                        <Table 
+                            columns={columns} 
+                            data={employees} 
+                            className="employees-table"
+                            searchable={false}
+                            columnSearchable={true}
+                        />
                     ) : (
                         <EmptyState
                             icon={<Icons.User size={48}/>}
@@ -544,7 +586,6 @@ const Employees = () => {
                     )}
                 </Card>
 
-                {/* ── Modal ──────────────────────────────────────────────── */}
                 <Modal
                     isOpen={showModal}
                     onClose={handleCloseModal}
@@ -554,7 +595,6 @@ const Employees = () => {
                                 modalType === 'view' ? 'Employee Details' :
                                     'Remove Employee'
                     }
-                    size={modalType === 'view' ? 'medium' : 'large'}
                     footer={
                         modalType === 'delete' ? (
                             <><Button variant="outline" onClick={handleCloseModal}>Cancel</Button>
@@ -569,82 +609,68 @@ const Employees = () => {
                         )
                     }
                 >
-                    {/* ── Delete Confirmation ─────────────────────────────── */}
                     {modalType === 'delete' ? (
                         <div className="delete-confirmation">
                             <div className="delete-icon"><Icons.Warning size={48} color="var(--warning-color)"/></div>
-                            <p>Remove <strong>{selectedEmployee?.name}</strong> from the system?</p>
+                            <p>Are you sure you want to remove <strong>{selectedEmployee?.name}</strong> from the system?</p>
                             <p className="delete-warning">This action cannot be undone.</p>
+                            <p className="delete-info">
+                                Employee: <strong>{selectedEmployee?.name}</strong> ({selectedEmployee?.role_name})
+                            </p>
                         </div>
-
-                        /* ── View Details ────────────────────────────────────── */
                     ) : modalType === 'view' ? (
-                        <div className="emp-view-details">
-                            <div className="emp-view-avatar">
-                                {selectedEmployee?.name?.charAt(0).toUpperCase()}
+                        <div className="emp-view" style={{ textAlign: 'center', padding: '20px 0' }}>
+                            <div style={{ marginBottom: '16px' }}>
+                                <div className="emp-view-avatar" style={{ margin: '0 auto' }}>
+                                    {selectedEmployee?.name?.charAt(0).toUpperCase()}
+                                </div>
                             </div>
-                            <h3 className="emp-view-name">{selectedEmployee?.name}</h3>
-                            <Badge variant="primary" className="emp-view-role">{selectedEmployee?.role_name}</Badge>
+                            <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--gray-800)', marginBottom: '8px' }}>{selectedEmployee?.name}</h3>
+                            <Badge variant="primary" style={{ marginBottom: '24px' }}>{selectedEmployee?.role_name}</Badge>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', background: 'var(--gray-50)', padding: '20px', borderRadius: '8px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
+                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Employee ID</span>
+                                    <span style={{ fontSize: '14px', color: 'var(--gray-800)', fontWeight: '600' }}>#{selectedEmployee?.id}</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
+                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Email</span>
+                                    <span style={{ fontSize: '14px', color: 'var(--gray-800)', fontWeight: '600' }}>{selectedEmployee?.email}</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
+                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Phone</span>
+                                    <span style={{ fontSize: '14px', color: 'var(--gray-800)', fontWeight: '600' }}>{selectedEmployee?.phone || '—'}</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
+                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Status</span>
+                                    <Badge variant={selectedEmployee?.is_active ? 'success' : 'danger'}>{selectedEmployee?.is_active ? 'Active' : 'Inactive'}</Badge>
+                                </div>
 
-                            <div className="detail-grid" style={{marginTop: '24px'}}>
-                                <div className="detail-group">
-                                    <label>Email</label>
-                                    <p>{selectedEmployee?.email}</p>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
+                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Created</span>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontSize: '14px', color: 'var(--gray-800)', fontWeight: '600' }}>{selectedEmployee?.created_at ? new Date(selectedEmployee.created_at).toLocaleDateString() : 'N/A'}</div>
+                                        <small style={{ color: 'var(--gray-500)', fontSize: '12px' }}>{selectedEmployee?.created_by_name ? `By ${selectedEmployee.created_by_name}` : ''}</small>
+                                    </div>
                                 </div>
-                                <div className="detail-group">
-                                    <label>Phone</label>
-                                    <p>{selectedEmployee?.phone || '—'}</p>
-                                </div>
-                                <div className="detail-group">
-                                    <label>Status</label>
-                                    <Badge variant={selectedEmployee?.is_active ? 'success' : 'danger'}>
-                                        {selectedEmployee?.is_active ? 'Active' : 'Inactive'}
-                                    </Badge>
-                                </div>
-                                <div className="detail-group">
-                                    <label>Assigned To</label>
-                                    <p>
-                                        {selectedEmployee?.store_name
-                                            ? <><Icons.Store size={14}
-                                                             style={{marginRight: '4px'}}/> {selectedEmployee.store_name}</>
-                                            : selectedEmployee?.warehouse_name
-                                                ? <><Icons.Warehouse size={14}
-                                                                     style={{marginRight: '4px'}}/> {selectedEmployee.warehouse_name}</>
-                                                : '—'}
-                                    </p>
-                                </div>
-                                <div className="detail-group">
-                                    <label>Created At</label>
-                                    <p>{selectedEmployee?.created_at
-                                        ? new Date(selectedEmployee.created_at).toLocaleString('en-IN', {
-                                            dateStyle: 'medium',
-                                            timeStyle: 'short'
-                                        })
-                                        : 'N/A'}</p>
-                                </div>
-                                <div className="detail-group">
-                                    <label>Last Updated</label>
-                                    <p>{selectedEmployee?.updated_at
-                                        ? new Date(selectedEmployee.updated_at).toLocaleString('en-IN', {
-                                            dateStyle: 'medium',
-                                            timeStyle: 'short'
-                                        })
-                                        : 'N/A'}</p>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
+                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Last Updated</span>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontSize: '14px', color: 'var(--gray-800)', fontWeight: '600' }}>{selectedEmployee?.updated_at ? new Date(selectedEmployee.updated_at).toLocaleDateString() : 'N/A'}</div>
+                                        <small style={{ color: 'var(--gray-500)', fontSize: '12px' }}>{selectedEmployee?.updated_by_name ? `By ${selectedEmployee.updated_by_name}` : ''}</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        /* ── Add / Edit Form ─────────────────────────────────── */
                     ) : (
                         <div className="emp-form">
-                            {/* Context info banner */}
                             <div className="emp-context-banner">
                                 {activeTab === 'store' ? (
                                     <span><Icons.Store size={14}
                                                        style={{marginRight: '4px'}}/> Adding to: <strong>{currentStore?.store_name || '—'}</strong></span>
                                 ) : (
                                     <span><Icons.Warehouse size={14}
-                                                           style={{marginRight: '4px'}}/> Adding to: <strong>{currentWarehouse?.warehouse_name || '—'}</strong></span>
+                                                            style={{marginRight: '4px'}}/> Adding to: <strong>{currentWarehouse?.warehouse_name || '—'}</strong></span>
                                 )}
                             </div>
 
@@ -658,15 +684,13 @@ const Employees = () => {
                             </div>
 
                             <div className="form-row">
-                                {modalType === 'add' && (
-                                    <Input label="Password" value={formData.password}
-                                           onChange={e => setFormData({...formData, password: e.target.value})}
-                                           error={formErrors.password} placeholder="Minimum 6 characters"
-                                           type="password" required/>
-                                )}
+                                <Input label="Password" value={formData.password}
+                                       onChange={e => setFormData({...formData, password: e.target.value})}
+                                       error={formErrors.password} placeholder={modalType === 'add' ? 'Minimum 6 characters' : 'Leave blank to keep current'}
+                                       type="password" required={modalType === 'add'}/>
                                 <Input label="Phone Number" value={formData.phone}
                                        onChange={e => setFormData({...formData, phone: e.target.value})}
-                                       error={formErrors.phone} placeholder="10-15 digits (optional)"/>
+                                       error={formErrors.phone} placeholder="10 digits (optional)"/>
                             </div>
 
                             <div className="form-row">
@@ -683,26 +707,18 @@ const Employees = () => {
                                         ))}
                                     </select>
                                     {formErrors.role_id && <span className="error-text">{formErrors.role_id}</span>}
-                                    <small className="field-note">
-                                        {activeTab === 'store'
-                                            ? isStoreOwner
-                                                ? 'Store roles: Manager, Cashier, Inventory Staff'
-                                                : 'Store roles: Cashier, Inventory Staff'
-                                            : 'Warehouse role: Warehouse Staff'}
-                                    </small>
                                 </div>
                             </div>
 
                             {modalType === 'edit' && (
                                 <div className="form-info">
-                                    <small>• Password is not changed here — use a separate password reset flow</small>
+                                    <small>• Leave password blank if you don't want to change it</small>
                                     <small>• Store/Warehouse assignment cannot be changed on edit</small>
                                 </div>
                             )}
                         </div>
                     )}
                 </Modal>
-
             </div>
         </MainLayout>
     );

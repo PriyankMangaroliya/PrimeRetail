@@ -81,6 +81,10 @@ const userValidation = {
             'string.pattern.base': 'Phone number must be exactly 10 digits'
         }),
         profile_image: Joi.string().max(255).allow(null, '').optional(),
+        password: Joi.string().min(6).max(255).optional().messages({
+            'string.min': 'Password must be at least 6 characters long',
+            'string.max': 'Password cannot exceed 255 characters'
+        }),
         is_active: Joi.boolean().optional(),
         updated_by: Joi.number().integer().positive().required().messages({
             'any.required': 'Updater ID is required'
