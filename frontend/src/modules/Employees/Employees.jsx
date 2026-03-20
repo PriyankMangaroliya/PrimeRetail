@@ -126,7 +126,7 @@ const Employees = () => {
                 }
             }
         } catch (err) {
-            showAlert('error', 'Failed to load initial data');
+            showAlert('error', 'Failed to load initial data' + err);
         }
     };
 

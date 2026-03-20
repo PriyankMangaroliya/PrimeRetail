@@ -284,6 +284,7 @@ const StoreTaxes = () => {
                             data={storeTaxes}
                             className="taxes-table"
                             columnSearchable={true}
+                            searchable={false}
                         />
                     ) : (
                         <EmptyState
@@ -312,9 +313,9 @@ const StoreTaxes = () => {
                         modalType === 'delete' ? (
                             <>
                                 <Button variant="outline" onClick={handleCloseModal}>Cancel</Button>
-                                <Button 
-                                    variant="danger" 
-                                    onClick={handleRemoveTax} 
+                                <Button
+                                    variant="danger"
+                                    onClick={handleRemoveTax}
                                     disabled={usageProducts.length > 0}
                                 >
                                     Remove Tax
