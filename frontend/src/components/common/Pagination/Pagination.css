@@ -1,33 +1,96 @@
-.pagination {
+.pagination-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    padding: 16px;
+}
+
+.pagination-container {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
-    margin-top: 20px;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-numbers {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .pagination-btn {
-    padding: 6px 12px;
-    border: 1px solid var(--gray-300);
-    background: white;
-    border-radius: 4px;
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: #e0e0e0;
     font-size: 14px;
-    transition: all 0.3s ease;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pagination-btn:hover:not(:disabled) {
-    background: var(--gray-100);
-    border-color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .pagination-btn.active {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
     color: white;
-    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .pagination-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
+}
+
+.pagination-btn.dots {
+    cursor: default;
+    background: transparent !important;
+    border-color: transparent !important;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.pagination-info-text {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* Light mode adjustments if needed, assuming dark mode as default premium feel */
+@media (prefers-color-scheme: light) {
+    .pagination-container {
+        background: rgba(0, 0, 0, 0.02);
+        border-color: rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    .pagination-btn {
+        color: #475569;
+    }
+    .pagination-btn:hover:not(:disabled) {
+        background: rgba(0, 0, 0, 0.05);
+        color: #1e293b;
+    }
+    .pagination-info-text {
+        color: #64748b;
+    }
 }

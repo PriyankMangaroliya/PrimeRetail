@@ -199,7 +199,7 @@ const PaymentMethods = () => {
             title: 'Status',
             key: 'is_active',
             render: (value) => (
-                <Badge variant={value ? 'success' : 'danger'}>
+                <Badge variant={value ? 'success' : 'danger'} className="badge-status">
                     {value ? 'Active' : 'Inactive'}
                 </Badge>
             )
@@ -232,33 +232,33 @@ const PaymentMethods = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className="action-menu-container" onClick={(e) => { e.stopPropagation(); }}>
+                <div className="common-action-menu" onClick={(e) => { e.stopPropagation(); }}>
                     <button 
-                        className="action-menu-trigger" 
+                        className="action-trigger" 
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
                         }}
                     >
-                        ⋮
+                        <Icons.Actions size={16} />
                     </button>
                     {activeDropdown === record.id && (
-                        <div className="action-menu-dropdown">
-                            <button onClick={() => { handleOpenModal('usage', record); setActiveDropdown(null); }}>
+                        <div className="action-dropdown">
+                            <button className="action-item" onClick={() => { handleOpenModal('usage', record); setActiveDropdown(null); }}>
                                 <Icons.View size={16} /> View
                             </button>
-                            <button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
                                 {record.is_active ? <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> : <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
                             </button>
-                            <button onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
                             <button 
                                 onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }} 
                                 disabled={Number(record.usage_count) > 0}
-                                className="delete-action-btn"
+                                className="action-item delete-item"
                             >
-                                <Icons.Trash size={16} /> Delete
+                                <Icons.Delete size={16} /> Delete
                             </button>
                         </div>
                     )}
@@ -386,7 +386,7 @@ const PaymentMethods = () => {
                                 </div>
                                 <div className="usage-stat-item">
                                     <span className="usage-label">Status</span>
-                                    <Badge variant={selectedMethod?.is_active ? 'success' : 'danger'}>
+                                    <Badge variant={selectedMethod?.is_active ? 'success' : 'danger'} className="badge-status">
                                         {selectedMethod?.is_active ? 'Active' : 'Inactive'}
                                     </Badge>
                                 </div>

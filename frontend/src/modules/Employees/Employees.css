@@ -182,6 +182,11 @@
     flex-wrap: wrap;
 }
 
+.emp-contact {
+    font-weight: 500;
+    color: var(--gray-800);
+}
+
 .emp-no-context {
     font-size: 13px;
     color: var(--gray-500);
@@ -198,9 +203,13 @@
 }
 
 /* ─── Employee cell ──────────────────────────────────────────────────────── */
+.delete-warning {
+    color: var(--danger-color) !important;
+    font-weight: 500;
+}
+
 .emp-id {
     color: var(--gray-600);
-    font-size: 12px;
     font-weight: 500;
 }
 
@@ -219,115 +228,36 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
     font-weight: 700;
     flex-shrink: 0;
 }
 
 .emp-info-cell strong {
     display: block;
-    font-size: 14px;
     color: var(--gray-800);
     line-height: 1.3;
 }
 
 .emp-info-cell small {
     display: block;
-    font-size: 14px;
     color: var(--gray-800);
     line-height: 1.3;
 }
 
 .emp-na {
     color: var(--gray-400);
-    font-size: 13px;
 }
 
 /* ─── Role badge ─────────────────────────────────────────────────────────── */
 .role-badge {
-    font-size: 11px;
     padding: 5px 8px;
     white-space: nowrap;
 }
 
-/* ─── Action Menu Dropdown ───────────────────────────────────────────────── */
-.action-menu-container {
-    position: relative;
-    display: inline-block;
-}
-
-.action-menu-trigger {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0 8px;
-    color: var(--gray-600);
-    border-radius: 4px;
-    transition: background-color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 32px;
-    width: 32px;
-}
-
-.action-menu-trigger:hover {
-    background-color: var(--gray-200);
-    color: var(--gray-800);
-}
-
-.action-menu-dropdown {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    margin-top: 4px;
-    background: white;
-    border: 1px solid var(--gray-300);
-    border-radius: var(--border-radius, 6px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    min-width: 140px;
-    display: flex;
-    flex-direction: column;
-    padding: 4px 0;
-}
-
-.action-menu-dropdown button {
-    background: none;
-    border: none;
-    padding: 8px 16px;
-    text-align: left;
-    cursor: pointer;
-    font-size: 14px;
-    color: var(--gray-700);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s;
-    width: 100%;
-}
-
-.action-menu-dropdown button:hover {
-    background-color: var(--gray-100);
-}
-
-.action-menu-dropdown button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.action-menu-dropdown .delete-action-btn:hover:not(:disabled) {
-    background-color: #fee2e2;
-    color: #ef4444;
-}
-
-/* ─── Status badge ───────────────────────────────────────────────────────── */
-.status-badge {
-    font-size: 12px;
+.emp-id-badge {
     padding: 4px 8px;
-    min-width: 70px;
-    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 /* ─── Form ───────────────────────────────────────────────────────────────── */
@@ -479,6 +409,13 @@
     background: var(--gray-50);
     border-radius: 6px;
     font-size: 14px;
+}
+
+.store-tag {
+    background: var(--gray-100);
+    color: var(--gray-600);
+    padding: 2px 8px;
+    border-radius: 4px;
 }
 
 .delete-info strong {

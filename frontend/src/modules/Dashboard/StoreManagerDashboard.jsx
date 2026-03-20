@@ -3,10 +3,52 @@ import MainLayout from '../../components/layout/MainLayout/MainLayout';
 import Card from '../../components/common/Card/Card';
 import Button from '../../components/common/Button/Button';
 import Badge from '../../components/common/Badge/Badge';
+import Table from '../../components/common/Table/Table';
 import Icons from '../../components/common/Icons';
 import './Dashboard.css';
 
 const StoreManagerDashboard = () => {
+    const orderColumns = [
+        {
+            title: 'Order ID',
+            key: 'id',
+            render: (val) => `#ORD-${1000 + val}`
+        },
+        {
+            title: 'Customer',
+            key: 'customer'
+        },
+        {
+            title: 'Amount',
+            key: 'amount',
+            render: (val) => `$${val.toFixed(2)}`
+        },
+        {
+            title: 'Status',
+            key: 'status',
+            render: (val) => <Badge variant={val === 'Processing' ? 'warning' : 'success'}>{val}</Badge>
+        },
+        {
+            title: 'Action',
+            key: 'actions',
+            render: () => (
+                <div className="action-buttons">
+                    <Button size="small" variant="outline" title="View"><Icons.View size={14} /></Button>
+                    <Button size="small" variant="outline" title="Status"><Icons.CheckCircle size={14} color="#10b981" /></Button>
+                    <Button size="small" variant="outline" title="Edit"><Icons.Edit size={14} /></Button>
+                    <Button size="small" variant="outline" title="Delete"><Icons.Trash size={14} /></Button>
+                </div>
+            )
+        }
+    ];
+
+    const orderData = [1, 2, 3, 4, 5].map(i => ({
+        id: i,
+        customer: 'John Doe',
+        amount: 125.50,
+        status: 'Processing'
+    }));
+
     return (
         <MainLayout>
             <div className="dashboard">
@@ -60,35 +102,14 @@ const StoreManagerDashboard = () => {
                         <h3>Recent Orders</h3>
                         <Button variant="outline" size="small">View All</Button>
                     </div>
-                    <table className="orders-table">
-                        <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {[1,2,3,4,5].map((item) => (
-                            <tr key={item}>
-                                <td>#ORD-{1000 + item}</td>
-                                <td>John Doe</td>
-                                <td>$125.50</td>
-                                <td><Badge variant="warning">Processing</Badge></td>
-                                <td>
-                                    <div className="action-buttons">
-                                        <Button size="small" variant="outline" title="View"><Icons.View size={14} /></Button>
-                                        <Button size="small" variant="outline" title="Status"><Icons.CheckCircle size={14} color="#10b981" /></Button>
-                                        <Button size="small" variant="outline" title="Edit"><Icons.Edit size={14} /></Button>
-                                        <Button size="small" variant="outline" title="Delete"><Icons.Trash size={14} /></Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
+                    <div className="orders-table-container">
+                        <Table
+                            columns={orderColumns}
+                            data={orderData}
+                            searchable={false}
+                            itemsPerPage={5}
+                        />
+                    </div>
                 </Card>
             </div>
         </MainLayout>

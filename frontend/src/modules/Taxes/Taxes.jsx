@@ -218,7 +218,7 @@ const Taxes = () => {
             title: 'Tax Rate',
             key: 'tax_rate',
             render: (value) => (
-                <Badge variant="primary" className="tax-rate-badge">
+                <Badge variant="primary" className="badge-code">
                     {value}%
                 </Badge>
             )
@@ -227,7 +227,7 @@ const Taxes = () => {
             title: 'Status',
             key: 'is_active',
             render: (value) => (
-                <Badge variant={value ? 'success' : 'danger'}>
+                <Badge variant={value ? 'success' : 'danger'} className="badge-status">
                     {value ? 'Active' : 'Inactive'}
                 </Badge>
             )
@@ -260,9 +260,9 @@ const Taxes = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className="action-menu-container" onClick={(e) => { e.stopPropagation(); }}>
+                <div className="common-action-menu" onClick={(e) => { e.stopPropagation(); }}>
                     <button 
-                        className="action-menu-trigger" 
+                        className="action-trigger" 
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
@@ -271,24 +271,20 @@ const Taxes = () => {
                         <Icons.Actions size={16} />
                     </button>
                     {activeDropdown === record.id && (
-                        <div className="action-menu-dropdown">
-                            <button onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
+                        <div className="action-dropdown">
+                            <button className="action-item" onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
                                 <Icons.View size={16} /> View
                             </button>
-                            <button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
                                 {record.is_active ? <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> : <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
                             </button>
-                            {/*<button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>*/}
-                            {/*    <Icons.Status size={16} color={record.is_active ? 'var(--danger-color)' : 'var(--success-color)'} style={{ marginRight: '8px' }} />*/}
-                            {/*    {record.is_active ? 'Deactivate' : 'Activate'}*/}
-                            {/*</button>*/}
-                            <button onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
                             <button 
                                 onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }} 
                                 disabled={Number(record.usage_count) > 0}
-                                className="delete-action-btn"
+                                className="action-item delete-item"
                             >
                                 <Icons.Delete size={16} /> Delete
                             </button>
@@ -417,7 +413,7 @@ const Taxes = () => {
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
                                     <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Status</span>
-                                    <Badge variant={selectedTax?.is_active ? 'success' : 'danger'}>{selectedTax?.is_active ? 'Active' : 'Inactive'}</Badge>
+                                    <Badge variant={selectedTax?.is_active ? 'success' : 'danger'} className="badge-status">{selectedTax?.is_active ? 'Active' : 'Inactive'}</Badge>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
                                     <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Usage Assignments</span>

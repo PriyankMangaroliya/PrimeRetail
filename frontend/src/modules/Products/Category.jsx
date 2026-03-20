@@ -135,7 +135,7 @@ const Category = () => {
         {
             title: 'No',
             key: 'id',
-            render: (_, __, index) => <span className="cat-row-no">{index + 1}</span>
+            render: (_, __, index) => <span className="cat-no">{index + 1}</span>
         },
         {
             title: 'Category Name',
@@ -146,7 +146,7 @@ const Category = () => {
             title: 'Products',
             key: 'product_count',
             render: (value) => (
-                <Badge variant="primary">
+                <Badge variant="primary" className="badge-count">
                     {value || 0} Products
                 </Badge>
             )
@@ -155,7 +155,7 @@ const Category = () => {
             title: 'Status',
             key: 'is_active',
             render: (value) => (
-                <Badge variant={value ? 'success' : 'danger'} className="status-badge">
+                <Badge variant={value ? 'success' : 'danger'} className="badge-status">
                     {value ? 'Active' : 'Inactive'}
                 </Badge>
             )
@@ -164,34 +164,34 @@ const Category = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className="action-menu-container" onClick={(e) => e.stopPropagation()}>
+                <div className="common-action-menu" onClick={(e) => e.stopPropagation()}>
                     <button
-                        className="action-menu-trigger"
+                        className="action-trigger"
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
                         }}
                     >
-                        ⋮
+                        <Icons.Actions size={16} />
                     </button>
                     {activeDropdown === record.id && (
-                        <div className="action-menu-dropdown">
-                            <button onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
+                        <div className="action-dropdown">
+                            <button className="action-item" onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
                                 <Icons.View size={16}/> View
                             </button>
                             {isOwner && (
                                 <>
-                                    <button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
+                                    <button className="action-item" onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
                                         {record.is_active ? <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> : <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
                                     </button>
-                                    <button onClick={() => {
+                                    <button className="action-item" onClick={() => {
                                         handleOpenModal('edit', record);
                                         setActiveDropdown(null);
                                     }}>
                                         <Icons.Edit size={16}/> Edit
                                     </button>
                                     <button
-                                        className="delete-action-btn"
+                                        className="action-item delete-item"
                                         onClick={() => {
                                             handleOpenModal('delete', record);
                                             setActiveDropdown(null);
@@ -206,6 +206,33 @@ const Category = () => {
                         </div>
                     )}
                 </div>
+            )
+        }
+    ];
+
+    const linkColumns = [
+        {
+            title: 'Product Name',
+            key: 'product_name',
+            render: (val) => <strong>{val}</strong>
+        },
+        {
+            title: 'SKU',
+            key: 'sku',
+            render: (val) => <code>{val}</code>
+        },
+        {
+            title: 'Price',
+            key: 'price',
+            render: (val) => `₹${val}`
+        },
+        {
+            title: 'Status',
+            key: 'is_active',
+            render: (val) => (
+                <Badge variant={val ? 'success' : 'danger'} size="sm">
+                    {val ? 'Active' : 'Inactive'}
+                </Badge>
             )
         }
     ];
@@ -316,7 +343,7 @@ const Category = () => {
                                 <div className="cat-info-text">
                                     <h3>{selectedCategory?.category_name}</h3>
                                     <p>
-                                        <Badge variant="primary">{selectedCategory?.product_count || 0} Products</Badge>
+                                        <Badge variant="primary" className="badge-count">{selectedCategory?.product_count || 0} Products</Badge>
                                     </p>
                                 </div>
                             </div>
@@ -325,7 +352,7 @@ const Category = () => {
                                 <div className="view-group">
                                     <label>Status</label>
                                     <p>
-                                        <Badge variant={selectedCategory?.is_active ? 'success' : 'danger'}>
+                                        <Badge variant={selectedCategory?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedCategory?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </p>
@@ -362,31 +389,12 @@ const Category = () => {
                                 <div className="view-products-list">
                                     <h4>Linked Products</h4>
                                     <div className="products-scroll">
-                                        <table className="mini-table">
-                                            <thead>
-                                            <tr>
-                                                <th>Product Name</th>
-                                                <th>SKU</th>
-                                                <th>Price</th>
-                                                <th>Status</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {selectedCategory.products.map(product => (
-                                                <tr key={product.id}>
-                                                    <td>{product.product_name}</td>
-                                                    <td><code>{product.sku}</code></td>
-                                                    <td>₹{product.price}</td>
-                                                    <td>
-                                                        <Badge variant={product.is_active ? 'success' : 'danger'}
-                                                               size="sm">
-                                                            {product.is_active ? 'Active' : 'Inactive'}
-                                                        </Badge>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                            </tbody>
-                                        </table>
+                                        <Table
+                                            columns={linkColumns}
+                                            data={selectedCategory?.products || []}
+                                            searchable={false}
+                                            itemsPerPage={5}
+                                        />
                                     </div>
                                 </div>
                             )}

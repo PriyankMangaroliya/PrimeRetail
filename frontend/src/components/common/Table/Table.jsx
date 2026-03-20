@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import Pagination from '../Pagination/Pagination';
 import './Table.css';
 
 const Table = ({ columns, data = [], className = '', searchable = true, columnSearchable = false, itemsPerPage = 10 }) => {
@@ -50,12 +51,8 @@ const Table = ({ columns, data = [], className = '', searchable = true, columnSe
         setCurrentPage(1);
     }, [searchTerm, columnSearch, data]);
 
-    const handlePrevious = () => {
-        setCurrentPage(prev => Math.max(prev - 1, 1));
-    };
-
-    const handleNext = () => {
-        setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
     };
 
     return (
@@ -121,32 +118,17 @@ const Table = ({ columns, data = [], className = '', searchable = true, columnSe
                     </tbody>
                 </table>
             </div>
-            {totalPages > 1 && (
-                <div className="table-pagination">
-                    <div className="pagination-info">
-                        Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} entries
-                    </div>
-                    <div className="pagination-controls">
-                        <button 
-                            className="pagination-btn" 
-                            onClick={handlePrevious} 
-                            disabled={currentPage === 1}
-                        >
-                            Previous
-                        </button>
-                        <span className="pagination-current-page">
-                            Page {currentPage} of {totalPages}
-                        </span>
-                        <button 
-                            className="pagination-btn" 
-                            onClick={handleNext} 
-                            disabled={currentPage === totalPages}
-                        >
-                            Next
-                        </button>
-                    </div>
+            
+            <div className="table-pagination-footer">
+                <div className="pagination-info">
+                    Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} entries
                 </div>
-            )}
+                <Pagination 
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
+            </div>
         </div>
     );
 };

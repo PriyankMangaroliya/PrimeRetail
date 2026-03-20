@@ -279,7 +279,7 @@ const Warehouses = () => {
             title: 'Code',
             key: 'warehouse_code',
             render: (value) => (
-                <Badge variant="primary" className="wh-code-badge">{value}</Badge>
+                <Badge variant="primary" className="badge-code">{value}</Badge>
             )
         },
         {
@@ -297,7 +297,7 @@ const Warehouses = () => {
             title: 'Status',
             key: 'is_active',
             render: (value) => (
-                <Badge variant={value ? 'success' : 'danger'} className="status-badge">
+                <Badge variant={value ? 'success' : 'danger'} className="badge-status">
                     {value ? 'Active' : 'Inactive'}
                 </Badge>
             )
@@ -331,9 +331,9 @@ const Warehouses = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className="action-menu-container" onClick={(e) => { e.stopPropagation(); }}>
+                <div className="common-action-menu" onClick={(e) => { e.stopPropagation(); }}>
                     <button
-                        className="action-menu-trigger"
+                        className="action-trigger"
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
@@ -342,14 +342,14 @@ const Warehouses = () => {
                         <Icons.Actions size={16} />
                     </button>
                     {activeDropdown === record.id && (
-                        <div className="action-menu-dropdown">
-                            <button onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
+                        <div className="action-dropdown">
+                            <button className="action-item" onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
                                 <Icons.View size={16} /> View
                             </button>
-                            <button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
                                 {record.is_active ? <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> : <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
                             </button>
-                            <button onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
                             <button
@@ -363,6 +363,24 @@ const Warehouses = () => {
                     )}
                 </div>
             )
+        }
+    ];
+
+    const staffColumns = [
+        {
+            title: 'No',
+            key: 'index',
+            render: (_, __, index) => index + 1
+        },
+        {
+            title: 'Name',
+            key: 'name',
+            render: (val) => <strong>{val}</strong>
+        },
+        {
+            title: 'Role',
+            key: 'role',
+            render: (val) => <Badge variant="info" size="small">{val}</Badge>
         }
     ];
 
@@ -496,7 +514,7 @@ const Warehouses = () => {
                                 <div className="view-group">
                                     <label>Status</label>
                                     <p>
-                                        <Badge variant={selectedWarehouse?.is_active ? 'success' : 'danger'}>
+                                        <Badge variant={selectedWarehouse?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedWarehouse?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </p>
@@ -522,27 +540,13 @@ const Warehouses = () => {
                                         <Loader size="medium" />
                                     </div>
                                 ) : selectedWarehouse?.staff && selectedWarehouse.staff.length > 0 ? (
-                                    <div className="owner-stores-table-container" style={{ marginTop: '15px', maxHeight: '250px', overflowY: 'auto' }}>
-                                        <table className="owner-stores-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-                                            <thead style={{ position: 'sticky', top: 0, background: 'white', borderBottom: '2px solid #eee' }}>
-                                                <tr>
-                                                    <th style={{ padding: '8px', textAlign: 'left', width: '50px' }}>No</th>
-                                                    <th style={{ padding: '8px', textAlign: 'left' }}>Name</th>
-                                                    <th style={{ padding: '8px', textAlign: 'left' }}>Role</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {selectedWarehouse.staff.map((member, index) => (
-                                                    <tr key={member.id} style={{ borderBottom: '1px solid #eee' }}>
-                                                        <td style={{ padding: '8px', color: '#666' }}>{index + 1}</td>
-                                                        <td style={{ padding: '8px', fontWeight: 500 }}>{member.name}</td>
-                                                        <td style={{ padding: '8px' }}>
-                                                            <Badge variant="info" size="small">{member.role}</Badge>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                    <div className="owner-stores-table-container" style={{ marginTop: '15px' }}>
+                                        <Table
+                                            columns={staffColumns}
+                                            data={selectedWarehouse.staff}
+                                            searchable={false}
+                                            itemsPerPage={5}
+                                        />
                                     </div>
                                 ) : (
                                     <p style={{ color: '#666', marginTop: '10px' }}>No staff members found for this warehouse.</p>

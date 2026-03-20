@@ -180,7 +180,7 @@ const Products = () => {
         {
             title: 'SKU',
             key: 'sku',
-            render: (value) => <Badge variant="dark" className="sku-badge">{value}</Badge>
+            render: (value) => <Badge variant="dark" className="badge-code">{value}</Badge>
         },
         {
             title: 'Product Name',
@@ -204,7 +204,7 @@ const Products = () => {
             title: 'Status',
             key: 'is_active',
             render: (value) => (
-                <Badge variant={value ? 'success' : 'danger'} className="status-badge">
+                <Badge variant={value ? 'success' : 'danger'} className="badge-status">
                     {value ? 'Active' : 'Inactive'}
                 </Badge>
             )
@@ -213,34 +213,34 @@ const Products = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className="action-menu-container" onClick={(e) => e.stopPropagation()}>
+                <div className="common-action-menu" onClick={(e) => e.stopPropagation()}>
                     <button
-                        className="action-menu-trigger"
+                        className="action-trigger"
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
                         }}
                     >
-                        ⋮
+                        <Icons.Actions size={16} />
                     </button>
                     {activeDropdown === record.id && (
-                        <div className="action-menu-dropdown">
-                            <button onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
+                        <div className="action-dropdown">
+                            <button className="action-item" onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
                                 <Icons.View size={16}/> View
                             </button>
                             {isOwner && (
                                 <>
-                                    <button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
+                                    <button className="action-item" onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
                                         {record.is_active ? <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> : <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
                                     </button>
-                                    <button onClick={() => {
+                                    <button className="action-item" onClick={() => {
                                         handleOpenModal('edit', record);
                                         setActiveDropdown(null);
                                     }}>
                                         <Icons.Edit size={16}/> Edit
                                     </button>
                                     <button
-                                        className="delete-action-btn"
+                                        className="action-item delete-item"
                                         onClick={() => {
                                             handleOpenModal('delete', record);
                                             setActiveDropdown(null);
@@ -253,6 +253,28 @@ const Products = () => {
                         </div>
                     )}
                 </div>
+            )
+        }
+    ];
+
+    const stockColumns = [
+        {
+            title: 'Store Name',
+            key: 'store_name',
+            render: (val, record) => val || `Store #${record.store_id}`
+        },
+        {
+            title: 'Location',
+            key: 'location',
+            render: (val) => val || 'N/A'
+        },
+        {
+            title: 'Stock Quantity',
+            key: 'quantity',
+            render: (val) => (
+                <Badge variant={val > 0 ? 'success' : 'danger'}>
+                    {val} {selectedProduct?.unit}
+                </Badge>
             )
         }
     ];
@@ -428,7 +450,7 @@ const Products = () => {
                                 <div className="view-group">
                                     <label>Status</label>
                                     <p>
-                                        <Badge variant={selectedProduct?.is_active ? 'success' : 'danger'}>
+                                        <Badge variant={selectedProduct?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedProduct?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </p>
@@ -442,36 +464,14 @@ const Products = () => {
                             {/* Store-wise Stock table */}
                             <div className="view-products-list">
                                 <h4>Store-wise Stock</h4>
-                                <div className="products-scroll">
-                                    <table className="mini-table">
-                                        <thead>
-                                        <tr>
-                                            <th>Store Name</th>
-                                            <th>Location</th>
-                                            <th>Stock Quantity</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {selectedProduct?.stock_by_store && selectedProduct.stock_by_store.length > 0 ? (
-                                            selectedProduct.stock_by_store.map((stock, idx) => (
-                                                <tr key={idx}>
-                                                    <td>{stock.store_name || `Store #${stock.store_id}`}</td>
-                                                    <td>{stock.location || 'N/A'}</td>
-                                                    <td>
-                                                        <Badge variant={stock.quantity > 0 ? 'success' : 'danger'}>
-                                                            {stock.quantity} {selectedProduct.unit}
-                                                        </Badge>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td colSpan="3" style={{textAlign: 'center'}}>No stock data available for stores</td>
-                                            </tr>
-                                        )}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                    <div className="products-scroll">
+                                        <Table
+                                            columns={stockColumns}
+                                            data={selectedProduct?.stock_by_store || []}
+                                            searchable={false}
+                                            itemsPerPage={5}
+                                        />
+                                    </div>
                             </div>
                         </div>
                     ) : (

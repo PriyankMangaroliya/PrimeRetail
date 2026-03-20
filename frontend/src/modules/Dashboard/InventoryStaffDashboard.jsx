@@ -3,10 +3,57 @@ import MainLayout from '../../components/layout/MainLayout/MainLayout';
 import Card from '../../components/common/Card/Card';
 import Button from '../../components/common/Button/Button';
 import Badge from '../../components/common/Badge/Badge';
+import Table from '../../components/common/Table/Table';
 import Icons from '../../components/common/Icons';
 import './Dashboard.css';
 
 const InventoryStaffDashboard = () => {
+    const stockColumns = [
+        {
+            title: 'Product',
+            key: 'name'
+        },
+        {
+            title: 'SKU',
+            key: 'sku'
+        },
+        {
+            title: 'Current Stock',
+            key: 'current',
+            render: (val) => <span className="stock-low">{val}</span>
+        },
+        {
+            title: 'Minimum Level',
+            key: 'minimum'
+        },
+        {
+            title: 'Status',
+            key: 'status',
+            render: (val) => <Badge variant="danger">{val}</Badge>
+        },
+        {
+            title: 'Action',
+            key: 'actions',
+            render: () => (
+                <div className="action-buttons">
+                    <Button size="small" variant="outline" title="View"><Icons.View size={14} /></Button>
+                    <Button size="small" variant="outline" title="Status"><Icons.CheckCircle size={14} color="#10b981" /></Button>
+                    <Button size="small" variant="outline" title="Edit"><Icons.Edit size={14} /></Button>
+                    <Button size="small" variant="outline" title="Delete"><Icons.Trash size={14} /></Button>
+                </div>
+            )
+        }
+    ];
+
+    const stockData = [1, 2, 3, 4, 5].map(i => ({
+        id: i,
+        name: `Product Name ${i}`,
+        sku: `SKU-${i}234`,
+        current: 5,
+        minimum: 20,
+        status: 'Critical'
+    }));
+
     return (
         <MainLayout>
             <div className="dashboard">
@@ -57,37 +104,14 @@ const InventoryStaffDashboard = () => {
                 {/* Low Stock Alert */}
                 <Card className="low-stock">
                     <h3>Low Stock Alert</h3>
-                    <table className="inventory-table">
-                        <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>SKU</th>
-                            <th>Current Stock</th>
-                            <th>Minimum Level</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {[1,2,3,4,5].map((item) => (
-                            <tr key={item}>
-                                <td>Product Name {item}</td>
-                                <td>SKU-{item}234</td>
-                                <td className="stock-low">5</td>
-                                <td>20</td>
-                                <td><Badge variant="danger">Critical</Badge></td>
-                                <td>
-                                    <div className="action-buttons">
-                                        <Button size="small" variant="outline" title="View"><Icons.View size={14} /></Button>
-                                        <Button size="small" variant="outline" title="Status"><Icons.CheckCircle size={14} color="#10b981" /></Button>
-                                        <Button size="small" variant="outline" title="Edit"><Icons.Edit size={14} /></Button>
-                                        <Button size="small" variant="outline" title="Delete"><Icons.Trash size={14} /></Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
+                    <div className="inventory-table-container">
+                        <Table
+                            columns={stockColumns}
+                            data={stockData}
+                            searchable={false}
+                            itemsPerPage={5}
+                        />
+                    </div>
                 </Card>
             </div>
         </MainLayout>

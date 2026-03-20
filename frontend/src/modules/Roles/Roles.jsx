@@ -202,7 +202,7 @@ const Roles = () => {
             title: 'Status',
             key: 'is_active',
             render: (value) => (
-                <Badge variant={value ? 'success' : 'danger'}>
+                <Badge variant={value ? 'success' : 'danger'} className="badge-status">
                     {value ? 'Active' : 'Inactive'}
                 </Badge>
             )
@@ -221,38 +221,55 @@ const Roles = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className="action-menu-container" onClick={(e) => { e.stopPropagation(); }}>
+                <div className="common-action-menu" onClick={(e) => { e.stopPropagation(); }}>
                     <button 
-                        className="action-menu-trigger" 
+                        className="action-trigger" 
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
                         }}
                     >
-                        ⋮
+                        <Icons.Actions size={16} />
                     </button>
                     {activeDropdown === record.id && (
-                        <div className="action-menu-dropdown">
-                            <button onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
+                        <div className="action-dropdown">
+                            <button className="action-item" onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
                                 <Icons.View size={16} /> View
                             </button>
-                            <button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
                                 {record.is_active ? <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> : <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
                             </button>
-                            <button onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
                             <button 
                                 onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }} 
                                 disabled={Number(record.user_count) > 0}
-                                className="delete-action-btn"
+                                className="action-item delete-item"
                             >
-                                <Icons.Trash size={16} /> Delete
+                                <Icons.Delete size={16} /> Delete
                             </button>
                         </div>
                     )}
                 </div>
             )
+        }
+    ];
+
+    const userColumns = [
+        {
+            title: 'No',
+            key: 'index',
+            render: (_, __, index) => index + 1
+        },
+        {
+            title: 'Name',
+            key: 'name',
+            render: (val) => <strong>{val}</strong>
+        },
+        {
+            title: 'Email',
+            key: 'email'
         }
     ];
 
@@ -375,25 +392,13 @@ const Roles = () => {
                                 {loadingUsers ? (
                                     <Loader size="small" />
                                 ) : roleUsers.length > 0 ? (
-                                    <div className="role-users-table-container" style={{ marginTop: '15px', maxHeight: '250px', overflowY: 'auto' }}>
-                                        <table className="role-users-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-                                            <thead style={{ position: 'sticky', top: 0, background: 'white', borderBottom: '2px solid #eee' }}>
-                                                <tr>
-                                                    <th style={{ padding: '8px', textAlign: 'left', width: '50px' }}>No</th>
-                                                    <th style={{ padding: '8px', textAlign: 'left' }}>Name</th>
-                                                    <th style={{ padding: '8px', textAlign: 'left' }}>Email</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {roleUsers.map((user, index) => (
-                                                    <tr key={user.id} style={{ borderBottom: '1px solid #eee' }}>
-                                                        <td style={{ padding: '8px', color: '#666' }}>{index + 1}</td>
-                                                        <td style={{ padding: '8px', fontWeight: 500 }}>{user.name}</td>
-                                                        <td style={{ padding: '8px', color: '#666' }}>{user.email}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                    <div className="role-users-table-container" style={{ marginTop: '15px' }}>
+                                        <Table
+                                            columns={userColumns}
+                                            data={roleUsers}
+                                            searchable={false}
+                                            itemsPerPage={5}
+                                        />
                                     </div>
                                 ) : (
                                     <p style={{ color: '#666', marginTop: '10px' }}>No users found for this role.</p>

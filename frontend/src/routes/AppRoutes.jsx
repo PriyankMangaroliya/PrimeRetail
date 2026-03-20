@@ -22,7 +22,7 @@ import Employees from '../modules/Employees/Employees';
 import Discounts from '../modules/Discounts/Discounts';
 import Products from '../modules/Products/Products';
 import Category from '../modules/Products/Category';
-import StoreTaxes from '../modules/Taxes/storeTaxes';
+import StoreTaxes from '../modules/Taxes/StoreTaxes.jsx';
 
 
 const AppRoutes = () => {

@@ -67,6 +67,10 @@ import {
     ArrowUpCircle,
     ArrowDownCircle,
     Zap,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
     X as CloseIcon
 } from 'lucide-react';
 
@@ -193,7 +197,11 @@ export const Icons = {
     ArrowUpCircle: ArrowUpCircle,
     ArrowDownCircle: ArrowDownCircle,
     Zap: Zap,
-    Clock: Clock
+    Clock: Clock,
+    ChevronLeft: ChevronLeft,
+    ChevronRight: ChevronRight,
+    ChevronsLeft: ChevronsLeft,
+    ChevronsRight: ChevronsRight
 };
 
 // React Icons (Fi)

@@ -282,7 +282,7 @@ const StoreOwners = () => {
             title: 'Stores',
             key: 'store_count',
             render: (value) => (
-                <Badge variant={value > 0 ? 'primary' : 'secondary'}>
+                <Badge variant={value > 0 ? 'primary' : 'secondary'} className="badge-count">
                     {value || 0} {value === 1 ? 'Store' : 'Stores'}
                 </Badge>
             )
@@ -291,7 +291,7 @@ const StoreOwners = () => {
             title: 'Status',
             key: 'is_active',
             render: (value) => (
-                <Badge variant={value ? 'success' : 'danger'}>
+                <Badge variant={value ? 'success' : 'danger'} className="badge-status">
                     {value ? 'Active' : 'Inactive'}
                 </Badge>
             )
@@ -324,38 +324,51 @@ const StoreOwners = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className="action-menu-container" onClick={(e) => { e.stopPropagation(); }}>
+                <div className="common-action-menu" onClick={(e) => { e.stopPropagation(); }}>
                     <button 
-                        className="action-menu-trigger" 
+                        className="action-trigger" 
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
                         }}
                     >
-                        ⋮
+                        <Icons.Actions size={16} />
                     </button>
                     {activeDropdown === record.id && (
-                        <div className="action-menu-dropdown">
-                            <button onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
+                        <div className="action-dropdown">
+                            <button className="action-item" onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
                                 <Icons.View size={16} /> View
                             </button>
-                            <button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
                                 {record.is_active ? <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> : <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
                             </button>
-                            <button onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
                             <button 
                                 onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }} 
                                 disabled={Number(record.store_count) > 0}
-                                className="delete-action-btn"
+                                className="action-item delete-item"
                             >
-                                <Icons.Trash size={16} /> Delete
+                                <Icons.Delete size={16} /> Delete
                             </button>
                         </div>
                     )}
                 </div>
             )
+        }
+    ];
+
+    const storeColumns = [
+        {
+            title: 'No',
+            key: 'index',
+            render: (_, __, index) => index + 1
+        },
+        {
+            title: 'Name',
+            key: 'store_name',
+            render: (val) => <strong>{val}</strong>
         }
     ];
 
@@ -491,23 +504,13 @@ const StoreOwners = () => {
                                 {loadingStores ? (
                                     <Loader size="small" />
                                 ) : ownerStores.length > 0 ? (
-                                    <div className="owner-stores-table-container" style={{ marginTop: '15px', maxHeight: '250px', overflowY: 'auto' }}>
-                                        <table className="owner-stores-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-                                            <thead style={{ position: 'sticky', top: 0, background: 'white', borderBottom: '2px solid #eee' }}>
-                                                <tr>
-                                                    <th style={{ padding: '8px', textAlign: 'left', width: '50px' }}>No</th>
-                                                    <th style={{ padding: '8px', textAlign: 'left' }}>Name</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {ownerStores.map((store, index) => (
-                                                    <tr key={store.id} style={{ borderBottom: '1px solid #eee' }}>
-                                                        <td style={{ padding: '8px', color: '#666' }}>{index + 1}</td>
-                                                        <td style={{ padding: '8px', fontWeight: 500 }}>{store.store_name}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                    <div className="owner-stores-table-container" style={{ marginTop: '15px' }}>
+                                        <Table
+                                            columns={storeColumns}
+                                            data={ownerStores}
+                                            searchable={false}
+                                            itemsPerPage={5}
+                                        />
                                     </div>
                                 ) : (
                                     <p style={{ color: '#666', marginTop: '10px' }}>No stores found for this owner.</p>

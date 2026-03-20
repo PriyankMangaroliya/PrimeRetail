@@ -54,9 +54,9 @@
 }
 
 /* ─── Row Number ─────────────────────────────────────────────────────────── */
-.cat-row-no {
-    color: var(--gray-800);
-    font-size: 13px;
+.cat-id {
+    color: var(--gray-600);
+    font-weight: 500;
 }
 
 /* ─── Name ───────────────────────────────────────────────────────────────── */
@@ -66,80 +66,10 @@
 }
 
 /* ─── Action Menu Dropdown ───────────────────────────────────────────────── */
-.action-menu-container {
-    position: relative;
-    display: inline-block;
-}
 
-.action-menu-trigger {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0 8px;
-    color: var(--gray-600);
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-.action-menu-trigger:hover {
-    background-color: var(--gray-200);
-    color: var(--gray-800);
-}
-
-.action-menu-dropdown {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    margin-top: 4px;
-    background: white;
-    border: 1px solid var(--gray-300);
-    border-radius: var(--border-radius, 6px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    min-width: 140px;
-    display: flex;
-    flex-direction: column;
-    padding: 4px 0;
-}
-
-.action-menu-dropdown button {
-    background: none;
-    border: none;
-    padding: 8px 16px;
-    text-align: left;
-    cursor: pointer;
-    font-size: 14px;
-    color: var(--gray-700);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s;
-    width: 100%;
-}
-
-.action-menu-dropdown button:hover {
-    background-color: var(--gray-100);
-}
-
-.action-menu-dropdown button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.action-menu-dropdown .delete-action-btn:hover:not(:disabled) {
-    background-color: #fee2e2;
-    color: #ef4444;
-}
 
 /* ─── Status Badge ───────────────────────────────────────────────────────── */
-.status-badge {
-    font-size: 12px;
-    padding: 4px 8px;
-    min-width: 70px;
-    text-align: center;
-    display: inline-block;
-}
+
 
 /* ─── Form ───────────────────────────────────────────────────────────────── */
 .category-form {
@@ -167,7 +97,6 @@
 
 .delete-warning {
     color: var(--danger-color, #ef4444) !important;
-    font-size: 14px !important;
     font-weight: 500;
 }
 

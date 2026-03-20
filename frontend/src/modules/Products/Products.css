@@ -61,62 +61,10 @@
     color: var(--gray-800);
 }
 
-.sku-badge {
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 11px;
-}
+
 
 /* ─── Action Menu ─────────────────────────────────────────────────────────── */
-.action-menu-container {
-    position: relative;
-}
 
-.action-menu-trigger {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0 8px;
-    border-radius: 4px;
-}
-
-.action-menu-trigger:hover {
-    background: var(--gray-100);
-}
-
-.action-menu-dropdown {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    background: white;
-    border: 1px solid var(--gray-200);
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    z-index: 100;
-    min-width: 140px;
-    padding: 5px 0;
-}
-
-.action-menu-dropdown button {
-    display: block;
-    width: 100%;
-    padding: 8px 16px;
-    text-align: left;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.action-menu-dropdown button:hover {
-    background: var(--gray-50);
-}
-
-.action-menu-dropdown .delete-action-btn:hover {
-    color: #ef4444;
-    background: #fef2f2;
-}
 
 /* ─── Modal Content ──────────────────────────────────────────────────────── */
 .item-view {
@@ -253,7 +201,6 @@
 .mini-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
 }
 
 .mini-table th {

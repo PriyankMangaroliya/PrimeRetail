@@ -13,7 +13,7 @@ import { useAuth } from '../../context/AuthContext';
 import storeTaxApi from '../../api/storeTax.api';
 import taxApi from '../../api/tax.api';
 import Icons from '../../components/common/Icons';
-import './storeTaxes.css';
+import './StoreTaxes.css';
 
 const StoreTaxes = () => {
     const { user } = useAuth();
@@ -160,7 +160,7 @@ const StoreTaxes = () => {
             title: 'Status',
             key: 'is_active',
             render: (value) => (
-                <Badge variant={value ? 'success' : 'danger'} className="status-badge">
+                <Badge variant={value ? 'success' : 'danger'} className="badge-status">
                     {value ? 'Active' : 'Inactive'}
                 </Badge>
             )
@@ -169,22 +169,22 @@ const StoreTaxes = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className="action-menu-container" onClick={(e) => e.stopPropagation()}>
+                <div className="common-action-menu" onClick={(e) => e.stopPropagation()}>
                     <button
-                        className="action-menu-trigger"
+                        className="action-trigger"
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
                         }}
                     >
-                        ⋮
+                        <Icons.Actions size={16} />
                     </button>
                     {activeDropdown === record.id && (
-                        <div className="action-menu-dropdown">
-                            <button onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
+                        <div className="action-dropdown">
+                            <button className="action-item" onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
                                 <Icons.View size={16} /> View
                             </button>
-                            <button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
                                 {record.is_active ?
                                     <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> :
                                     <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>
@@ -192,9 +192,9 @@ const StoreTaxes = () => {
                             </button>
                             <button
                                 onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }}
-                                className="delete-action-btn"
+                                className="action-item delete-item"
                             >
-                                <Icons.Trash size={16} /> Remove
+                                <Icons.Delete size={16} /> Remove
                             </button>
                         </div>
                     )}
@@ -373,7 +373,7 @@ const StoreTaxes = () => {
                                 <div className="dc-info-text">
                                     <h3>{selectedTax?.tax_name}</h3>
                                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                                        <Badge variant={selectedTax?.is_active ? 'success' : 'danger'}>
+                                        <Badge variant={selectedTax?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedTax?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                         <span className="dc-value-large">
@@ -400,6 +400,7 @@ const StoreTaxes = () => {
                                             data={usageProducts}
                                             className="usage-table"
                                             searchable={false}
+                                            itemsPerPage={5}
                                         />
                                     </div>
                                 ) : (

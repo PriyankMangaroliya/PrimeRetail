@@ -1,64 +1,114 @@
 import React from 'react';
+import Icons from '../Icons';
 import './Pagination.css';
 
 const Pagination = ({
-                        currentPage,
-                        totalPages,
-                        onPageChange,
-                        siblingCount = 1
-                    }) => {
+    currentPage,
+    totalPages,
+    onPageChange,
+    siblingCount = 1
+}) => {
     const getPageNumbers = () => {
         const pages = [];
+        const totalNumbers = siblingCount * 2 + 3; // siblingCount * 2 + currentPage + ellipsis + lastPage
 
-        pages.push(1);
-
-        for (let i = Math.max(2, currentPage - siblingCount);
-             i <= Math.min(totalPages - 1, currentPage + siblingCount);
-             i++) {
-            if (i === 2 && pages[pages.length - 1] !== 1) {
-                pages.push('...');
+        if (totalPages <= totalNumbers) {
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push(i);
             }
-            pages.push(i);
+            return pages;
         }
 
-        if (totalPages > 1) {
-            if (pages[pages.length - 1] !== totalPages - 1 && totalPages > 2) {
-                pages.push('...');
+        const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+        const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+        const shouldShowLeftDots = leftSiblingIndex > 2;
+        const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
+
+        if (!shouldShowLeftDots && shouldShowRightDots) {
+            let leftItemCount = 3 + 2 * siblingCount;
+            let leftRange = [];
+            for (let i = 1; i <= leftItemCount; i++) {
+                leftRange.push(i);
             }
-            pages.push(totalPages);
+            return [...leftRange, '...', totalPages];
         }
 
-        return pages;
+        if (shouldShowLeftDots && !shouldShowRightDots) {
+            let rightItemCount = 3 + 2 * siblingCount;
+            let rightRange = [];
+            for (let i = totalPages - rightItemCount + 1; i <= totalPages; i++) {
+                rightRange.push(i);
+            }
+            return [1, '...', ...rightRange];
+        }
+
+        if (shouldShowLeftDots && shouldShowRightDots) {
+            let middleRange = [];
+            for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+                middleRange.push(i);
+            }
+            return [1, '...', ...middleRange, '...', totalPages];
+        }
     };
 
+    if (totalPages <= 1) return null;
+
+    const pages = getPageNumbers();
+
     return (
-        <div className="pagination">
-            <button
-                className="pagination-btn"
-                onClick={() => onPageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-            >
-                Previous
-            </button>
-
-            {getPageNumbers().map((page, index) => (
+        <div className="pagination-wrapper">
+            <div className="pagination-container">
                 <button
-                    key={index}
-                    className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
-                    onClick={() => typeof page === 'number' && onPageChange(page)}
-                    disabled={typeof page !== 'number'}
+                    className="pagination-btn nav-btn"
+                    onClick={() => onPageChange(1)}
+                    disabled={currentPage === 1}
+                    title="First Page"
                 >
-                    {page}
+                    <Icons.ChevronsLeft size={18} />
                 </button>
-            ))}
+                <button
+                    className="pagination-btn nav-btn"
+                    onClick={() => onPageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    title="Previous Page"
+                >
+                    <Icons.ChevronLeft size={18} />
+                </button>
 
-            <button
-                className="pagination-btn"
-                onClick={() => onPageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-            >
-                Next
-            </button>
+                <div className="pagination-numbers">
+                    {pages.map((page, index) => (
+                        <button
+                            key={index}
+                            className={`pagination-btn number-btn ${currentPage === page ? 'active' : ''} ${page === '...' ? 'dots' : ''}`}
+                            onClick={() => typeof page === 'number' && onPageChange(page)}
+                            disabled={page === '...'}
+                        >
+                            {page}
+                        </button>
+                    ))}
+                </div>
+
+                <button
+                    className="pagination-btn nav-btn"
+                    onClick={() => onPageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    title="Next Page"
+                >
+                    <Icons.ChevronRight size={18} />
+                </button>
+                <button
+                    className="pagination-btn nav-btn"
+                    onClick={() => onPageChange(totalPages)}
+                    disabled={currentPage === totalPages}
+                    title="Last Page"
+                >
+                    <Icons.ChevronsRight size={18} />
+                </button>
+            </div>
+            <div className="pagination-info-text">
+                Page {currentPage} of {totalPages}
+            </div>
         </div>
     );
 };

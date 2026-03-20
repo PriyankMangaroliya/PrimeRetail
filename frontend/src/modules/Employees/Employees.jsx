@@ -349,7 +349,7 @@ const Employees = () => {
             title: 'Role',
             key: 'role_name',
             render: (value) => (
-                <Badge variant="primary" className="role-badge">{value}</Badge>
+                <Badge variant="primary" className="badge-status">{value}</Badge>
             )
         },
         {
@@ -362,7 +362,7 @@ const Employees = () => {
             title: 'Status',
             key: 'is_active',
             render: (value) => (
-                <Badge variant={value ? 'success' : 'danger'} className="status-badge">
+                <Badge variant={value ? 'success' : 'danger'} className="badge-status">
                     {value ? 'Active' : 'Inactive'}
                 </Badge>
             )
@@ -395,9 +395,9 @@ const Employees = () => {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
-                <div className="action-menu-container" onClick={(e) => { e.stopPropagation(); }}>
+                <div className="common-action-menu" onClick={(e) => { e.stopPropagation(); }}>
                     <button
-                        className="action-menu-trigger"
+                        className="action-trigger"
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
@@ -406,19 +406,19 @@ const Employees = () => {
                         <Icons.Actions size={16} />
                     </button>
                     {activeDropdown === record.id && (
-                        <div className="action-menu-dropdown">
-                            <button onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
+                        <div className="action-dropdown">
+                            <button className="action-item" onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
                                 <Icons.View size={16} /> View
                             </button>
-                            <button onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
                                 {record.is_active ? <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> : <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
                             </button>
-                            <button onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
                             <button
                                 onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }}
-                                className="delete-action-btn"
+                                className="action-item delete-item"
                             >
                                 <Icons.Delete size={16} /> Delete
                             </button>
@@ -466,7 +466,7 @@ const Employees = () => {
                     >
                         <Icons.Store size={18} style={{ marginRight: '8px' }} /> Store Employees
                         {activeTab === 'store' && employees.length > 0 && (
-                            <span className="tab-count">{employees.length}</span>
+                            <span className="badge-count">{employees.length}</span>
                         )}
                     </button>
                     {isStoreOwner && (
@@ -476,7 +476,7 @@ const Employees = () => {
                         >
                             <Icons.Warehouse size={18} style={{ marginRight: '8px' }} /> Warehouse Employees
                             {activeTab === 'warehouse' && employees.length > 0 && (
-                                <span className="tab-count">{employees.length}</span>
+                                <span className="badge-count">{employees.length}</span>
                             )}
                         </button>
                     )}
@@ -648,7 +648,7 @@ const Employees = () => {
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
                                     <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Status</span>
-                                    <Badge variant={selectedEmployee?.is_active ? 'success' : 'danger'}>{selectedEmployee?.is_active ? 'Active' : 'Inactive'}</Badge>
+                                    <Badge variant={selectedEmployee?.is_active ? 'success' : 'danger'} className="badge-status">{selectedEmployee?.is_active ? 'Active' : 'Inactive'}</Badge>
                                 </div>
 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
