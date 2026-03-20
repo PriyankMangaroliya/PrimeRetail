@@ -12,6 +12,8 @@ router.use(roleMiddleware.hasStoreAccess());
 // Store tax management routes
 router.get('/', storeTaxController.getStoreTaxes);
 router.post('/', storeTaxController.addStoreTax);
+router.patch('/:id/status', storeTaxController.toggleStoreTaxStatus);
+router.get('/:id/usage', storeTaxController.getTaxUsage);
 router.delete('/:id', storeTaxController.removeStoreTax);
 
 module.exports = router;

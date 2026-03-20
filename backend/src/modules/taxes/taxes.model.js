@@ -48,8 +48,8 @@ const taxModel = {
             text: `SELECT t.*,
                           u1.name as created_by_name,
                           u2.name as updated_by_name,
-                          (SELECT COUNT(*) FROM product_master WHERE tax_id = t.id AND is_deleted = false) + 
-                          (SELECT COUNT(*) FROM store_taxes WHERE tax_id = t.id AND is_active = true) as usage_count
+                           (SELECT COUNT(*) FROM product_master p JOIN store_taxes st ON p.tax_id = st.id WHERE st.tax_id = t.id AND p.is_deleted = false) + 
+                           (SELECT COUNT(*) FROM store_taxes WHERE tax_id = t.id AND is_active = true) as usage_count
                    FROM tax_master t
                             LEFT JOIN user_master u1 ON t.created_by = u1.id
                             LEFT JOIN user_master u2 ON t.updated_by = u2.id

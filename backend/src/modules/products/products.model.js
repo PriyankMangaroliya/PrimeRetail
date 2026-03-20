@@ -3,19 +3,19 @@ const db = require('../../config/database.config');
 const productModel = {
     // Create new product (Store Owner only)
     createProduct: (productData) => {
-        const { owner_id, product_name, sku, barcode, category_id, tax_id, price, unit } = productData;
+        const { owner_id, product_name, sku, barcode, category_id, tax_id, price, unit, created_by } = productData;
         const query = {
             text: `INSERT INTO product_master
-                   (owner_id, product_name, sku, barcode, category_id, tax_id, price, unit)
-                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-            values: [owner_id, product_name, sku, barcode, category_id, tax_id, price, unit]
+                   (owner_id, product_name, sku, barcode, category_id, tax_id, price, unit, created_by, updated_by)
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $9) RETURNING *`,
+            values: [owner_id, product_name, sku, barcode, category_id, tax_id, price, unit, created_by]
         };
         return db.query(query);
     },
 
     // Update product (Store Owner only)
     updateProduct: (id, productData) => {
-        const { product_name, sku, barcode, category_id, tax_id, price, unit, is_active } = productData;
+        const { product_name, sku, barcode, category_id, tax_id, price, unit, is_active, updated_by } = productData;
         const query = {
             text: `UPDATE product_master
                    SET product_name = COALESCE($1, product_name),
@@ -26,23 +26,54 @@ const productModel = {
                        price = COALESCE($6, price),
                        unit = COALESCE($7, unit),
                        is_active = COALESCE($8, is_active),
+                       updated_by = $9,
                        updated_at = CURRENT_TIMESTAMP
-                   WHERE id = $9 AND is_deleted = false RETURNING *`,
-            values: [product_name, sku, barcode, category_id, tax_id, price, unit, is_active, id]
+                   WHERE id = $10 AND is_deleted = false RETURNING *`,
+            values: [product_name, sku, barcode, category_id, tax_id, price, unit, is_active, updated_by, id]
         };
         return db.query(query);
     },
 
     // Soft delete product (Store Owner only)
-    deleteProduct: (id) => {
+    deleteProduct: (id, updated_by) => {
         const query = {
             text: `UPDATE product_master
                    SET is_deleted = true,
+                       updated_by = $1,
                        updated_at = CURRENT_TIMESTAMP
-                   WHERE id = $1 AND is_deleted = false RETURNING *`,
-            values: [id]
+                   WHERE id = $2 AND is_deleted = false RETURNING *`,
+            values: [updated_by, id]
         };
         return db.query(query);
+    },
+
+    // Check if product name is unique for an owner
+    checkProductNameUnique: (productName, ownerId, excludeId = null) => {
+        let text = 'SELECT id FROM product_master WHERE LOWER(product_name) = LOWER($1) AND owner_id = $2 AND is_deleted = false';
+        const values = [productName, ownerId];
+
+        if (excludeId) {
+            text += ' AND id != $3';
+            values.push(excludeId);
+        }
+
+        return db.query({ text, values });
+    },
+
+    // Check for existing transactions
+    checkTransactions: async (id) => {
+        const invoiceCheck = await db.query(
+            'SELECT COUNT(*) FROM invoice_items WHERE product_id = $1',
+            [id]
+        );
+        const stockTxCheck = await db.query(
+            'SELECT COUNT(*) FROM stock_transactions WHERE product_id = $1',
+            [id]
+        );
+        
+        return {
+            hasTransactions: parseInt(invoiceCheck.rows[0].count) > 0 || parseInt(stockTxCheck.rows[0].count) > 0
+        };
     },
 
     // Get all products based on user role
@@ -56,7 +87,8 @@ const productModel = {
                               COALESCE(s.quantity, 0) as stock_quantity
                        FROM product_master p
                        LEFT JOIN category_master c ON p.category_id = c.id
-                       LEFT JOIN tax_master t ON p.tax_id = t.id
+                       LEFT JOIN store_taxes st ON p.tax_id = st.id
+                       LEFT JOIN tax_master t ON st.tax_id = t.id
                        LEFT JOIN stock_master s ON p.id = s.product_id AND s.location_type = 'Store' AND s.location_id = ANY(
                            SELECT id FROM store_master WHERE owner_id = $1
                        )
@@ -71,7 +103,8 @@ const productModel = {
                               COALESCE(s.quantity, 0) as stock_quantity
                        FROM product_master p
                        LEFT JOIN category_master c ON p.category_id = c.id
-                       LEFT JOIN tax_master t ON p.tax_id = t.id
+                       LEFT JOIN store_taxes st ON p.tax_id = st.id
+                       LEFT JOIN tax_master t ON st.tax_id = t.id
                        LEFT JOIN stock_master s ON p.id = s.product_id AND s.location_type = 'Store' AND s.location_id = $2
                        WHERE p.owner_id = $1 AND p.is_active = true AND p.is_deleted = false
                        ORDER BY p.product_name`,
@@ -97,7 +130,8 @@ const productModel = {
                               ) as stock_by_store
                        FROM product_master p
                        LEFT JOIN category_master c ON p.category_id = c.id
-                       LEFT JOIN tax_master t ON p.tax_id = t.id
+                       LEFT JOIN store_taxes st ON p.tax_id = st.id
+                       LEFT JOIN tax_master t ON st.tax_id = t.id
                        LEFT JOIN stock_master s ON p.id = s.product_id AND s.location_type = 'Store'
                        WHERE p.id = $1 AND p.owner_id = $2 AND p.is_deleted = false
                        GROUP BY p.id, c.category_name, t.tax_name, t.tax_rate`,
@@ -108,7 +142,8 @@ const productModel = {
                 text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate
                        FROM product_master p
                        LEFT JOIN category_master c ON p.category_id = c.id
-                       LEFT JOIN tax_master t ON p.tax_id = t.id
+                       LEFT JOIN store_taxes st ON p.tax_id = st.id
+                       LEFT JOIN tax_master t ON st.tax_id = t.id
                        WHERE p.id = $1 AND p.is_active = true AND p.is_deleted = false`,
                 values: [id]
             };

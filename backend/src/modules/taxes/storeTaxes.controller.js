@@ -5,22 +5,12 @@ const storeTaxController = {
     // Add tax to store (Store Owner only)
     addStoreTax: async (req, res) => {
         try {
-            const storeId = req.user.store_id; // Store Owner's store ID
+            const ownerId = req.user.id; // Store Owner's user ID
             const { tax_id } = req.body;
 
-            // Validate using storeTaxValidation
-            const { error } = storeTaxValidation.addStoreTax.validate({ 
-                store_id: storeId, 
-                tax_id, 
-                created_by: req.user.id 
-            });
-            if (error) {
-                return responseUtils.validationError(res, 'Validation failed', error.details);
-            }
+            const result = await storeTaxService.addStoreTax(ownerId, tax_id);
 
-            const result = await storeTaxService.addStoreTax(storeId, tax_id);
-
-            return responseUtils.created(res, 'Tax added to store successfully', result);
+            return responseUtils.created(res, 'Tax added successfully', result);
         } catch (error) {
             console.error('Add Store Tax Error:', error);
 
@@ -31,7 +21,7 @@ const storeTaxController = {
                 return responseUtils.conflict(res, error.message);
             }
 
-            return responseUtils.error(res, 500, error.message || 'Failed to add tax to store');
+            return responseUtils.error(res, 500, error.message || 'Failed to add tax');
         }
     },
 
@@ -39,17 +29,11 @@ const storeTaxController = {
     removeStoreTax: async (req, res) => {
         try {
             const { id } = req.params;
-            const storeId = req.user.store_id;
+            const ownerId = req.user.id;
 
-            // Validate ID param
-            const { error: paramError } = storeTaxValidation.storeTaxIdParam.validate({ id });
-            if (paramError) {
-                return responseUtils.validationError(res, 'Invalid store tax ID', paramError.details);
-            }
+            const result = await storeTaxService.removeStoreTax(id, ownerId);
 
-            const result = await storeTaxService.removeStoreTax(id, storeId);
-
-            return responseUtils.success(res, 200, 'Tax removed from store successfully', result);
+            return responseUtils.success(res, 200, 'Tax removed successfully', result);
         } catch (error) {
             console.error('Remove Store Tax Error:', error);
 
@@ -60,21 +44,64 @@ const storeTaxController = {
                 return responseUtils.forbidden(res, error.message);
             }
 
-            return responseUtils.error(res, 500, error.message || 'Failed to remove tax from store');
+            return responseUtils.error(res, 500, error.message || 'Failed to remove tax');
         }
     },
 
-    // Get taxes by store (Store Owner only)
+    // Get taxes by owner (Store Owner only)
     getStoreTaxes: async (req, res) => {
         try {
-            const storeId = req.user.store_id;
+            const ownerId = req.user.id;
 
-            const taxes = await storeTaxService.getStoreTaxes(storeId);
+            const taxes = await storeTaxService.getStoreTaxes(ownerId);
 
-            return responseUtils.success(res, 200, 'Store taxes retrieved successfully', taxes);
+            return responseUtils.success(res, 200, 'Taxes retrieved successfully', taxes);
         } catch (error) {
             console.error('Get Store Taxes Error:', error);
-            return responseUtils.error(res, 500, error.message || 'Failed to retrieve store taxes');
+            return responseUtils.error(res, 500, error.message || 'Failed to retrieve taxes');
+        }
+    },
+
+    // Toggle store tax status
+    toggleStoreTaxStatus: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { is_active } = req.body;
+            const ownerId = req.user.id;
+
+            const result = await storeTaxService.toggleStoreTaxStatus(id, ownerId, is_active);
+
+            return responseUtils.success(res, 200, `Tax ${is_active ? 'activated' : 'deactivated'} successfully`, result);
+        } catch (error) {
+            console.error('Toggle Store Tax Status Error:', error);
+            if (error.message.includes('not found')) {
+                return responseUtils.notFound(res, error.message);
+            }
+            if (error.message.includes('Forbidden')) {
+                return responseUtils.forbidden(res, error.message);
+            }
+            return responseUtils.error(res, 500, error.message || 'Failed to toggle status');
+        }
+    },
+
+    // Get tax usage
+    getTaxUsage: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const ownerId = req.user.id;
+
+            const result = await storeTaxService.getTaxUsage(id, ownerId);
+
+            return responseUtils.success(res, 200, 'Tax usage retrieved successfully', result);
+        } catch (error) {
+            console.error('Get Tax Usage Error:', error);
+            if (error.message.includes('not found')) {
+                return responseUtils.notFound(res, error.message);
+            }
+            if (error.message.includes('Forbidden')) {
+                return responseUtils.forbidden(res, error.message);
+            }
+            return responseUtils.error(res, 500, error.message || 'Failed to retrieve usage');
         }
     }
 };

@@ -25,7 +25,7 @@ router.use('/store-owners', storeOwnerRoutes);
 router.use('/stores', storeRoutes);
 router.use('/warehouses', warehouseRoutes);
 router.use('/taxes', taxRoutes);
-router.use('/store-taxes', storeTaxRoutes);
+router.use('/owner-taxes', storeTaxRoutes);
 router.use('/payment-methods', paymentMethodRoutes);
 router.use('/employees', userRoutes);
 router.use('/categories', categoryRoutes);
@@ -55,7 +55,7 @@ router.get('/info', (req, res) => {
             stores: '/api/v1/stores',
             warehouses: '/api/v1/warehouses',
             taxes: '/api/v1/taxes',
-            storeTaxes: '/api/v1/store-taxes',
+            storeTaxes: '/api/v1/owner-taxes',
             paymentMethods: '/api/v1/payment-methods',
             employees: '/api/v1/employees',
             categories: '/api/v1/categories',

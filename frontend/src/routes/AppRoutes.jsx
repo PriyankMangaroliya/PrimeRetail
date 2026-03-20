@@ -22,6 +22,7 @@ import Employees from '../modules/Employees/Employees';
 import Discounts from '../modules/Discounts/Discounts';
 import Products from '../modules/Products/Products';
 import Category from '../modules/Products/Category';
+import StoreTaxes from '../modules/Taxes/storeTaxes';
 
 
 
@@ -31,7 +32,7 @@ const AppRoutes = () => {
     const getDashboardRoute = () => {
         if (!user) return '/login';
 
-        switch(user.role_name) {
+        switch (user.role_name) {
             case 'Super Admin':
                 return '/admin/dashboard';
             case 'Store Owner':
@@ -166,6 +167,15 @@ const AppRoutes = () => {
                 element={
                     <PrivateRoute allowedRoles={['Store Owner']}>
                         <Discounts />
+                    </PrivateRoute>
+                }
+            />
+
+            <Route
+                path="/owner/taxes"
+                element={
+                    <PrivateRoute allowedRoles={['Store Owner']}>
+                        <StoreTaxes />
                     </PrivateRoute>
                 }
             />

@@ -18,7 +18,8 @@ const productController = {
             }
 
             const ownerId = req.user.id;
-            const product = await productService.createProduct(value, ownerId);
+            const userId = req.user.id;
+            const product = await productService.createProduct(value, ownerId, userId);
 
             return responseUtils.created(res, 'Product created successfully', product);
         } catch (error) {
@@ -58,7 +59,8 @@ const productController = {
             }
 
             const ownerId = req.user.id;
-            const product = await productService.updateProduct(id, value, ownerId);
+            const userId = req.user.id;
+            const product = await productService.updateProduct(id, value, ownerId, userId);
 
             return responseUtils.success(res, 200, 'Product updated successfully', product);
         } catch (error) {
@@ -95,7 +97,8 @@ const productController = {
             }
 
             const ownerId = req.user.id;
-            const result = await productService.deleteProduct(id, ownerId);
+            const userId = req.user.id;
+            const result = await productService.deleteProduct(id, ownerId, userId);
 
             return responseUtils.success(res, 200, 'Product deleted successfully', result);
         } catch (error) {
@@ -104,7 +107,7 @@ const productController = {
             if (error.message.includes('not found')) {
                 return responseUtils.notFound(res, error.message);
             }
-            if (error.message.includes('existing stock')) {
+            if (error.message.includes('existing transactions') || error.message.includes('existing stock')) {
                 return responseUtils.conflict(res, error.message);
             }
             if (error.message.includes('permission') || error.message.includes('forbidden')) {

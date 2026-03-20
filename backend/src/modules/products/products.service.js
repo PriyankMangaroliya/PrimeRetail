@@ -2,20 +2,42 @@ const productModel = require('./products.model');
 
 const productService = {
     // Create new product (Store Owner only)
-    createProduct: async (productData, ownerId) => {
+    createProduct: async (productData, ownerId, userId) => {
         try {
+            // Check if product name is unique for this owner
+            const nameCheck = await productModel.checkProductNameUnique(productData.product_name, ownerId);
+            if (nameCheck.rows.length > 0) {
+                throw new Error('Product name already exists');
+            }
+
+            // Generate SKU if not provided
+            if (!productData.sku) {
+                productData.sku = productData.product_name
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, '_')
+                    .substring(0, 50);
+            }
+
             // Check if SKU already exists for this owner
             const existingSKU = await productModel.getProductBySKU(productData.sku, ownerId);
             if (existingSKU.rows.length > 0) {
-                throw new Error('SKU already exists');
+                // If auto-generated SKU exists, append a random suffix
+                if (!productData.sku_provided) {
+                    productData.sku = `${productData.sku}_${Math.floor(Math.random() * 1000)}`;
+                } else {
+                    throw new Error('SKU already exists');
+                }
+            }
+
+            // Generate barcode from SKU if not provided
+            if (!productData.barcode) {
+                productData.barcode = productData.sku;
             }
 
             // Check if barcode already exists (if provided)
-            if (productData.barcode) {
-                const existingBarcode = await productModel.getProductByBarcode(productData.barcode, ownerId);
-                if (existingBarcode.rows.length > 0) {
-                    throw new Error('Barcode already exists');
-                }
+            const existingBarcode = await productModel.getProductByBarcode(productData.barcode, ownerId);
+            if (existingBarcode.rows.length > 0) {
+                throw new Error('Barcode already exists');
             }
 
             // Verify category belongs to owner
@@ -28,9 +50,19 @@ const productService = {
                 throw new Error('Category not found or does not belong to you');
             }
 
+            // Verify tax belongs to owner
+            const taxCheck = await db.query(
+                'SELECT id FROM store_taxes WHERE id = $1 AND owner_id = $2 AND is_deleted = false',
+                [productData.tax_id, ownerId]
+            );
+            if (!taxCheck.rows.length) {
+                throw new Error('Tax rule not found or does not belong to your store');
+            }
+
             const data = {
                 ...productData,
-                owner_id: ownerId
+                owner_id: ownerId,
+                created_by: userId
             };
 
             const result = await productModel.createProduct(data);
@@ -41,7 +73,7 @@ const productService = {
     },
 
     // Update product (Store Owner only)
-    updateProduct: async (id, productData, ownerId) => {
+    updateProduct: async (id, productData, ownerId, userId) => {
         try {
             // Check if product exists and belongs to owner
             const db = require('../../config/database.config');
@@ -52,6 +84,14 @@ const productService = {
 
             if (!productCheck.rows.length) {
                 throw new Error('Product not found or you do not have permission');
+            }
+
+            // Check if product name is unique (if updating)
+            if (productData.product_name && productData.product_name !== productCheck.rows[0].product_name) {
+                const nameCheck = await productModel.checkProductNameUnique(productData.product_name, ownerId, id);
+                if (nameCheck.rows.length > 0) {
+                    throw new Error('Product name already exists');
+                }
             }
 
             // Check if SKU already exists (if updating)
@@ -81,7 +121,23 @@ const productService = {
                 }
             }
 
-            const result = await productModel.updateProduct(id, productData);
+            // Verify tax belongs to owner (if updating)
+            if (productData.tax_id) {
+                const taxCheck = await db.query(
+                    'SELECT id FROM store_taxes WHERE id = $1 AND owner_id = $2 AND is_deleted = false',
+                    [productData.tax_id, ownerId]
+                );
+                if (!taxCheck.rows.length) {
+                    throw new Error('Tax rule not found or does not belong to your store');
+                }
+            }
+
+            const data = {
+                ...productData,
+                updated_by: userId
+            };
+
+            const result = await productModel.updateProduct(id, data);
             return result.rows[0];
         } catch (error) {
             throw error;
@@ -89,7 +145,7 @@ const productService = {
     },
 
     // Delete product (Store Owner only)
-    deleteProduct: async (id, ownerId) => {
+    deleteProduct: async (id, ownerId, userId) => {
         try {
             // Check if product exists and belongs to owner
             const db = require('../../config/database.config');
@@ -102,9 +158,15 @@ const productService = {
                 throw new Error('Product not found or you do not have permission');
             }
 
-            // Check if product has any stock
+            // Check if product has any transactions
+            const txCheck = await productModel.checkTransactions(id);
+            if (txCheck.hasTransactions) {
+                throw new Error('Cannot delete product with existing transactions');
+            }
+
+            // Check if product has any stock (additional safety)
             const stockCheck = await db.query(
-                'SELECT COUNT(*) as count FROM stock_master WHERE product_id = $1',
+                'SELECT COUNT(*) as count FROM stock_master WHERE product_id = $1 AND quantity > 0',
                 [id]
             );
 
@@ -112,7 +174,7 @@ const productService = {
                 throw new Error('Cannot delete product with existing stock');
             }
 
-            const result = await productModel.deleteProduct(id);
+            const result = await productModel.deleteProduct(id, userId);
             return result.rows[0];
         } catch (error) {
             throw error;

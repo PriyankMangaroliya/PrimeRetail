@@ -8,11 +8,10 @@ const productValidation = {
             'string.max': 'Product name cannot exceed 200 characters',
             'any.required': 'Product name is required'
         }),
-        sku: Joi.string().trim().max(100).required().messages({
-            'string.empty': 'SKU is required',
-            'string.max': 'SKU cannot exceed 100 characters',
-            'any.required': 'SKU is required'
+        sku: Joi.string().trim().max(100).optional().allow('', null).messages({
+            'string.max': 'SKU cannot exceed 100 characters'
         }),
+        sku_provided: Joi.boolean().optional(),
         barcode: Joi.string().trim().max(100).allow(null, '').optional().messages({
             'string.max': 'Barcode cannot exceed 100 characters'
         }),
@@ -21,8 +20,9 @@ const productValidation = {
             'number.positive': 'Category ID must be a positive number',
             'any.required': 'Category ID is required'
         }),
-        tax_id: Joi.number().integer().positive().allow(null).optional().messages({
-            'number.integer': 'Tax ID must be an integer'
+        tax_id: Joi.number().integer().positive().required().messages({
+            'number.integer': 'Tax ID must be an integer',
+            'any.required': 'Tax ID is required'
         }),
         price: Joi.number().precision(2).min(0).required().messages({
             'number.base': 'Price must be a number',
@@ -33,7 +33,8 @@ const productValidation = {
             'string.empty': 'Unit is required',
             'string.max': 'Unit cannot exceed 20 characters',
             'any.required': 'Unit is required'
-        })
+        }),
+        description: Joi.string().trim().max(500).allow('', null).optional()
     }),
 
     // Update product validation

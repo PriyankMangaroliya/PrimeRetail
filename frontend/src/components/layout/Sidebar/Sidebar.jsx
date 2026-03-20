@@ -36,24 +36,28 @@ const Sidebar = () => {
         'Store Manager': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/manager/dashboard' },
             { name: 'Employee', icon: Icons.Users, url: '/manager/employees' },
-            { name: 'Stock', icon: Icons.Boxes, url: '/manager/stock' },
-            { name: 'Invoices', icon: Icons.FileText, url: '/manager/invoices' },
-            { name: 'Payments', icon: Icons.DollarSign, url: '/manager/payments' },
-            { name: 'Reports', icon: Icons.BarChart, url: '/manager/reports' }
+            { name: 'Products', icon: Icons.Product, url: '/manager/products' },
+            { name: 'Stock', icon: Icons.Stock, url: '/manager/stock' },
+            { name: 'Invoices', icon: Icons.Invoice, url: '/manager/invoices' },
+            { name: 'Payments', icon: Icons.Currency, url: '/manager/payments' },
+            { name: 'Reports', icon: Icons.Report, url: '/manager/reports' }
         ],
         'Cashier': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/cashier/dashboard' },
+            { name: 'Products', icon: Icons.Product, url: '/cashier/products' },
             { name: 'Manage Invoices', icon: Icons.Search, url: '/cashier/invoices' }
         ],
         'Inventory Staff': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/inventory/dashboard' },
-            { name: 'Stock', icon: Icons.Boxes, url: '/inventory/stock' },
-            { name: 'Reports', icon: Icons.BarChart, url: '/inventory/reports' }
+            { name: 'Products', icon: Icons.Product, url: '/inventory/products' },
+            { name: 'Stock', icon: Icons.Stock, url: '/inventory/stock' },
+            { name: 'Reports', icon: Icons.Report, url: '/inventory/reports' }
         ],
         'Warehouse Staff': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/warehouse/dashboard' },
-            { name: 'Stock', icon: Icons.Boxes, url: '/warehouse/stock' },
-            { name: 'Reports', icon: Icons.BarChart, url: '/warehouse/reports' }
+            { name: 'Products', icon: Icons.Product, url: '/warehouse/products' },
+            { name: 'Stock', icon: Icons.Stock, url: '/warehouse/stock' },
+            { name: 'Reports', icon: Icons.Report, url: '/warehouse/reports' }
         ]
     };
 

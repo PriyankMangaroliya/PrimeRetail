@@ -1,0 +1,315 @@
+/* ─── Store Taxes Module CSS ───────────────────────────────────────────────
+   Separated from general Taxes.css to follow modular structure and mirror
+   the Discounts module design.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Container */
+.taxes-container {
+    padding: 24px;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+.taxes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.taxes-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.taxes-header p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* ─── Loading State ──────────────────────────────────────────────────────── */
+.taxes-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+}
+
+.taxes-loading p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+/* ─── Table Card ─────────────────────────────────────────────────────────── */
+.taxes-table-card {
+    overflow-x: auto;
+}
+
+.taxes-table {
+    min-width: 900px;
+}
+
+/* ─── Row Number ─────────────────────────────────────────────────────────── */
+.dc-row-no {
+    color: var(--gray-800);
+    font-size: 13px;
+}
+
+/* ─── Name ───────────────────────────────────────────────────────────────── */
+.dc-name {
+    font-weight: 500;
+    color: var(--gray-800);
+}
+
+/* ─── Value ──────────────────────────────────────────────────────────────── */
+.dc-value {
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+/* ─── Status Badge ───────────────────────────────────────────────────────── */
+.status-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    min-width: 70px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* ─── Action Menu Dropdown ───────────────────────────────────────────────── */
+.action-menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.action-menu-trigger {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 8px;
+    color: var(--gray-600);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.action-menu-trigger:hover {
+    background-color: var(--gray-200);
+    color: var(--gray-800);
+}
+
+.action-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: white;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius, 6px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+}
+
+.action-menu-dropdown button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.action-menu-dropdown button:hover {
+    background-color: var(--gray-100);
+}
+
+.action-menu-dropdown .delete-action-btn:hover {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+/* ─── View Modal ─────────────────────────────────────────────────────────── */
+.dc-details-view {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.dc-brand-icon {
+    flex-shrink: 0;
+}
+
+.dc-icon-large {
+    background: var(--primary-light, #ede9fe);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--primary-color);
+}
+
+.dc-info-text h3 {
+    margin: 0 0 8px 0;
+    font-size: 22px;
+    color: var(--gray-800);
+}
+
+.dc-info-text p {
+    margin: 4px 0;
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.dc-value-large {
+    font-size: 20px !important;
+    font-weight: 700;
+    color: var(--primary-color) !important;
+}
+
+.view-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.view-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.view-group p {
+    font-size: 14px;
+    color: var(--gray-800);
+    margin: 0;
+}
+
+/* ─── Tax Selection Grid (Add Tax Modal) ─────────────────────────────────── */
+.tax-selection-modal {
+    padding: 8px 0;
+}
+
+.tax-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 4px;
+}
+
+.tax-select-card {
+    border: 1px solid var(--gray-200);
+    transition: all 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border-radius: var(--border-radius, 8px);
+}
+
+.tax-select-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.tax-select-card h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.tax-select-card p {
+    font-size: 12px;
+    color: var(--gray-600);
+    margin-top: 12px;
+    line-height: 1.5;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+}
+
+/* ─── Delete Confirmation ────────────────────────────────────────────────── */
+.delete-confirmation {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.delete-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+}
+
+.delete-confirmation p {
+    font-size: 16px;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.delete-warning {
+    color: var(--danger-color) !important;
+    font-size: 14px !important;
+    font-weight: 500;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .taxes-container {
+        padding: 16px;
+    }
+
+    .taxes-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions .btn {
+        width: 100%;
+    }
+
+    .action-menu-dropdown {
+        right: auto;
+        left: 0;
+    }
+
+    .view-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tax-grid {
+        grid-template-columns: 1fr;
+    }
+}

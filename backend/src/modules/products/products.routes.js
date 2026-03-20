@@ -7,14 +7,25 @@ const roleMiddleware = require('../../middlewares/role.middleware');
 // All product routes require authentication
 router.use(authMiddleware.verifyToken);
 
+// Block Super Admin from all product routes
+router.use((req, res, next) => {
+    if (req.user && req.user.role_name === 'Super Admin') {
+        const responseUtils = require('../../utils/response.utils');
+        return responseUtils.forbidden(res, 'Super Admins do not have access to the Products module');
+    }
+    next();
+});
+
 // View routes - accessible by Store Owner, Manager, Cashier, Inventory Staff, Warehouse Staff
-router.get('/stats', productController.getProductStats);
-router.get('/check-sku', productController.checkSKU);
-router.get('/check-barcode', productController.checkBarcode);
-router.get('/for-sale', productController.getProductsForSale); // Cashier only
-router.get('/category/:categoryId', productController.getProductsByCategory);
-router.get('/', productController.getAllProducts);
-router.get('/:id', productController.getProductById);
+const VIEW_ROLES = ['Store Owner', 'Store Manager', 'Cashier', 'Inventory Staff', 'Warehouse Staff'];
+
+router.get('/stats', roleMiddleware.hasRole(VIEW_ROLES), productController.getProductStats);
+router.get('/check-sku', roleMiddleware.hasRole(['Store Owner']), productController.checkSKU);
+router.get('/check-barcode', roleMiddleware.hasRole(['Store Owner']), productController.checkBarcode);
+router.get('/for-sale', roleMiddleware.isCashier(), productController.getProductsForSale);
+router.get('/category/:categoryId', roleMiddleware.hasRole(VIEW_ROLES), productController.getProductsByCategory);
+router.get('/', roleMiddleware.hasRole(VIEW_ROLES), productController.getAllProducts);
+router.get('/:id', roleMiddleware.hasRole(VIEW_ROLES), productController.getProductById);
 
 // Store Owner ONLY routes (management)
 router.post('/',

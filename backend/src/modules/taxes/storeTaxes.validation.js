@@ -3,10 +3,10 @@ const Joi = require('joi');
 const storeTaxValidation = {
     // Add store tax validation
     addStoreTax: Joi.object({
-        store_id: Joi.number().integer().positive().required().messages({
-            'number.integer': 'Store ID must be an integer',
-            'number.positive': 'Store ID must be a positive number',
-            'any.required': 'Store ID is required'
+        owner_id: Joi.number().integer().positive().required().messages({
+            'number.integer': 'Owner ID must be an integer',
+            'number.positive': 'Owner ID must be a positive number',
+            'any.required': 'Owner ID is required'
         }),
         tax_id: Joi.number().integer().positive().required().messages({
             'number.integer': 'Tax ID must be an integer',
@@ -28,10 +28,10 @@ const storeTaxValidation = {
         })
     }),
 
-    // Store ID query validation
-    storeIdQuery: Joi.object({
-        store_id: Joi.number().integer().positive().required().messages({
-            'any.required': 'Store ID is required'
+    // Owner ID query validation
+    ownerIdQuery: Joi.object({
+        owner_id: Joi.number().integer().positive().required().messages({
+            'any.required': 'Owner ID is required'
         })
     })
 };
