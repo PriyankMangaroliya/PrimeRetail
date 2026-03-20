@@ -139,7 +139,7 @@ const StoreTaxes = () => {
     const columns = [
         {
             title: 'No',
-            key: 'id',
+            key: 'index',
             render: (_, __, index) => <span className="dc-row-no">{index + 1}</span>
         },
         {
@@ -152,8 +152,7 @@ const StoreTaxes = () => {
             key: 'tax_rate',
             render: (value) => (
                 <span className="dc-value">
-                    <Icons.Percent size={14} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-                    {parseFloat(value).toFixed(2)}%
+                    {parseFloat(value).toFixed(2)} %
                 </span>
             )
         },

@@ -198,9 +198,9 @@ const Taxes = () => {
 
     const columns = [
         {
-            title: 'ID',
-            key: 'id',
-            render: (value) => <span className="tax-id">#{value}</span>
+            title: 'No',
+            key: 'index',
+            render: (_, __, index) => <span className="tax-no">{index + 1}</span>
         },
         {
             title: 'Tax Name',

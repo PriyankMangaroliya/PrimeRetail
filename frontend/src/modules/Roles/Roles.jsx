@@ -182,9 +182,9 @@ const Roles = () => {
 
     const columns = [
         {
-            title: 'ID',
-            key: 'id',
-            render: (value) => <span className="role-id">#{value}</span>
+            title: 'No',
+            key: 'index',
+            render: (_, __, index) => <span className="role-no">{index + 1}</span>
         },
         {
             title: 'Role Name',

@@ -23,6 +23,7 @@ const Stores = () => {
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState('add'); // 'add', 'edit', 'delete', 'view'
     const [selectedStore, setSelectedStore] = useState(null);
+    const [fetchingDetails, setFetchingDetails] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
 
     // Close dropdown on outside click
@@ -99,9 +100,12 @@ const Stores = () => {
         setTimeout(() => setAlert({ show: false, type: '', message: '' }), 3000);
     };
 
-    const handleOpenModal = (type, store = null) => {
+    const handleOpenModal = async (type, store = null) => {
         setModalType(type);
-        setSelectedStore(store);
+        setFormErrors({});
+        setCodeAvailable(null);
+        setShowModal(true);
+
         if (store) {
             setFormData({
                 store_code: store.store_code || '',
@@ -113,7 +117,26 @@ const Stores = () => {
                 contact_number: store.contact_number || '',
                 gstin: store.gstin || ''
             });
+
+            if (type === 'view') {
+                try {
+                    setFetchingDetails(true);
+                    setSelectedStore(store); // Set initial data from list
+                    const response = await storeApi.getStoreById(store.id);
+                    if (response.data) {
+                        setSelectedStore(response.data);
+                    }
+                } catch (err) {
+                    console.error('Fetch store details error:', err);
+                    showAlert('error', 'Failed to fetch store details');
+                } finally {
+                    setFetchingDetails(false);
+                }
+            } else {
+                setSelectedStore(store);
+            }
         } else {
+            setSelectedStore(null);
             setFormData({
                 store_code: '',
                 store_name: '',
@@ -125,9 +148,6 @@ const Stores = () => {
                 gstin: ''
             });
         }
-        setFormErrors({});
-        setCodeAvailable(null);
-        setShowModal(true);
     };
 
     const handleCloseModal = () => {
@@ -277,6 +297,11 @@ const Stores = () => {
     // Columns configuration based on user role
     const getColumns = () => {
         const baseColumns = [
+            {
+                title: 'No',
+                key: 'index',
+                render: (_, __, index) => <span className="store-no">{index + 1}</span>
+            },
             {
                 title: 'Code',
                 key: 'store_code',
@@ -584,8 +609,12 @@ const Stores = () => {
                             </div>
 
                             <div className="store-employees-section" style={{ marginTop: '20px' }}>
-                                <h4>Employees ({selectedStore?.employee_count || 0})</h4>
-                                {selectedStore?.employees && selectedStore.employees.length > 0 ? (
+                                <h4>Employees ({selectedStore?.employees?.length || selectedStore?.employee_count || 0})</h4>
+                                {fetchingDetails ? (
+                                    <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+                                        <Loader size="medium" />
+                                    </div>
+                                ) : selectedStore?.employees && selectedStore.employees.length > 0 ? (
                                     <div className="owner-stores-table-container" style={{ marginTop: '15px', maxHeight: '250px', overflowY: 'auto' }}>
                                         <table className="owner-stores-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
                                             <thead style={{ position: 'sticky', top: 0, background: 'white', borderBottom: '2px solid #eee' }}>

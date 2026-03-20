@@ -323,9 +323,9 @@ const Employees = () => {
     // ── Table columns ─────────────────────────────────────────────────────────
     const columns = [
         {
-            title: 'ID',
-            key: 'id',
-            render: (value) => <span className="emp-id">#{value}</span>
+            title: 'No',
+            key: 'index',
+            render: (_, __, index) => <span className="emp-no">{index + 1}</span>
         },
         {
             title: 'Employee',

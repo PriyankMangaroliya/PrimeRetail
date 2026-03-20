@@ -179,9 +179,9 @@ const PaymentMethods = () => {
 
     const columns = [
         {
-            title: 'ID',
-            key: 'id',
-            render: (value) => <span className="method-id">#{value}</span>
+            title: 'No',
+            key: 'index',
+            render: (_, __, index) => <span className="method-no">{index + 1}</span>
         },
         {
             title: 'Payment Method',

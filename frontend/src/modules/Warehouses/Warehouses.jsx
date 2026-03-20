@@ -22,6 +22,7 @@ const Warehouses = () => {
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState('add'); // 'add' | 'edit' | 'delete' | 'view'
     const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+    const [fetchingDetails, setFetchingDetails] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
 
     // Close dropdown on outside click
@@ -125,18 +126,41 @@ const Warehouses = () => {
         contact_number: ''
     });
 
-    const handleOpenModal = (type, warehouse = null) => {
+    const handleOpenModal = async (type, warehouse = null) => {
         setModalType(type);
-        setSelectedWarehouse(warehouse);
-        setFormData(warehouse ? {
-            warehouse_code: warehouse.warehouse_code || '',
-            warehouse_name: warehouse.warehouse_name || '',
-            location: warehouse.location || '',
-            contact_number: warehouse.contact_number || ''
-        } : resetForm());
         setFormErrors({});
         setCodeAvailable(null);
         setShowModal(true);
+
+        if (warehouse) {
+            setFormData({
+                warehouse_code: warehouse.warehouse_code || '',
+                warehouse_name: warehouse.warehouse_name || '',
+                location: warehouse.location || '',
+                contact_number: warehouse.contact_number || ''
+            });
+
+            if (type === 'view') {
+                try {
+                    setFetchingDetails(true);
+                    setSelectedWarehouse(warehouse); // Set initial data
+                    const response = await warehouseApi.getWarehouseById(warehouse.id);
+                    if (response.data) {
+                        setSelectedWarehouse(response.data);
+                    }
+                } catch (err) {
+                    console.error('Fetch warehouse details error:', err);
+                    showAlert('error', 'Failed to fetch warehouse details');
+                } finally {
+                    setFetchingDetails(false);
+                }
+            } else {
+                setSelectedWarehouse(warehouse);
+            }
+        } else {
+            setSelectedWarehouse(null);
+            setFormData(resetForm());
+        }
     };
 
     const handleCloseModal = () => {
@@ -246,6 +270,11 @@ const Warehouses = () => {
 
     // ── Table Columns ─────────────────────────────────────────────────────────
     const columns = [
+        {
+            title: 'No',
+            key: 'index',
+            render: (_, __, index) => <span className="wh-no">{index + 1}</span>
+        },
         {
             title: 'Code',
             key: 'warehouse_code',
@@ -362,7 +391,7 @@ const Warehouses = () => {
                     </div>
                     <div className="header-actions">
                         <Button variant="primary" onClick={() => handleOpenModal('add')}>
-                        <Icons.Plus size={20} /> Add New Warehouse
+                            <Icons.Plus size={20} /> Add New Warehouse
                         </Button>
                     </div>
                 </div>
@@ -487,8 +516,12 @@ const Warehouses = () => {
                             </div>
 
                             <div className="staff-section" style={{ marginTop: '20px' }}>
-                                <h4>Employee List ({selectedWarehouse?.staff_count || 0})</h4>
-                                {selectedWarehouse?.staff && selectedWarehouse.staff.length > 0 ? (
+                                <h4>Employee List ({selectedWarehouse?.staff?.length || selectedWarehouse?.staff_count || 0})</h4>
+                                {fetchingDetails ? (
+                                    <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+                                        <Loader size="medium" />
+                                    </div>
+                                ) : selectedWarehouse?.staff && selectedWarehouse.staff.length > 0 ? (
                                     <div className="owner-stores-table-container" style={{ marginTop: '15px', maxHeight: '250px', overflowY: 'auto' }}>
                                         <table className="owner-stores-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
                                             <thead style={{ position: 'sticky', top: 0, background: 'white', borderBottom: '2px solid #eee' }}>

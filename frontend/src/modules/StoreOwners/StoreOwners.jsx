@@ -251,9 +251,9 @@ const StoreOwners = () => {
 
     const columns = [
         {
-            title: 'ID',
-            key: 'id',
-            render: (value) => <span className="owner-id">#{value}</span>
+            title: 'No',
+            key: 'index',
+            render: (_, __, index) => <span className="owner-no">{index + 1}</span>
         },
         {
             title: 'Owner Name',

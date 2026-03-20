@@ -30,3 +30,26 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--gray-600);
 }
+
+/* Global Table and Form Standardization */
+.table th, .table td {
+    color: var(--black-color) !important;
+    font-size: var(--standard-font-size) !important;
+}
+
+.input-label, .input-field,
+.textarea-label, .textarea-field,
+.select-label, .select-field,
+.form-label, .form-input, .form-select, .form-textarea,
+input[type="text"], input[type="email"], input[type="password"], input[type="number"],
+select, textarea {
+    color: var(--black-color) !important;
+    font-size: var(--standard-font-size) !important;
+}
+
+.input-field::placeholder,
+.textarea-field::placeholder,
+.select-field::placeholder {
+    color: var(--gray-500);
+    opacity: 0.8;
+}
