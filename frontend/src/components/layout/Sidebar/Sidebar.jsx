@@ -6,7 +6,7 @@ import './Sidebar.css';
 
 const Sidebar = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [menuItems, setMenuItems] = useState([]);
 
     // Define menu items with icons and URLs for each role
@@ -45,7 +45,7 @@ const Sidebar = () => {
         'Cashier': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/cashier/dashboard' },
             { name: 'Products', icon: Icons.Product, url: '/cashier/products' },
-            { name: 'Manage Invoices', icon: Icons.Search, url: '/cashier/invoices' }
+            { name: 'Manage Invoices', icon: Icons.Invoice, url: '/cashier/invoices' }
         ],
         'Inventory Staff': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/inventory/dashboard' },
@@ -67,20 +67,20 @@ const Sidebar = () => {
         }
     }, [user]);
 
-    const handleLogout = () => {
-        // Add logout logic here
-        navigate('/login');
-    };
-
-    const getUserInitials = () => {
-        if (!user?.name) return 'U';
-        return user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-    };
-
-    const getRoleDisplay = () => {
-        if (!user?.role_name) return 'User';
-        return user.role_name;
-    };
+    // const handleLogout = () => {
+    //     // Add logout logic here
+    //     navigate('/login');
+    // };
+    //
+    // const getUserInitials = () => {
+    //     if (!user?.name) return 'U';
+    //     return user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    // };
+    //
+    // const getRoleDisplay = () => {
+    //     if (!user?.role_name) return 'User';
+    //     return user.role_name;
+    // };
 
     return (
         <div className="sidebar">

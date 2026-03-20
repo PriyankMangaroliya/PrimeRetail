@@ -79,7 +79,7 @@ const NotFound = () => {
                 </div>
 
                 <div className="error-help">
-                    <p>Need assistance? <a href="/support">Contact Support</a></p>
+                    <p>Change Role? <a href="/login">Login</a></p>
                 </div>
             </div>
 

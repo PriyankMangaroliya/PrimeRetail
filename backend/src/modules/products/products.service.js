@@ -182,15 +182,17 @@ const productService = {
     },
 
     // Get all products based on user role
-    getAllProducts: async (userRole, userId) => {
+    getAllProducts: async (user) => {
         try {
+            const userRole = user.role_name;
+            const userId = user.id;
             let ownerId = null;
             let storeId = null;
 
             if (userRole === 'Store Owner') {
                 ownerId = userId;
             } else if (userRole === 'Store Manager' || userRole === 'Cashier' || userRole === 'Inventory Staff') {
-                storeId = userId; // userId is store_id for these roles
+                storeId = user.store_id; 
                 // Get owner_id from store
                 const db = require('../../config/database.config');
                 const storeResult = await db.query(
@@ -203,7 +205,7 @@ const productService = {
                 const db = require('../../config/database.config');
                 const warehouseResult = await db.query(
                     'SELECT owner_id FROM warehouse_master WHERE id = $1',
-                    [userId]
+                    [user.warehouse_id]
                 );
                 ownerId = warehouseResult.rows[0]?.owner_id;
             }
@@ -220,8 +222,10 @@ const productService = {
     },
 
     // Get product by ID
-    getProductById: async (id, userRole, userId) => {
+    getProductById: async (id, user) => {
         try {
+            const userRole = user.role_name;
+            const userId = user.id;
             let ownerId = null;
 
             if (userRole === 'Store Owner') {
@@ -234,12 +238,12 @@ const productService = {
                 if (userRole === 'Warehouse Staff') {
                     query = {
                         text: 'SELECT owner_id FROM warehouse_master WHERE id = $1',
-                        values: [userId]
+                        values: [user.warehouse_id]
                     };
                 } else {
                     query = {
                         text: 'SELECT owner_id FROM store_master WHERE id = $1',
-                        values: [userId]
+                        values: [user.store_id]
                     };
                 }
 
@@ -260,8 +264,10 @@ const productService = {
     },
 
     // Get products by category
-    getProductsByCategory: async (categoryId, userRole, userId) => {
+    getProductsByCategory: async (categoryId, user) => {
         try {
+            const userRole = user.role_name;
+            const userId = user.id;
             let ownerId = null;
 
             if (userRole === 'Store Owner') {
@@ -273,12 +279,12 @@ const productService = {
                 if (userRole === 'Warehouse Staff') {
                     query = {
                         text: 'SELECT owner_id FROM warehouse_master WHERE id = $1',
-                        values: [userId]
+                        values: [user.warehouse_id]
                     };
                 } else {
                     query = {
                         text: 'SELECT owner_id FROM store_master WHERE id = $1',
-                        values: [userId]
+                        values: [user.store_id]
                     };
                 }
 
@@ -304,8 +310,10 @@ const productService = {
     },
 
     // Get product statistics
-    getProductStats: async (userRole, userId) => {
+    getProductStats: async (user) => {
         try {
+            const userRole = user.role_name;
+            const userId = user.id;
             let ownerId = null;
 
             if (userRole === 'Store Owner') {
@@ -318,12 +326,12 @@ const productService = {
                 if (userRole === 'Warehouse Staff') {
                     query = {
                         text: 'SELECT owner_id FROM warehouse_master WHERE id = $1',
-                        values: [userId]
+                        values: [user.warehouse_id]
                     };
                 } else {
                     query = {
                         text: 'SELECT owner_id FROM store_master WHERE id = $1',
-                        values: [userId]
+                        values: [user.store_id]
                     };
                 }
 

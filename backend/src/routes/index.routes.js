@@ -5,32 +5,32 @@ const responseUtils = require('../utils/response.utils');
 // Import all module routes
 const authRoutes = require('../modules/auth/auth.routes');
 const dashboardRoutes = require('../modules/dashboard/dashboard.routes');
+const discountRoutes = require('../modules/discounts/discounts.routes');
+const paymentMethodRoutes = require('../modules/payments/paymentMethods.routes');
+const categoryRoutes = require('../modules/products/categories.routes');
+const productRoutes = require('../modules/products/products.routes');
 const roleRoutes = require('../modules/roles/roles.routes');
 const storeOwnerRoutes = require('../modules/storeOwners/storeOwners.routes');
 const storeRoutes = require('../modules/stores/stores.routes');
-const warehouseRoutes = require('../modules/warehouses/warehouses.routes');
 const taxRoutes = require('../modules/taxes/taxes.routes');
 const storeTaxRoutes = require('../modules/taxes/storeTaxes.routes');
-const paymentMethodRoutes = require('../modules/payments/paymentMethods.routes');
 const userRoutes = require('../modules/users/users.routes');
-const categoryRoutes = require('../modules/products/categories.routes');
-const productRoutes = require('../modules/products/products.routes');
-const discountRoutes = require('../modules/discounts/discounts.routes');
+const warehouseRoutes = require('../modules/warehouses/warehouses.routes');
 
 // Use routes
 router.use('/Auth', authRoutes);
 router.use('/Dashboard', dashboardRoutes);
+router.use('/discounts', discountRoutes);
+router.use('/payment-methods', paymentMethodRoutes);
+router.use('/categories', categoryRoutes);
+router.use('/products', productRoutes);
 router.use('/roles', roleRoutes);
 router.use('/store-owners', storeOwnerRoutes);
 router.use('/stores', storeRoutes);
-router.use('/warehouses', warehouseRoutes);
 router.use('/taxes', taxRoutes);
 router.use('/owner-taxes', storeTaxRoutes);
-router.use('/payment-methods', paymentMethodRoutes);
 router.use('/employees', userRoutes);
-router.use('/categories', categoryRoutes);
-router.use('/products', productRoutes);
-router.use('/discounts', discountRoutes);
+router.use('/warehouses', warehouseRoutes);
 
 // Health check route using ResponseUtils
 router.get('/health', (req, res) => {

@@ -129,7 +129,7 @@ const productController = {
                 return responseUtils.forbidden(res, 'You do not have permission to view products');
             }
 
-            const products = await productService.getAllProducts(userRole, userId);
+            const products = await productService.getAllProducts(req.user);
 
             return responseUtils.success(res, 200, 'Products retrieved successfully', products);
         } catch (error) {
@@ -156,7 +156,7 @@ const productController = {
                 return responseUtils.forbidden(res, 'You do not have permission to view products');
             }
 
-            const product = await productService.getProductById(id, userRole, userId);
+            const product = await productService.getProductById(id, req.user);
 
             return responseUtils.success(res, 200, 'Product retrieved successfully', product);
         } catch (error) {
@@ -182,7 +182,7 @@ const productController = {
                 return responseUtils.forbidden(res, 'You do not have permission to view products');
             }
 
-            const products = await productService.getProductsByCategory(categoryId, userRole, userId);
+            const products = await productService.getProductsByCategory(categoryId, req.user);
 
             return responseUtils.success(res, 200, 'Products retrieved successfully', products);
         } catch (error) {
@@ -226,7 +226,7 @@ const productController = {
                 return responseUtils.forbidden(res, 'You do not have permission to view product statistics');
             }
 
-            const stats = await productService.getProductStats(userRole, userId);
+            const stats = await productService.getProductStats(req.user);
 
             return responseUtils.success(res, 200, 'Product statistics retrieved successfully', stats);
         } catch (error) {

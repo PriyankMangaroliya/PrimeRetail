@@ -288,7 +288,7 @@ const userService = {
     },
 
     // Get employees by store
-    getEmployeesByStore: async (storeId, userRole, userId) => {
+    getEmployeesByStore: async (storeId, userRole, userId, userStoreId) => {
         try {
             // Verify store access
             if (userRole === 'Store Owner') {

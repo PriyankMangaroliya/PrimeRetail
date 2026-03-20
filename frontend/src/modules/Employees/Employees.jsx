@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '../../components/layout/MainLayout/MainLayout';
 import Card from '../../components/common/Card/Card';
 import Button from '../../components/common/Button/Button';
@@ -9,7 +9,7 @@ import Input from '../../components/common/Input/Input';
 import Alert from '../../components/common/Alert/Alert';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
-import {useAuth} from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import employeeApi from '../../api/employee.api';
 import storeApi from '../../api/store.api';
 import warehouseApi from '../../api/warehouse.api';
@@ -32,7 +32,7 @@ const emptyForm = {
 };
 
 const Employees = () => {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const isStoreOwner = user?.role_name === 'Store Owner';
     const isStoreManager = user?.role_name === 'Store Manager';
     const canManage = isStoreOwner || isStoreManager;
@@ -50,9 +50,9 @@ const Employees = () => {
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState('add');
     const [selectedEmployee, setSelectedEmployee] = useState(null);
-    const [formData, setFormData] = useState({...emptyForm});
+    const [formData, setFormData] = useState({ ...emptyForm });
     const [formErrors, setFormErrors] = useState({});
-    const [alert, setAlert] = useState({show: false, type: '', message: ''});
+    const [alert, setAlert] = useState({ show: false, type: '', message: '' });
     const [activeDropdown, setActiveDropdown] = useState(null);
 
     // Close dropdown on outside click
@@ -95,8 +95,8 @@ const Employees = () => {
                         <div><h1>Employee Management</h1><p>Access restricted for your role</p></div>
                     </div>
                     <Card className="employees-table-card">
-                        <EmptyState icon={<Icons.Lock size={48}/>} title="Access Restricted"
-                                    description="Only Store Owners and Store Managers can access the Employee Management module."/>
+                        <EmptyState icon={<Icons.Lock size={48} />} title="Access Restricted"
+                            description="Only Store Owners and Store Managers can access the Employee Management module." />
                     </Card>
                 </div>
             </MainLayout>
@@ -147,7 +147,12 @@ const Employees = () => {
         setTableLoading(true);
         try {
             const res = await employeeApi.getEmployeesByStore(storeId);
-            setEmployees(res.data || []);
+            const data = res.data || [];
+            if (isStoreManager) {
+                setEmployees(data.filter(emp => emp.role_name !== 'Store Manager'));
+            } else {
+                setEmployees(data);
+            }
         } catch (err) {
             console.error('Load store employees error:', err);
             setEmployees([]);
@@ -171,8 +176,8 @@ const Employees = () => {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
     const showAlert = (type, message) => {
-        setAlert({show: true, type, message});
-        setTimeout(() => setAlert({show: false, type: '', message: ''}), 3500);
+        setAlert({ show: true, type, message });
+        setTimeout(() => setAlert({ show: false, type: '', message: '' }), 3500);
     };
 
     const handleTabChange = (tab) => {
@@ -180,7 +185,7 @@ const Employees = () => {
         setEmployees([]);
         setSelectedEmployee(null);
         setShowModal(false);
-        setAlert({show: false, type: '', message: ''});
+        setAlert({ show: false, type: '', message: '' });
     };
 
     const availableRoles = allRoles.filter(r => {
@@ -224,7 +229,7 @@ const Employees = () => {
     const handleCloseModal = () => {
         setShowModal(false);
         setSelectedEmployee(null);
-        setFormData({...emptyForm});
+        setFormData({ ...emptyForm });
         setFormErrors({});
     };
 
@@ -391,8 +396,8 @@ const Employees = () => {
             key: 'actions',
             render: (_, record) => (
                 <div className="action-menu-container" onClick={(e) => { e.stopPropagation(); }}>
-                    <button 
-                        className="action-menu-trigger" 
+                    <button
+                        className="action-menu-trigger"
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
@@ -411,7 +416,7 @@ const Employees = () => {
                             <button onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
-                            <button 
+                            <button
                                 onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }}
                                 className="delete-action-btn"
                             >
@@ -428,7 +433,7 @@ const Employees = () => {
         return (
             <MainLayout>
                 <div className="employees-loading">
-                    <Loader size="large"/><p>Loading employees...</p>
+                    <Loader size="large" /><p>Loading employees...</p>
                 </div>
             </MainLayout>
         );
@@ -459,7 +464,7 @@ const Employees = () => {
                         className={`emp-tab ${activeTab === 'store' ? 'active' : ''}`}
                         onClick={() => handleTabChange('store')}
                     >
-                        <Icons.Store size={18} style={{marginRight: '8px'}}/> Store Employees
+                        <Icons.Store size={18} style={{ marginRight: '8px' }} /> Store Employees
                         {activeTab === 'store' && employees.length > 0 && (
                             <span className="tab-count">{employees.length}</span>
                         )}
@@ -469,7 +474,7 @@ const Employees = () => {
                             className={`emp-tab ${activeTab === 'warehouse' ? 'active' : ''}`}
                             onClick={() => handleTabChange('warehouse')}
                         >
-                            <Icons.Warehouse size={18} style={{marginRight: '8px'}}/> Warehouse Employees
+                            <Icons.Warehouse size={18} style={{ marginRight: '8px' }} /> Warehouse Employees
                             {activeTab === 'warehouse' && employees.length > 0 && (
                                 <span className="tab-count">{employees.length}</span>
                             )}
@@ -481,7 +486,7 @@ const Employees = () => {
                     {activeTab === 'store' ? (
                         <div className="emp-selector-row">
                             <div className="emp-selector-label">
-                                <Icons.Store size={20}/>
+                                <Icons.Store size={20} />
                                 <span>{isStoreManager ? 'Your Store' : 'Select Store'}</span>
                             </div>
                             <div className="emp-selector-controls">
@@ -513,18 +518,18 @@ const Employees = () => {
                                 <span>Manages:</span>
                                 {isStoreOwner ? (
                                     ['Store Manager', 'Cashier', 'Inventory Staff'].map(r => <Badge key={r}
-                                                                                                     variant="info"
-                                                                                                     size="small">{r}</Badge>)
+                                        variant="info"
+                                        size="small">{r}</Badge>)
                                 ) : (
                                     ['Cashier', 'Inventory Staff'].map(r => <Badge key={r} variant="info"
-                                                                                    size="small">{r}</Badge>)
+                                        size="small">{r}</Badge>)
                                 )}
                             </div>
                         </div>
                     ) : (
                         <div className="emp-selector-row">
                             <div className="emp-selector-label">
-                                <Icons.Warehouse size={20}/>
+                                <Icons.Warehouse size={20} />
                                 <span>Select Warehouse</span>
                             </div>
                             <div className="emp-selector-controls">
@@ -562,21 +567,21 @@ const Employees = () => {
 
                 <Card className="employees-table-card">
                     {tableLoading ? (
-                        <div className="emp-table-loading"><Loader/><p>Loading...</p></div>
+                        <div className="emp-table-loading"><Loader /><p>Loading...</p></div>
                     ) : (activeTab === 'store' && !selectedStoreId) || (activeTab === 'warehouse' && !selectedWarehouseId) ? (
-                        <EmptyState icon={<Icons.Filter size={48}/>} title="Select a Location"
-                                    description={`Choose a ${activeTab === 'store' ? 'store' : 'warehouse'} above to view its employees.`}/>
+                        <EmptyState icon={<Icons.Filter size={48} />} title="Select a Location"
+                            description={`Choose a ${activeTab === 'store' ? 'store' : 'warehouse'} above to view its employees.`} />
                     ) : employees.length > 0 ? (
-                        <Table 
-                            columns={columns} 
-                            data={employees} 
+                        <Table
+                            columns={columns}
+                            data={employees}
                             className="employees-table"
                             searchable={false}
                             columnSearchable={true}
                         />
                     ) : (
                         <EmptyState
-                            icon={<Icons.User size={48}/>}
+                            icon={<Icons.User size={48} />}
                             title="No Employees Found"
                             description={`No employees assigned to this ${activeTab === 'store' ? 'store' : 'warehouse'} yet.`}
                             action={
@@ -611,7 +616,7 @@ const Employees = () => {
                 >
                     {modalType === 'delete' ? (
                         <div className="delete-confirmation">
-                            <div className="delete-icon"><Icons.Warning size={48} color="var(--warning-color)"/></div>
+                            <div className="delete-icon"><Icons.Warning size={48} color="var(--warning-color)" /></div>
                             <p>Are you sure you want to remove <strong>{selectedEmployee?.name}</strong> from the system?</p>
                             <p className="delete-warning">This action cannot be undone.</p>
                             <p className="delete-info">
@@ -627,7 +632,7 @@ const Employees = () => {
                             </div>
                             <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--gray-800)', marginBottom: '8px' }}>{selectedEmployee?.name}</h3>
                             <Badge variant="primary" style={{ marginBottom: '24px' }}>{selectedEmployee?.role_name}</Badge>
-                            
+
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', background: 'var(--gray-50)', padding: '20px', borderRadius: '8px' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
                                     <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Employee ID</span>
@@ -667,30 +672,30 @@ const Employees = () => {
                             <div className="emp-context-banner">
                                 {activeTab === 'store' ? (
                                     <span><Icons.Store size={14}
-                                                       style={{marginRight: '4px'}}/> Adding to: <strong>{currentStore?.store_name || '—'}</strong></span>
+                                        style={{ marginRight: '4px' }} /> Adding to: <strong>{currentStore?.store_name || '—'}</strong></span>
                                 ) : (
                                     <span><Icons.Warehouse size={14}
-                                                            style={{marginRight: '4px'}}/> Adding to: <strong>{currentWarehouse?.warehouse_name || '—'}</strong></span>
+                                        style={{ marginRight: '4px' }} /> Adding to: <strong>{currentWarehouse?.warehouse_name || '—'}</strong></span>
                                 )}
                             </div>
 
                             <div className="form-row">
                                 <Input label="Full Name" value={formData.name}
-                                       onChange={e => setFormData({...formData, name: e.target.value})}
-                                       error={formErrors.name} placeholder="Enter full name" required/>
+                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                    error={formErrors.name} placeholder="Enter full name" required />
                                 <Input label="Email Address" value={formData.email}
-                                       onChange={e => setFormData({...formData, email: e.target.value})}
-                                       error={formErrors.email} placeholder="Enter email" type="email" required/>
+                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                    error={formErrors.email} placeholder="Enter email" type="email" required />
                             </div>
 
                             <div className="form-row">
                                 <Input label="Password" value={formData.password}
-                                       onChange={e => setFormData({...formData, password: e.target.value})}
-                                       error={formErrors.password} placeholder={modalType === 'add' ? 'Minimum 6 characters' : 'Leave blank to keep current'}
-                                       type="password" required={modalType === 'add'}/>
+                                    onChange={e => setFormData({ ...formData, password: e.target.value })}
+                                    error={formErrors.password} placeholder={modalType === 'add' ? 'Minimum 6 characters' : 'Leave blank to keep current'}
+                                    type="password" required={modalType === 'add'} />
                                 <Input label="Phone Number" value={formData.phone}
-                                       onChange={e => setFormData({...formData, phone: e.target.value})}
-                                       error={formErrors.phone} placeholder="10 digits (optional)"/>
+                                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                    error={formErrors.phone} placeholder="10 digits (optional)" />
                             </div>
 
                             <div className="form-row">
@@ -699,7 +704,7 @@ const Employees = () => {
                                     <select
                                         className={`emp-native-select ${formErrors.role_id ? 'select-error' : ''}`}
                                         value={formData.role_id}
-                                        onChange={e => setFormData({...formData, role_id: e.target.value})}
+                                        onChange={e => setFormData({ ...formData, role_id: e.target.value })}
                                     >
                                         <option value="">— Select Role —</option>
                                         {availableRoles.map(r => (

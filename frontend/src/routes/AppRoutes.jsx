@@ -25,7 +25,6 @@ import Category from '../modules/Products/Category';
 import StoreTaxes from '../modules/Taxes/storeTaxes';
 
 
-
 const AppRoutes = () => {
     const { isAuthenticated, user } = useAuth();
 
@@ -50,207 +49,196 @@ const AppRoutes = () => {
         }
     };
 
-    return (
-        <Routes>
-            {/* Public Routes */}
-            <Route
-                path="/login"
-                element={
-                    isAuthenticated ?
-                        <Navigate to={getDashboardRoute()} replace /> :
-                        <Login />
-                }
-            />
+    return (<Routes>
+        {/* Public Routes */}
+        <Route
+            path="/login"
+            element={
+                isAuthenticated ? <Navigate to={getDashboardRoute()} replace /> : <Login />
+            }
+        />
 
-            {/* Protected Routes */}
-            <Route
-                path="/profile"
-                element={
-                    <PrivateRoute>
-                        <Profile />
-                    </PrivateRoute>
-                }
-            />
+        {/* Protected Routes */}
+        <Route
+            path="/profile"
+            element={<PrivateRoute>
+                <Profile />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/dashboard"
-                element={
-                    <PrivateRoute>
-                        <SuperAdminDashboard />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/dashboard"
+            element={<PrivateRoute>
+                <Navigate to={getDashboardRoute()} replace />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/admin/dashboard"
-                element={
-                    <PrivateRoute allowedRoles={['Super Admin']}>
-                        <SuperAdminDashboard />
-                    </PrivateRoute>
-                }
-            />
+        {/* Super Admin Routes */}
+        <Route
+            path="/admin/dashboard"
+            element={<PrivateRoute allowedRoles={['Super Admin']}>
+                <SuperAdminDashboard />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/admin/roles"
-                element={
-                    <PrivateRoute allowedRoles={['Super Admin']}>
-                        <Roles />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/admin/roles"
+            element={<PrivateRoute allowedRoles={['Super Admin']}>
+                <Roles />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/admin/store-owners"
-                element={
-                    <PrivateRoute allowedRoles={['Super Admin']}>
-                        <StoreOwners />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/admin/store-owners"
+            element={<PrivateRoute allowedRoles={['Super Admin']}>
+                <StoreOwners />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/admin/taxes"
-                element={
-                    <PrivateRoute allowedRoles={['Super Admin']}>
-                        <Taxes />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/admin/taxes"
+            element={<PrivateRoute allowedRoles={['Super Admin']}>
+                <Taxes />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/admin/payment-methods"
-                element={
-                    <PrivateRoute allowedRoles={['Super Admin']}>
-                        <PaymentMethods />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/admin/payment-methods"
+            element={<PrivateRoute allowedRoles={['Super Admin']}>
+                <PaymentMethods />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/owner/dashboard"
-                element={
-                    <PrivateRoute allowedRoles={['Store Owner']}>
-                        <StoreOwnerDashboard />
-                    </PrivateRoute>
-                }
-            />
+        {/* Store Owner Routes */}
+        <Route
+            path="/owner/dashboard"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <StoreOwnerDashboard />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/owner/stores"
-                element={
-                    <PrivateRoute allowedRoles={['Store Owner']}>
-                        <Stores />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/owner/stores"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <Stores />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/owner/warehouse"
-                element={
-                    <PrivateRoute allowedRoles={['Store Owner']}>
-                        <Warehouses />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/owner/warehouse"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <Warehouses />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/owner/employees"
-                element={
-                    <PrivateRoute allowedRoles={['Store Owner']}>
-                        <Employees />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/owner/employees"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <Employees />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/owner/discounts"
-                element={
-                    <PrivateRoute allowedRoles={['Store Owner']}>
-                        <Discounts />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/owner/taxes"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <StoreTaxes />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/owner/taxes"
-                element={
-                    <PrivateRoute allowedRoles={['Store Owner']}>
-                        <StoreTaxes />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/owner/discounts"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <Discounts />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/owner/products"
-                element={
-                    <PrivateRoute allowedRoles={['Store Owner']}>
-                        <Products defaultTab="products" />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/owner/category"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <Category />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/owner/category"
-                element={
-                    <PrivateRoute allowedRoles={['Store Owner', 'Store Manager', 'Cashier', 'Inventory Staff', 'Warehouse Staff']}>
-                        <Category />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/owner/products"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <Products />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/manager/employees"
-                element={
-                    <PrivateRoute allowedRoles={['Store Manager']}>
-                        <Employees />
-                    </PrivateRoute>
-                }
-            />
+        {/* Store Manager Routes */}
+        <Route
+            path="/manager/dashboard"
+            element={<PrivateRoute allowedRoles={['Store Manager']}>
+                <StoreManagerDashboard />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/manager/dashboard"
-                element={
-                    <PrivateRoute allowedRoles={['Store Manager']}>
-                        <StoreManagerDashboard />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/manager/employees"
+            element={<PrivateRoute allowedRoles={['Store Manager']}>
+                <Employees />
+            </PrivateRoute>}
+        />
 
+        <Route
+            path="/manager/products"
+            element={<PrivateRoute allowedRoles={['Store Manager']}>
+                <Products />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/cashier/dashboard"
-                element={
-                    <PrivateRoute allowedRoles={['Cashier']}>
-                        <CashierDashboard />
-                    </PrivateRoute>
-                }
-            />
+        {/* Cashier Routes */}
+        <Route
+            path="/cashier/dashboard"
+            element={<PrivateRoute allowedRoles={['Cashier']}>
+                <CashierDashboard />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/inventory/dashboard"
-                element={
-                    <PrivateRoute allowedRoles={['Inventory Staff']}>
-                        <InventoryStaffDashboard />
-                    </PrivateRoute>
-                }
-            />
+        <Route
+            path="/cashier/products"
+            element={<PrivateRoute allowedRoles={['Cashier']}>
+                <Products />
+            </PrivateRoute>}
+        />
 
-            <Route
-                path="/warehouse/dashboard"
-                element={
-                    <PrivateRoute allowedRoles={['Warehouse Staff']}>
-                        <WarehouseStaffDashboard />
-                    </PrivateRoute>
-                }
-            />
+        {/* Inventory Staff Routes */}
+        <Route
+            path="/inventory/dashboard"
+            element={<PrivateRoute allowedRoles={['Inventory Staff']}>
+                <InventoryStaffDashboard />
+            </PrivateRoute>}
+        />
 
-            {/* Error Pages */}
-            <Route path="/500" element={<ServerError />} />
+        <Route
+            path="/inventory/products"
+            element={<PrivateRoute allowedRoles={['Inventory Staff']}>
+                <Products />
+            </PrivateRoute>}
+        />
 
-            {/* 404 - This should be the last route */}
-            <Route path="*" element={<NotFound />} />
-        </Routes>
-    );
+        {/* Warehouse Staff Routes */}
+        <Route
+            path="/warehouse/dashboard"
+            element={<PrivateRoute allowedRoles={['Warehouse Staff']}>
+                <WarehouseStaffDashboard />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/warehouse/products"
+            element={<PrivateRoute allowedRoles={['Warehouse Staff']}>
+                <Products />
+            </PrivateRoute>}
+        />
+
+        {/* Error Pages */}
+        <Route path="/500" element={<ServerError />} />
+
+        {/* 404 - This should be the last route */}
+        <Route path="*" element={<NotFound />} />
+    </Routes>);
 };
 
 export default AppRoutes;
