@@ -1,13 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const stockController = require('./stock.controller');
-const { protect, authorize } = require('../../middlewares/auth.middleware');
+const authMiddleware = require('../../middlewares/auth.middleware');
+const roleMiddleware = require('../../middlewares/role.middleware');
 
 // All stock routes are protected
-router.use(protect);
+router.use(authMiddleware.verifyToken);
 
 // Create stock entry (Store Owner/Warehouse Manager)
-router.post('/', authorize('Store Owner', 'Warehouse Staff'), stockController.createStock);
+router.post('/', roleMiddleware.hasRole(['Store Owner', 'Warehouse Staff']), stockController.createStock);
+
+// Get all stock (role-based mapped)
+router.get('/', stockController.getAllStock);
+
+// Get all active locations for owner (Stores & Warehouses)
+router.get('/active-locations', stockController.getActiveLocations);
 
 // Get low stock products
 router.get('/low-stock', stockController.getLowStockProducts);
@@ -16,10 +23,10 @@ router.get('/low-stock', stockController.getLowStockProducts);
 router.get('/:id', stockController.getStockById);
 
 // Update stock quantity
-router.patch('/:id/quantity', authorize('Store Owner', 'Store Manager', 'Warehouse Staff', 'Inventory Staff'), stockController.updateStockQuantity);
+router.patch('/:id/quantity', roleMiddleware.hasRole(['Store Owner', 'Store Manager', 'Warehouse Staff', 'Inventory Staff']), stockController.updateStockQuantity);
 
 // Delete stock entry
-router.delete('/:id', authorize('Store Owner', 'Warehouse Staff'), stockController.deleteStock);
+router.delete('/:id', roleMiddleware.hasRole(['Store Owner', 'Warehouse Staff']), stockController.deleteStock);
 
 // Get stock by store
 router.get('/store/:store_id', stockController.getStockByStore);

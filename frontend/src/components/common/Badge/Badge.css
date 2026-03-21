@@ -31,3 +31,29 @@
     background: #fff3cd;
     color: #856404;
 }
+
+.badge-info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge-dark {
+    background: #343a40;
+    color: white;
+}
+
+.badge-light {
+    background: #f8f9fa;
+    color: #212529;
+    border: 1px solid #dee2e6;
+}
+
+.badge-purple {
+    background: #e2d9f3;
+    color: #512da8;
+}
+
+.badge-orange {
+    background: #ffe8cc;
+    color: #e67e22;
+}

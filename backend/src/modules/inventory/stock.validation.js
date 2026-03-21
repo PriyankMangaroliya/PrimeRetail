@@ -24,7 +24,9 @@ const stockValidation = {
         }),
         created_by: Joi.number().integer().positive().required().messages({
             'any.required': 'Creator ID is required'
-        })
+        }),
+        movement_type: Joi.string().trim().optional(),
+        notes: Joi.string().trim().allow('').optional()
     }),
 
     // Update stock quantity validation

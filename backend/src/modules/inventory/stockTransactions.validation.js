@@ -8,10 +8,11 @@ const stockTransactionValidation = {
             'number.positive': 'Product ID must be a positive number',
             'any.required': 'Product ID is required'
         }),
-        stock_id: Joi.number().integer().positive().required().messages({
-            'any.required': 'Stock ID is required'
-        }),
-        movement_type: Joi.string().trim().valid('Transfer', 'Add', 'Remove', 'Damaged').required().messages({
+        movement_type: Joi.string().trim().valid(
+            'Add', 'Damaged', 'Return', 'Exchange', 
+            'By Mistake Add', 'Sell', 
+            'Remove', 'Transfer'
+        ).required().messages({
             'any.only': 'Invalid movement type',
             'any.required': 'Movement type is required'
         }),

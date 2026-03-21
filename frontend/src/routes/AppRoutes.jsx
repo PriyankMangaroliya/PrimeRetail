@@ -23,6 +23,8 @@ import Discounts from '../modules/Discounts/Discounts';
 import Products from '../modules/Products/Products';
 import Category from '../modules/Products/Category';
 import StoreTaxes from '../modules/Taxes/StoreTaxes.jsx';
+import StockList from '../modules/Inventory/StockList';
+import TransactionHistory from '../modules/Inventory/TransactionHistory';
 
 
 const AppRoutes = () => {
@@ -166,6 +168,20 @@ const AppRoutes = () => {
             </PrivateRoute>}
         />
 
+        <Route
+            path="/owner/stock"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <StockList />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/owner/transactions"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <TransactionHistory />
+            </PrivateRoute>}
+        />
+
         {/* Store Manager Routes */}
         <Route
             path="/manager/dashboard"
@@ -188,6 +204,20 @@ const AppRoutes = () => {
             </PrivateRoute>}
         />
 
+        <Route
+            path="/manager/stock"
+            element={<PrivateRoute allowedRoles={['Store Manager']}>
+                <StockList />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/manager/transactions"
+            element={<PrivateRoute allowedRoles={['Store Manager']}>
+                <TransactionHistory />
+            </PrivateRoute>}
+        />
+
         {/* Cashier Routes */}
         <Route
             path="/cashier/dashboard"
@@ -200,6 +230,20 @@ const AppRoutes = () => {
             path="/cashier/products"
             element={<PrivateRoute allowedRoles={['Cashier']}>
                 <Products />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/cashier/stock"
+            element={<PrivateRoute allowedRoles={['Cashier']}>
+                <StockList />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/cashier/transactions"
+            element={<PrivateRoute allowedRoles={['Cashier']}>
+                <TransactionHistory />
             </PrivateRoute>}
         />
 
@@ -218,6 +262,20 @@ const AppRoutes = () => {
             </PrivateRoute>}
         />
 
+        <Route
+            path="/inventory/stock"
+            element={<PrivateRoute allowedRoles={['Inventory Staff']}>
+                <StockList />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/inventory/transactions"
+            element={<PrivateRoute allowedRoles={['Inventory Staff']}>
+                <TransactionHistory />
+            </PrivateRoute>}
+        />
+
         {/* Warehouse Staff Routes */}
         <Route
             path="/warehouse/dashboard"
@@ -230,6 +288,20 @@ const AppRoutes = () => {
             path="/warehouse/products"
             element={<PrivateRoute allowedRoles={['Warehouse Staff']}>
                 <Products />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/warehouse/stock"
+            element={<PrivateRoute allowedRoles={['Warehouse Staff']}>
+                <StockList />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/warehouse/transactions"
+            element={<PrivateRoute allowedRoles={['Warehouse Staff']}>
+                <TransactionHistory />
             </PrivateRoute>}
         />
 

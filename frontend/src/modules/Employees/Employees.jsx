@@ -7,6 +7,7 @@ import Badge from '../../components/common/Badge/Badge';
 import Modal from '../../components/common/Modal/Modal';
 import Input from '../../components/common/Input/Input';
 import Alert from '../../components/common/Alert/Alert';
+import Select from '../../components/common/Select/Select';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useAuth } from '../../context/AuthContext';
@@ -491,18 +492,13 @@ const Employees = () => {
                             </div>
                             <div className="emp-selector-controls">
                                 {stores.length > 0 ? (
-                                    <select
+                                    <Select
                                         className="emp-native-select"
                                         value={selectedStoreId}
                                         onChange={(e) => setSelectedStoreId(e.target.value)}
                                         disabled={isStoreManager}
-                                    >
-                                        {stores.map(s => (
-                                            <option key={s.id} value={s.id}>
-                                                {s.store_name} ({s.store_code})
-                                            </option>
-                                        ))}
-                                    </select>
+                                        options={stores.map(s => ({ value: s.id, label: `${s.store_name} (${s.store_code})` }))}
+                                    />
                                 ) : (
                                     <span className="emp-no-context">No stores found. Create a store first.</span>
                                 )}
@@ -534,17 +530,12 @@ const Employees = () => {
                             </div>
                             <div className="emp-selector-controls">
                                 {warehouses.length > 0 ? (
-                                    <select
+                                    <Select
                                         className="emp-native-select"
                                         value={selectedWarehouseId}
                                         onChange={(e) => setSelectedWarehouseId(e.target.value)}
-                                    >
-                                        {warehouses.map(w => (
-                                            <option key={w.id} value={w.id}>
-                                                {w.warehouse_name} ({w.warehouse_code})
-                                            </option>
-                                        ))}
-                                    </select>
+                                        options={warehouses.map(w => ({ value: w.id, label: `${w.warehouse_name} (${w.warehouse_code})` }))}
+                                    />
                                 ) : (
                                     <span
                                         className="emp-no-context">No warehouses found. Create a warehouse first.</span>
@@ -699,20 +690,17 @@ const Employees = () => {
                             </div>
 
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label className="form-label">Role <span className="required-star">*</span></label>
-                                    <select
-                                        className={`emp-native-select ${formErrors.role_id ? 'select-error' : ''}`}
-                                        value={formData.role_id}
-                                        onChange={e => setFormData({ ...formData, role_id: e.target.value })}
-                                    >
-                                        <option value="">— Select Role —</option>
-                                        {availableRoles.map(r => (
-                                            <option key={r.id} value={r.id}>{r.role_name}</option>
-                                        ))}
-                                    </select>
-                                    {formErrors.role_id && <span className="error-text">{formErrors.role_id}</span>}
-                                </div>
+                                <Select
+                                    label="Role"
+                                    required
+                                    value={formData.role_id}
+                                    onChange={e => setFormData({ ...formData, role_id: e.target.value })}
+                                    error={formErrors.role_id}
+                                    options={[
+                                        { value: '', label: '— Select Role —' },
+                                        ...availableRoles.map(r => ({ value: r.id, label: r.role_name }))
+                                    ]}
+                                />
                             </div>
 
                             {modalType === 'edit' && (

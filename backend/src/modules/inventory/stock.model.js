@@ -20,21 +20,17 @@ const stockModel = {
              SET quantity = $1, 
                  updated_by = $2, 
                  updated_at = CURRENT_TIMESTAMP 
-             WHERE id = $3 AND is_deleted = false RETURNING *`,
+             WHERE id = $3 RETURNING *`,
             values: [quantity, updated_by, id]
         };
         return db.query(query);
     },
 
-    // Delete stock (soft delete)
-    deleteStock: (id, updated_by) => {
+    // Delete stock (hard delete)
+    deleteStock: (id) => {
         const query = {
-            text: `UPDATE stock_master 
-             SET is_deleted = true, 
-                 updated_by = $1, 
-                 updated_at = CURRENT_TIMESTAMP 
-             WHERE id = $2 AND is_deleted = false RETURNING *`,
-            values: [updated_by, id]
+            text: `DELETE FROM stock_master WHERE id = $1 RETURNING *`,
+            values: [id]
         };
         return db.query(query);
     },
@@ -42,11 +38,53 @@ const stockModel = {
     // Get stock by ID
     getStockById: (id) => {
         const query = {
-            text: `SELECT s.*, p.product_name, p.sku 
+            text: `SELECT s.*, p.product_name, p.sku, p.price, p.min_stock,
+                    CASE 
+                        WHEN s.location_type = 'Store' THEN st.store_name 
+                        WHEN s.location_type = 'Warehouse' THEN wh.warehouse_name 
+                    END as location_name,
+                    CASE 
+                        WHEN s.location_type = 'Store' THEN st.store_code 
+                        WHEN s.location_type = 'Warehouse' THEN wh.warehouse_code 
+                    END as location_code
              FROM stock_master s
              INNER JOIN product_master p ON s.product_id = p.id
-             WHERE s.id = $1 AND s.is_deleted = false`,
+             LEFT JOIN store_master st ON s.location_id = st.id AND s.location_type = 'Store'
+             LEFT JOIN warehouse_master wh ON s.location_id = wh.id AND s.location_type = 'Warehouse'
+             WHERE s.id = $1 AND p.is_deleted = false`,
             values: [id]
+        };
+        return db.query(query);
+    },
+
+    // Get all stock (for Owner)
+    getAllStock: () => {
+        const query = {
+            text: `SELECT s.*, p.product_name, p.sku, p.price, p.min_stock,
+                    CASE 
+                        WHEN s.location_type = 'Store' THEN st.store_name 
+                        WHEN s.location_type = 'Warehouse' THEN wh.warehouse_name 
+                    END as location_name,
+                    CASE 
+                        WHEN s.location_type = 'Store' THEN st.store_code 
+                        WHEN s.location_type = 'Warehouse' THEN wh.warehouse_code 
+                    END as location_code
+             FROM stock_master s
+             INNER JOIN product_master p ON s.product_id = p.id
+             LEFT JOIN store_master st ON s.location_id = st.id AND s.location_type = 'Store'
+             LEFT JOIN warehouse_master wh ON s.location_id = wh.id AND s.location_type = 'Warehouse'
+             WHERE p.is_deleted = false
+             ORDER BY s.id DESC`
+        };
+        return db.query(query);
+    },
+
+    // Get stock by product and location
+    getStockByLocationAndProduct: (location_type, location_id, product_id) => {
+        const query = {
+            text: `SELECT * FROM stock_master 
+             WHERE location_type = $1 AND location_id = $2 AND product_id = $3`,
+            values: [location_type, location_id, product_id]
         };
         return db.query(query);
     },
@@ -55,7 +93,7 @@ const stockModel = {
     getStockByProduct: (product_id) => {
         const query = {
             text: `SELECT * FROM stock_master 
-             WHERE product_id = $1 AND is_deleted = false 
+             WHERE product_id = $1 
              ORDER BY id DESC`,
             values: [product_id]
         };
@@ -65,11 +103,21 @@ const stockModel = {
     // Get stock by location (store or warehouse)
     getStockByLocation: (location_type, location_id) => {
         const query = {
-            text: `SELECT s.*, p.product_name, p.sku, p.price 
+            text: `SELECT s.*, p.product_name, p.sku, p.price, p.min_stock,
+                    CASE 
+                        WHEN s.location_type = 'Store' THEN st.store_name 
+                        WHEN s.location_type = 'Warehouse' THEN wh.warehouse_name 
+                    END as location_name,
+                    CASE 
+                        WHEN s.location_type = 'Store' THEN st.store_code 
+                        WHEN s.location_type = 'Warehouse' THEN wh.warehouse_code 
+                    END as location_code
              FROM stock_master s
              INNER JOIN product_master p ON s.product_id = p.id
+             LEFT JOIN store_master st ON s.location_id = st.id AND s.location_type = 'Store'
+             LEFT JOIN warehouse_master wh ON s.location_id = wh.id AND s.location_type = 'Warehouse'
              WHERE s.location_type = $1 AND s.location_id = $2 
-               AND s.is_deleted = false AND p.is_deleted = false
+               AND p.is_deleted = false
              ORDER BY s.id DESC`,
             values: [location_type, location_id]
         };
@@ -86,13 +134,12 @@ const stockModel = {
         return stockModel.getStockByLocation('Warehouse', warehouse_id);
     },
 
-    // Get low stock products (below threshold)
-    getLowStockProducts: (threshold = 10) => {
+    getLowStockProducts: (threshold = null) => {
         const query = {
-            text: `SELECT s.*, p.product_name, p.sku 
+            text: `SELECT s.*, p.product_name, p.sku, p.min_stock
              FROM stock_master s
              INNER JOIN product_master p ON s.product_id = p.id
-             WHERE s.quantity <= $1 AND s.is_deleted = false AND p.is_deleted = false
+             WHERE s.quantity <= COALESCE($1, p.min_stock) AND p.is_deleted = false
              ORDER BY s.quantity ASC`,
             values: [threshold]
         };

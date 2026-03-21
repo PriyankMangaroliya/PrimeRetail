@@ -35,7 +35,7 @@ const stockTransactionController = {
     // Get all stock transactions
     getAllStockTransactions: async (req, res) => {
         try {
-            const transactions = await stockTransactionService.getAllStockTransactions();
+            const transactions = await stockTransactionService.getAllStockTransactions(req.user);
             return responseUtils.success(res, 200, 'Stock transactions retrieved successfully', transactions);
         } catch (error) {
             console.error('Get All Stock Transactions Error:', error);

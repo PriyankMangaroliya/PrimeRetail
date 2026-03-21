@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import Icons from '../../common/Icons';
 import './Sidebar.css';
 
 const Sidebar = () => {
     const { user } = useAuth();
-    // const navigate = useNavigate();
+    const location = useLocation();
     const [menuItems, setMenuItems] = useState([]);
 
     // Define menu items with icons and URLs for each role
@@ -45,6 +45,7 @@ const Sidebar = () => {
         'Cashier': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/cashier/dashboard' },
             { name: 'Products', icon: Icons.Product, url: '/cashier/products' },
+            { name: 'Stock', icon: Icons.Stock, url: '/cashier/stock' },
             { name: 'Manage Invoices', icon: Icons.Invoice, url: '/cashier/invoices' }
         ],
         'Inventory Staff': [
@@ -95,9 +96,11 @@ const Sidebar = () => {
                         <NavLink
                             key={item.name}
                             to={item.url}
-                            className={({ isActive }) =>
-                                `nav-item ${isActive ? 'active' : ''}`
-                            }
+                            className={({ isActive }) => {
+                                const isTransactionsView = location.pathname.includes('/transactions');
+                                const forceActive = isTransactionsView && item.name === 'Stock';
+                                return `nav-item ${isActive || forceActive ? 'active' : ''}`;
+                            }}
                         >
                             <span className="nav-item-icon">
                                 <item.icon size={20} strokeWidth={2.5} />

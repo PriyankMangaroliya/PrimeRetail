@@ -34,6 +34,10 @@ const productValidation = {
             'string.max': 'Unit cannot exceed 20 characters',
             'any.required': 'Unit is required'
         }),
+        min_stock: Joi.number().integer().min(0).optional().default(0).messages({
+            'number.base': 'Min stock must be a number',
+            'number.min': 'Min stock cannot be negative'
+        }),
         description: Joi.string().trim().max(500).allow('', null).optional()
     }),
 
@@ -52,6 +56,10 @@ const productValidation = {
             'number.min': 'Price cannot be negative'
         }),
         unit: Joi.string().trim().max(20).optional(),
+        min_stock: Joi.number().integer().min(0).optional().messages({
+            'number.base': 'Min stock must be a number',
+            'number.min': 'Min stock cannot be negative'
+        }),
         is_active: Joi.boolean().optional()
     }),
 

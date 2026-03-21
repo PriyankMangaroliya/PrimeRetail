@@ -6,8 +6,8 @@ import Table from '../../components/common/Table/Table';
 import Badge from '../../components/common/Badge/Badge';
 import Modal from '../../components/common/Modal/Modal';
 import Input from '../../components/common/Input/Input';
-import TextArea from '../../components/common/TextArea/TextArea';
 import Alert from '../../components/common/Alert/Alert';
+import Select from '../../components/common/Select/Select';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useAuth } from '../../context/AuthContext';
@@ -525,22 +525,17 @@ const Discounts = () => {
                             </div>
 
                             <div className="form-row">
-                                <div className="form-field">
-                                    <label className="form-label">
-                                        Discount Type <span className="required-star">*</span>
-                                    </label>
-                                    <select
-                                        className={`form-select ${formErrors.discount_type ? 'input-error' : ''}`}
-                                        value={formData.discount_type}
-                                        onChange={(e) => setFormData({ ...formData, discount_type: e.target.value })}
-                                    >
-                                        <option value="Percentage">Percentage (%)</option>
-                                        <option value="Fixed">Fixed Amount (₹)</option>
-                                    </select>
-                                    {formErrors.discount_type && (
-                                        <span className="error-text">{formErrors.discount_type}</span>
-                                    )}
-                                </div>
+                                <Select
+                                    label="Discount Type"
+                                    required
+                                    value={formData.discount_type}
+                                    onChange={(e) => setFormData({ ...formData, discount_type: e.target.value })}
+                                    error={formErrors.discount_type}
+                                    options={[
+                                        { value: 'Percentage', label: 'Percentage (%)' },
+                                        { value: 'Fixed', label: 'Fixed Amount (₹)' }
+                                    ]}
+                                />
 
                                 <Input
                                     label={`Discount Value ${formData.discount_type === 'Percentage' ? '(%)' : '(₹)'}`}
@@ -556,13 +551,12 @@ const Discounts = () => {
                                 />
                             </div>
 
-                            <TextArea
+                            <Input
                                 label="Description"
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 error={formErrors.description}
                                 placeholder="Enter a description for this discount (optional)"
-                                rows={3}
                             />
                         </div>
                     )}

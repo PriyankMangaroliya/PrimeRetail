@@ -181,35 +181,32 @@ const Login = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="login-form-custom" style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div className="form-group-custom">
-                        <label>Email</label>
-                        <div className="input-wrapper-custom">
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="sellostore@company.com"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
+                    <Input
+                        label="Email"
+                        type="email"
+                        name="email"
+                        placeholder="sellostore@company.com"
+                        value={formData.email}
+                        onChange={handleChange}
+                        error={errors.email}
+                        required
+                    />
 
-                    <div className="form-group-custom">
-                        <label>Password</label>
-                        <div className="input-wrapper-custom">
-                            <input
-                                type={formData.showPassword ? 'text' : 'password'}
-                                name="password"
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
+                    <Input
+                        label="Password"
+                        type={formData.showPassword ? 'text' : 'password'}
+                        name="password"
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                        required
+                        icon={
                             <button
                                 type="button"
                                 className="password-toggle"
                                 onClick={() => setFormData(prev => ({ ...prev, showPassword: !prev.showPassword }))}
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
                             >
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     {formData.showPassword ? (
@@ -225,8 +222,8 @@ const Login = () => {
                                     )}
                                 </svg>
                             </button>
-                        </div>
-                    </div>
+                        }
+                    />
 
                     <div className="form-extras">
                         <label className="remember-me">

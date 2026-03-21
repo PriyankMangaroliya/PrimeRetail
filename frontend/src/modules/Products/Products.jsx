@@ -12,7 +12,7 @@ import Button from '../../components/common/Button/Button';
 import Badge from '../../components/common/Badge/Badge';
 import Alert from '../../components/common/Alert/Alert';
 import Card from '../../components/common/Card/Card';
-import TextArea from '../../components/common/TextArea/TextArea';
+import Select from '../../components/common/Select/Select';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import './Products.css';
@@ -38,6 +38,7 @@ const Products = () => {
         tax_id: '',
         price: '',
         unit: 'Pcs',
+        min_stock: '0',
         description: ''
     });
     const [formErrors, setFormErrors] = useState({});
@@ -88,6 +89,7 @@ const Products = () => {
         tax_id: '',
         price: '',
         unit: 'Pcs',
+        min_stock: '0',
         description: ''
     });
 
@@ -103,6 +105,7 @@ const Products = () => {
                 tax_id: product.tax_id || '',
                 price: product.price || '',
                 unit: product.unit || 'Pcs',
+                min_stock: product.min_stock || '0',
                 description: product.description || ''
             });
         } else {
@@ -133,7 +136,8 @@ const Products = () => {
         try {
             const payload = {
                 ...formData,
-                price: parseFloat(formData.price)
+                price: parseFloat(formData.price),
+                min_stock: parseInt(formData.min_stock || 0)
             };
 
             if (modalType === 'add') {
@@ -180,7 +184,7 @@ const Products = () => {
         {
             title: 'SKU',
             key: 'sku',
-            render: (value) => <Badge variant="dark" className="badge-code">{value}</Badge>
+            render: (value) => <Badge variant="primary" className="badge-code">{value}</Badge>
         },
         {
             title: 'Product Name',
@@ -199,6 +203,18 @@ const Products = () => {
         {
             title: 'Unit',
             key: 'unit'
+        },
+        {
+            title: 'Stock',
+            key: 'stock_quantity',
+            render: (value, record) => (
+                <div className="flex items-center gap-2">
+                    <span className={value <= record.min_stock ? 'text-danger fw-bold' : ''}>
+                        {value} {record.unit}
+                    </span>
+                    {value <= record.min_stock && <Icons.AlertTriangle size={14} color="var(--danger-color)" />}
+                </div>
+            )
         },
         {
             title: 'Status',
@@ -422,7 +438,7 @@ const Products = () => {
                                 </div>
                                 <div className="cat-info-text">
                                     <h3>{selectedProduct?.product_name}</h3>
-                                    <Badge variant="dark">{selectedProduct?.sku}</Badge>
+                                    <Badge variant="primary">{selectedProduct?.sku}</Badge>
                                 </div>
                             </div>
 
@@ -442,6 +458,10 @@ const Products = () => {
                                 <div className="view-group">
                                     <label>Unit</label>
                                     <p>{selectedProduct?.unit}</p>
+                                </div>
+                                <div className="view-group">
+                                    <label>Min Stock Threshold</label>
+                                    <p>{selectedProduct?.min_stock} {selectedProduct?.unit}</p>
                                 </div>
                                 <div className="view-group">
                                     <label>Tax</label>
@@ -497,24 +517,30 @@ const Products = () => {
                                     value={formData.barcode}
                                     onChange={(e) => setFormData({...formData, barcode: e.target.value})}
                                 />
-                                <div className="form-field">
-                                    <label>Category <span className="required-star">*</span></label>
-                                    <select value={formData.category_id} onChange={(e) => setFormData({...formData, category_id: e.target.value})}>
-                                        <option value="">Select Category</option>
-                                        {categories.map(c => <option key={c.id} value={c.id}>{c.category_name}</option>)}
-                                    </select>
-                                    {formErrors.category_id && <span className="error-text">{formErrors.category_id}</span>}
-                                </div>
+                                <Select
+                                    label="Category"
+                                    required
+                                    value={formData.category_id}
+                                    onChange={(e) => setFormData({...formData, category_id: e.target.value})}
+                                    error={formErrors.category_id}
+                                    options={[
+                                        { value: '', label: 'Select Category' },
+                                        ...categories.map(c => ({ value: c.id, label: c.category_name }))
+                                    ]}
+                                />
                             </div>
                             <div className="form-row">
-                                <div className="form-field">
-                                    <label>Tax Rule <span className="required-star">*</span></label>
-                                    <select value={formData.tax_id} onChange={(e) => setFormData({...formData, tax_id: e.target.value})}>
-                                        <option value="">Select Tax</option>
-                                        {storeTaxes.filter(t => t.is_active).map(t => <option key={t.id} value={t.id}>{t.tax_name} ({t.tax_rate}%)</option>)}
-                                    </select>
-                                    {formErrors.tax_id && <span className="error-text">{formErrors.tax_id}</span>}
-                                </div>
+                                <Select
+                                    label="Tax Rule"
+                                    required
+                                    value={formData.tax_id}
+                                    onChange={(e) => setFormData({...formData, tax_id: e.target.value})}
+                                    error={formErrors.tax_id}
+                                    options={[
+                                        { value: '', label: 'Select Tax' },
+                                        ...storeTaxes.filter(t => t.is_active).map(t => ({ value: t.id, label: `${t.tax_name} (${t.tax_rate}%)` }))
+                                    ]}
+                                />
                                 <Input
                                     label="Price (₹)"
                                     type="number"
@@ -533,12 +559,19 @@ const Products = () => {
                                     error={formErrors.unit}
                                     required
                                 />
+                                <Input
+                                    label="Min Stock Alert Level"
+                                    type="number"
+                                    min="0"
+                                    value={formData.min_stock}
+                                    onChange={(e) => setFormData({...formData, min_stock: e.target.value})}
+                                    placeholder="e.g. 10"
+                                />
                             </div>
-                            <TextArea
+                            <Input
                                 label="Description"
                                 value={formData.description}
                                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                                rows="3"
                             />
                         </form>
                     )}

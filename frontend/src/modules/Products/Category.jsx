@@ -10,7 +10,6 @@ import Button from '../../components/common/Button/Button';
 import Badge from '../../components/common/Badge/Badge';
 import Alert from '../../components/common/Alert/Alert';
 import Card from '../../components/common/Card/Card';
-import TextArea from '../../components/common/TextArea/TextArea';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import './Category.css';
@@ -413,13 +412,12 @@ const Category = () => {
                                 placeholder="e.g., Electronics, Beverages"
                             />
 
-                            <TextArea
+                            <Input
                                 label="Description"
                                 value={formData.description}
                                 onChange={(e) => setFormData({...formData, description: e.target.value})}
                                 error={formErrors.description}
                                 placeholder="Describe the category..."
-                                rows="4"
                             />
                         </form>
                     )}

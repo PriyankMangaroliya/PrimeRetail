@@ -6,11 +6,28 @@ const stockController = {
     // Create new stock entry
     createStock: async (req, res) => {
         try {
-            // Validate request body
-            const { error, value } = stockValidation.createStock.validate({
+            const stockData = {
                 ...req.body,
                 created_by: req.user.id
-            });
+            };
+
+            // Inject location data for restricted staff
+            if (req.user.role_name === 'Warehouse Staff') {
+                stockData.location_type = 'Warehouse';
+                stockData.location_id = req.user.warehouse_id;
+                
+                if (!stockData.location_id) {
+                    return responseUtils.badRequest(res, 'Warehouse ID missing for user');
+                }
+            } else if (['Store Owner', 'Store Manager'].includes(req.user.role_name)) {
+                // Keep frontend-sent location if privileged
+                if (!stockData.location_type || !stockData.location_id) {
+                    // It will fail Joi validation below anyway
+                }
+            }
+
+            // Validate request body
+            const { error, value } = stockValidation.createStock.validate(stockData);
             if (error) {
                 return responseUtils.validationError(res, 'Validation failed', error.details);
             }
@@ -21,6 +38,17 @@ const stockController = {
         } catch (error) {
             console.error('Create Stock Error:', error);
             return responseUtils.error(res, 500, error.message || 'Failed to create stock entry');
+        }
+    },
+
+    // Get all stock (role-based)
+    getAllStock: async (req, res) => {
+        try {
+            const stock = await stockService.getAllStock(req.user);
+            return responseUtils.success(res, 200, 'Stock retrieved successfully', stock);
+        } catch (error) {
+            console.error('Get All Stock Error:', error);
+            return responseUtils.error(res, 500, error.message || 'Failed to retrieve stock');
         }
     },
 
@@ -68,6 +96,13 @@ const stockController = {
             const { error: paramError } = stockValidation.stockIdParam.validate({ id });
             if (paramError) {
                 return responseUtils.validationError(res, 'Invalid stock ID', paramError.details);
+            }
+
+            // Verify access ownership
+            const existingStock = await stockService.getStockById(id);
+            if (req.user.role_name === 'Warehouse Staff' && 
+               (existingStock.location_type !== 'Warehouse' || existingStock.location_id !== req.user.warehouse_id)) {
+                return responseUtils.forbidden(res, 'Unauthorized to delete stock from this location');
             }
 
             const updatedBy = req.user.id;
@@ -159,6 +194,17 @@ const stockController = {
         } catch (error) {
             console.error('Get Low Stock Products Error:', error);
             return responseUtils.error(res, 500, error.message || 'Failed to retrieve low stock products');
+        }
+    },
+
+    // Get all active locations (Stores and Warehouses) for an owner
+    getActiveLocations: async (req, res) => {
+        try {
+            const locations = await stockService.getActiveLocations(req.user);
+            return responseUtils.success(res, 200, 'Active locations retrieved successfully', locations);
+        } catch (error) {
+            console.error('Get Active Locations Error:', error);
+            return responseUtils.error(res, 500, error.message || 'Failed to retrieve active locations');
         }
     }
 };

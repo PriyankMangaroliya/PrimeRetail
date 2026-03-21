@@ -243,7 +243,6 @@
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
 }
 
 .form-label {

@@ -23,10 +23,16 @@ const stockTransactionModel = {
     // Get all stock transactions
     getAllStockTransactions: () => {
         const query = {
-            text: `SELECT t.*, p.product_name, p.sku 
-             FROM stock_transactions t
-             INNER JOIN product_master p ON t.product_id = p.id
-             ORDER BY t.id DESC`
+            text: `SELECT t.*, p.product_name, p.sku,
+                        COALESCE(s_src.store_code, w_src.warehouse_code) as source_code,
+                        COALESCE(s_dest.store_code, w_dest.warehouse_code) as destination_code
+                 FROM stock_transactions t
+                 INNER JOIN product_master p ON t.product_id = p.id
+                 LEFT JOIN store_master s_src ON t.source_location_type = 'Store' AND t.source_location_id = s_src.id
+                 LEFT JOIN warehouse_master w_src ON t.source_location_type = 'Warehouse' AND t.source_location_id = w_src.id
+                 LEFT JOIN store_master s_dest ON t.destination_location_type = 'Store' AND t.destination_location_id = s_dest.id
+                 LEFT JOIN warehouse_master w_dest ON t.destination_location_type = 'Warehouse' AND t.destination_location_id = w_dest.id
+                 ORDER BY t.id DESC`
         };
         return db.query(query);
     },
@@ -34,10 +40,16 @@ const stockTransactionModel = {
     // Get transaction by ID
     getTransactionById: (id) => {
         const query = {
-            text: `SELECT t.*, p.product_name, p.sku 
-             FROM stock_transactions t
-             INNER JOIN product_master p ON t.product_id = p.id
-             WHERE t.id = $1`,
+            text: `SELECT t.*, p.product_name, p.sku,
+                        COALESCE(s_src.store_code, w_src.warehouse_code) as source_code,
+                        COALESCE(s_dest.store_code, w_dest.warehouse_code) as destination_code
+                 FROM stock_transactions t
+                 INNER JOIN product_master p ON t.product_id = p.id
+                 LEFT JOIN store_master s_src ON t.source_location_type = 'Store' AND t.source_location_id = s_src.id
+                 LEFT JOIN warehouse_master w_src ON t.source_location_type = 'Warehouse' AND t.source_location_id = w_src.id
+                 LEFT JOIN store_master s_dest ON t.destination_location_type = 'Store' AND t.destination_location_id = s_dest.id
+                 LEFT JOIN warehouse_master w_dest ON t.destination_location_type = 'Warehouse' AND t.destination_location_id = w_dest.id
+                 WHERE t.id = $1`,
             values: [id]
         };
         return db.query(query);
@@ -57,10 +69,18 @@ const stockTransactionModel = {
     // Get transactions by location (source or destination)
     getTransactionsByLocation: (location_type, location_id) => {
         const query = {
-            text: `SELECT * FROM stock_transactions 
-             WHERE (source_location_type = $1 AND source_location_id = $2)
-                OR (destination_location_type = $1 AND destination_location_id = $2)
-             ORDER BY id DESC`,
+            text: `SELECT t.*, p.product_name, p.sku,
+                        COALESCE(s_src.store_code, w_src.warehouse_code) as source_code,
+                        COALESCE(s_dest.store_code, w_dest.warehouse_code) as destination_code
+                 FROM stock_transactions t
+                 INNER JOIN product_master p ON t.product_id = p.id
+                 LEFT JOIN store_master s_src ON t.source_location_type = 'Store' AND t.source_location_id = s_src.id
+                 LEFT JOIN warehouse_master w_src ON t.source_location_type = 'Warehouse' AND t.source_location_id = w_src.id
+                 LEFT JOIN store_master s_dest ON t.destination_location_type = 'Store' AND t.destination_location_id = s_dest.id
+                 LEFT JOIN warehouse_master w_dest ON t.destination_location_type = 'Warehouse' AND t.destination_location_id = w_dest.id
+                 WHERE (t.source_location_type = $1 AND t.source_location_id = $2)
+                    OR (t.destination_location_type = $1 AND t.destination_location_id = $2)
+                 ORDER BY t.id DESC`,
             values: [location_type, location_id]
         };
         return db.query(query);

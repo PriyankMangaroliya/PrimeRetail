@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const stockTransactionController = require('./stockTransactions.controller');
-const { protect, authorize } = require('../../middlewares/auth.middleware');
+const authMiddleware = require('../../middlewares/auth.middleware');
+const roleMiddleware = require('../../middlewares/role.middleware');
 
 // All stock transaction routes are protected
-router.use(protect);
+router.use(authMiddleware.verifyToken);
 
 // Create stock transaction
-router.post('/', authorize('Store Owner', 'Store Manager', 'Warehouse Staff', 'Inventory Staff'), stockTransactionController.createStockTransaction);
+router.post('/', roleMiddleware.hasRole(['Store Owner', 'Store Manager', 'Warehouse Staff', 'Inventory Staff']), stockTransactionController.createStockTransaction);
 
-// Get all transactions (Store Owner / Manager)
-router.get('/', authorize('Store Owner', 'Store Manager'), stockTransactionController.getAllStockTransactions);
+// Get all transactions
+router.get('/', roleMiddleware.hasRole(['Store Owner', 'Store Manager', 'Warehouse Staff', 'Inventory Staff', 'Cashier']), stockTransactionController.getAllStockTransactions);
 
 // Get by product
 router.get('/product/:product_id', stockTransactionController.getTransactionsByProduct);

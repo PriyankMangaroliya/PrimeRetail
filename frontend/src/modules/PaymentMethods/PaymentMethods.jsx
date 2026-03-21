@@ -6,7 +6,6 @@ import Table from '../../components/common/Table/Table';
 import Badge from '../../components/common/Badge/Badge';
 import Modal from '../../components/common/Modal/Modal';
 import Input from '../../components/common/Input/Input';
-import TextArea from '../../components/common/TextArea/TextArea';
 import Alert from '../../components/common/Alert/Alert';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
@@ -409,13 +408,12 @@ const PaymentMethods = () => {
                                 required
                             />
 
-                            <TextArea
+                            <Input
                                 label="Description"
                                 value={formData.description}
                                 onChange={(e) => setFormData({...formData, description: e.target.value})}
                                 error={formErrors.description}
                                 placeholder="Enter payment method description (optional)"
-                                rows={3}
                             />
 
                             {modalType === 'edit' && (

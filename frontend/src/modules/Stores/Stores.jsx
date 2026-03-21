@@ -6,7 +6,6 @@ import Table from '../../components/common/Table/Table';
 import Badge from '../../components/common/Badge/Badge';
 import Modal from '../../components/common/Modal/Modal';
 import Input from '../../components/common/Input/Input';
-import TextArea from '../../components/common/TextArea/TextArea';
 import Alert from '../../components/common/Alert/Alert';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
@@ -693,13 +692,12 @@ const Stores = () => {
                                 />
                             </div>
 
-                            <TextArea
+                            <Input
                                 label="Address"
                                 value={formData.address}
                                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                 error={formErrors.address}
                                 placeholder="Enter complete address (optional)"
-                                rows={2}
                             />
 
                             <div className="form-row">
