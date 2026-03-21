@@ -1,13 +1,6 @@
-/* ─── Discounts Module CSS ───────────────────────────────────────────────────
-   Mirrors the Warehouses module styles with discount-specific naming
-   ─────────────────────────────────────────────────────────────────────────── */
-
-/* Container */
 .discounts-container {
     padding: 24px;
 }
-
-/* ─── Header ─────────────────────────────────────────────────────────────── */
 .discounts-header {
     display: flex;
     justify-content: space-between;
@@ -16,20 +9,16 @@
     flex-wrap: wrap;
     gap: 16px;
 }
-
 .discounts-header h1 {
     font-size: 28px;
     font-weight: 600;
     color: var(--gray-800);
     margin-bottom: 8px;
 }
-
 .discounts-header p {
     color: var(--gray-600);
     font-size: 14px;
 }
-
-/* ─── Loading State ──────────────────────────────────────────────────────── */
 .discounts-loading {
     display: flex;
     flex-direction: column;
@@ -38,39 +27,16 @@
     min-height: 400px;
     gap: 16px;
 }
-
 .discounts-loading p {
     color: var(--gray-600);
     font-size: 14px;
 }
-
-/* ─── Table Card ─────────────────────────────────────────────────────────── */
 .discounts-table-card {
     overflow-x: auto;
 }
-
 .discounts-table {
     min-width: 900px;
 }
-
-/* ─── Row Number ─────────────────────────────────────────────────────────── */
-.dc-row-no {
-    color: var(--gray-800);
-}
-
-/* ─── Name ───────────────────────────────────────────────────────────────── */
-.dc-name {
-    font-weight: 500;
-    color: var(--gray-800);
-}
-
-/* ─── Value ──────────────────────────────────────────────────────────────── */
-.dc-value {
-    font-weight: 600;
-    color: var(--gray-800);
-}
-
-/* ─── View Button (for non-owners) ──────────────────────────────────────── */
 .dc-view-btn {
     background: none;
     border: 1px solid var(--gray-300);
@@ -80,41 +46,33 @@
     color: var(--gray-700);
     transition: background-color 0.2s;
 }
-
 .dc-view-btn:hover {
     background-color: var(--gray-100);
 }
-
-/* ─── Form ───────────────────────────────────────────────────────────────── */
 .discount-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
-
 .form-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
 }
-
 .form-field {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
-
 .form-label {
     font-size: 14px;
     font-weight: 500;
     color: var(--gray-700);
 }
-
 .required-star {
     color: var(--danger-color, #ef4444);
     margin-left: 2px;
 }
-
 .form-select {
     padding: 8px 12px;
     border: 1px solid var(--gray-300);
@@ -127,46 +85,36 @@
     width: 100%;
     height: 42px;
 }
-
 .form-select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 99, 102, 241), 0.1);
 }
-
 .form-select.input-error {
     border-color: var(--danger-color, #ef4444);
 }
-
 .error-text {
     font-size: 12px;
     color: var(--danger-color, #ef4444);
 }
-
-/* ─── Delete Confirmation ────────────────────────────────────────────────── */
 .delete-confirmation {
     text-align: center;
     padding: 20px 0;
 }
-
 .delete-icon {
     font-size: 48px;
     margin-bottom: 16px;
 }
-
 .delete-confirmation p {
     font-size: 16px;
     color: var(--gray-800);
     margin-bottom: 8px;
 }
-
 .delete-warning {
     color: var(--danger-color) !important;
     font-size: 14px !important;
     font-weight: 500;
 }
-
-/* ─── Discount View Modal ────────────────────────────────────────────────── */
 .dc-details-view {
     display: flex;
     align-items: center;
@@ -174,11 +122,9 @@
     padding-bottom: 20px;
     border-bottom: 1px solid var(--gray-200);
 }
-
 .dc-brand-icon {
     flex-shrink: 0;
 }
-
 .dc-icon-large {
     font-size: 40px;
     background: var(--primary-light, #ede9fe);
@@ -189,31 +135,26 @@
     justify-content: center;
     border-radius: 50%;
 }
-
 .dc-info-text h3 {
     margin: 0 0 8px 0;
     font-size: 22px;
     color: var(--gray-800);
 }
-
 .dc-info-text p {
     margin: 4px 0;
     color: var(--gray-600);
     font-size: 14px;
 }
-
 .dc-value-large {
     font-size: 20px !important;
     font-weight: 700;
     color: var(--primary-color) !important;
 }
-
 .view-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
 }
-
 .view-group label {
     font-size: 12px;
     font-weight: 600;
@@ -222,41 +163,32 @@
     display: block;
     margin-bottom: 4px;
 }
-
 .view-group p {
     font-size: 14px;
     color: var(--gray-800);
     margin: 0;
 }
-
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .discounts-container {
         padding: 16px;
     }
-
     .discounts-header {
         flex-direction: column;
         align-items: flex-start;
     }
-
     .header-actions {
         width: 100%;
     }
-
     .header-actions .btn {
         width: 100%;
     }
-
     .action-menu-dropdown {
         right: auto;
         left: 0;
     }
-
     .form-row {
         grid-template-columns: 1fr;
     }
-
     .view-grid {
         grid-template-columns: 1fr;
     }

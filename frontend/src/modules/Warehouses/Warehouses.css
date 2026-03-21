@@ -1,13 +1,7 @@
-/* ─── Warehouses Module CSS ─────────────────────────────────────────────────
-   Mirrors the Stores module styles with warehouse-specific naming
-   ─────────────────────────────────────────────────────────────────────────── */
-
-/* Container */
 .warehouses-container {
     padding: 24px;
 }
 
-/* ─── Header ─────────────────────────────────────────────────────────────── */
 .warehouses-header {
     display: flex;
     justify-content: space-between;
@@ -29,7 +23,6 @@
     font-size: 14px;
 }
 
-/* ─── Loading State ──────────────────────────────────────────────────────── */
 .warehouses-loading {
     display: flex;
     flex-direction: column;
@@ -44,7 +37,6 @@
     font-size: 14px;
 }
 
-/* ─── Table Card ─────────────────────────────────────────────────────────── */
 .warehouses-table-card {
     overflow-x: auto;
 }
@@ -53,47 +45,12 @@
     min-width: 900px;
 }
 
-
-
-/* ─── Warehouse Info Cell ────────────────────────────────────────────────── */
-.wh-info-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.wh-location {
-    color: var(--gray-500);
-    background: var(--gray-100);
-    padding: 2px 6px;
-    border-radius: 4px;
-    display: inline-block;
-    width: fit-content;
-    max-width: 220px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-/* ─── Contact ────────────────────────────────────────────────────────────── */
-.wh-contact {
-    font-weight: 500;
-    color: var(--gray-800);
-    white-space: nowrap;
-}
-
-/* ─── Count Badge ────────────────────────────────────────────────────────── */
 .wh-count-badge {
     padding: 4px 8px;
     min-width: 40px;
     text-align: center;
 }
 
-
-
-
-
-/* ─── Form ───────────────────────────────────────────────────────────────── */
 .warehouse-form {
     display: flex;
     flex-direction: column;
@@ -129,7 +86,6 @@
     color: var(--gray-600);
 }
 
-/* ─── Delete Confirmation ────────────────────────────────────────────────── */
 .delete-confirmation {
     text-align: center;
     padding: 20px 0;
@@ -161,7 +117,6 @@
     border-radius: 6px;
 }
 
-/* ─── Warehouse View Modal ───────────────────────────────────────────────── */
 .warehouse-details-view {
     display: flex;
     align-items: center;
@@ -214,7 +169,6 @@
     margin: 0;
 }
 
-/* ─── Staff Section (reuses store-employees styles) ─────────────────────── */
 .store-employees {
     margin-top: 24px;
     padding-top: 20px;
@@ -248,7 +202,6 @@
     color: var(--gray-800);
 }
 
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .warehouses-container {
         padding: 16px;

@@ -253,7 +253,7 @@ const StoreOwners = () => {
         {
             title: 'No',
             key: 'index',
-            render: (_, __, index) => <span className="owner-no">{index + 1}</span>
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'Owner Name',
@@ -269,10 +269,10 @@ const StoreOwners = () => {
                             </span>
                         )}
                     </div>
-                    <div className="owner-details">
-                        <strong>{value}</strong>
-                        <small>{record.email}</small>
-                        {record.phone && <small className="owner-phone">{record.phone}</small>}
+                    <div className="table-info-group">
+                        <span className="table-name-cell">{value}</span>
+                        <small className="table-secondary-text">{record.email}</small>
+                        {record.phone && <small className="table-secondary-text">{record.phone}</small>}
                     </div>
                 </div>
             )
@@ -363,12 +363,12 @@ const StoreOwners = () => {
         {
             title: 'No',
             key: 'index',
-            render: (_, __, index) => index + 1
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'Name',
             key: 'store_name',
-            render: (val) => <strong>{val}</strong>
+            className: 'table-name-cell'
         }
     ];
 

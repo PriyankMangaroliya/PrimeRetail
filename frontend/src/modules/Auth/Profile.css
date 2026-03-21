@@ -148,7 +148,6 @@
     color: var(--text-main);
 }
 
-/* Skeleton/Loader */
 .profile-loading {
     display: flex;
     justify-content: center;
@@ -156,7 +155,6 @@
     min-height: 400px;
 }
 
-/* Full user data list for printing all user data */
 .full-data-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

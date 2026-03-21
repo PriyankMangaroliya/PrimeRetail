@@ -222,15 +222,13 @@ const Discounts = () => {
             title: 'No',
             key: 'id',
             render: (_, __, index) => (
-                <span className="dc-row-no">{index + 1}</span>
+                <span className="table-no-cell">{index + 1}</span>
             )
         },
         {
             title: 'Name',
             key: 'discount_name',
-            render: (value) => (
-                <span className="dc-name">{value}</span>
-            )
+            className: 'table-name-cell'
         },
         {
             title: 'Type',
@@ -246,7 +244,7 @@ const Discounts = () => {
             title: 'Value',
             key: 'discount_value',
             render: (value, record) => (
-                <span className="dc-value">
+                <span className="table-value">
                     {record.discount_type === 'Percentage'
                         ? `${parseFloat(value).toFixed(2)}%`
                         : `₹${parseFloat(value).toFixed(2)}`}
@@ -266,14 +264,14 @@ const Discounts = () => {
             title: 'Start Date',
             key: 'start_date',
             render: (value) => (
-                <span className="dc-date">{value ? new Date(value).toLocaleDateString() : 'N/A'}</span>
+                <span className="table-date">{value ? new Date(value).toLocaleDateString() : 'N/A'}</span>
             )
         },
         {
             title: 'End Date',
             key: 'end_date',
             render: (value) => (
-                <span className="dc-date">{value ? new Date(value).toLocaleDateString() : 'N/A'}</span>
+                <span className="table-date">{value ? new Date(value).toLocaleDateString() : 'N/A'}</span>
             )
         },
         {

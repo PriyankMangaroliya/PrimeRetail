@@ -330,7 +330,7 @@ const Employees = () => {
         {
             title: 'No',
             key: 'index',
-            render: (_, __, index) => <span className="emp-no">{index + 1}</span>
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'Employee',
@@ -338,9 +338,9 @@ const Employees = () => {
             render: (value, record) => (
                 <div className="emp-info-cell">
                     <div className="emp-avatar">{value?.charAt(0).toUpperCase()}</div>
-                    <div>
-                        <strong>{value}</strong>
-                        <small>{record.email}</small>
+                    <div className="table-info-group">
+                        <span className="table-name-cell">{value}</span>
+                        <small className="table-secondary-text">{record.email}</small>
                     </div>
                 </div>
             )
@@ -355,7 +355,7 @@ const Employees = () => {
         {
             title: 'Phone',
             key: 'phone',
-            render: (value) => value ? <> {value}</> :
+            render: (value) => value ? <span className="table-contact-phone">{value}</span> :
                 <span className="emp-na">—</span>
         },
         {

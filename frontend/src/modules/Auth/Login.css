@@ -17,7 +17,6 @@
     padding: 2rem;
 }
 
-/* Left Section: Form */
 .login-form-area {
     flex: 1;
     display: flex;
@@ -214,7 +213,6 @@
     text-decoration: none;
 }
 
-/* Right Section: Illustration */
 .login-illustration-area {
     flex: 0.7;
     background-color: var(--brand-blue);
@@ -262,7 +260,6 @@
     display: block;
 }
 
-/* Decorative background patterns for blue area */
 .pattern-bg {
     position: absolute;
     top: 50%;

@@ -181,16 +181,16 @@ const PaymentMethods = () => {
         {
             title: 'No',
             key: 'index',
-            render: (_, __, index) => <span className="method-no">{index + 1}</span>
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'Payment Method',
             key: 'method_name',
             render: (value, record) => (
-                <div className="method-name-cell">
-                    <strong>{value}</strong>
+                <div className="table-info-group">
+                    <span className="table-name-cell">{value}</span>
                     {record.description && (
-                        <small className="method-description">{record.description}</small>
+                        <small className="table-secondary-text">{record.description}</small>
                     )}
                 </div>
             )

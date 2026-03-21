@@ -175,7 +175,7 @@ const Products = () => {
         {
             title: 'No',
             key: 'id',
-            render: (_, __, index) => <span className="cat-row-no">{index + 1}</span>
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'SKU',
@@ -185,7 +185,7 @@ const Products = () => {
         {
             title: 'Product Name',
             key: 'product_name',
-            render: (value) => <span className="cat-name">{value}</span>
+            className: 'table-name-cell'
         },
         {
             title: 'Category',

@@ -300,7 +300,7 @@ const Stores = () => {
             {
                 title: 'No',
                 key: 'index',
-                render: (_, __, index) => <span className="store-no">{index + 1}</span>
+                render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
             },
             {
                 title: 'Code',
@@ -310,15 +310,14 @@ const Stores = () => {
             {
                 title: 'Name',
                 key: 'store_name',
-                className: 'store-name-col'
+                className: 'table-name-cell'
             },
             {
                 title: 'Phone',
                 key: 'contact_number',
-                className: 'contact-phone-col',
-                render: (value, record) => (
-                    <div className="contact-info">
-                        <div className="contact-phone">{value}</div>
+                render: (value) => (
+                    <div className="table-contact-cell">
+                        <div className="table-contact-phone">{value}</div>
                     </div>
                 )
             },
@@ -424,12 +423,12 @@ const Stores = () => {
         {
             title: 'No',
             key: 'index',
-            render: (_, __, index) => index + 1
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'Name',
             key: 'name',
-            render: (val) => <strong>{val}</strong>
+            render: (val) => <span className="table-name-cell">{val}</span>
         },
         {
             title: 'Role',

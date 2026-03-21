@@ -1,14 +1,7 @@
-/* ─── Store Taxes Module CSS ───────────────────────────────────────────────
-   Separated from general Taxes.css to follow modular structure and mirror
-   the Discounts module design.
-   ─────────────────────────────────────────────────────────────────────────── */
-
-/* Container */
 .taxes-container {
     padding: 24px;
 }
 
-/* ─── Header ─────────────────────────────────────────────────────────────── */
 .taxes-header {
     display: flex;
     justify-content: space-between;
@@ -30,7 +23,6 @@
     font-size: 14px;
 }
 
-/* ─── Loading State ──────────────────────────────────────────────────────── */
 .taxes-loading {
     display: flex;
     flex-direction: column;
@@ -45,7 +37,6 @@
     font-size: 14px;
 }
 
-/* ─── Table Card ─────────────────────────────────────────────────────────── */
 .taxes-table-card {
     overflow-x: auto;
 }
@@ -54,27 +45,6 @@
     min-width: 900px;
 }
 
-/* ─── Row Number ─────────────────────────────────────────────────────────── */
-.dc-row-no {
-    color: var(--gray-800);
-    font-size: 13px;
-}
-
-/* ─── Name ───────────────────────────────────────────────────────────────── */
-.dc-name {
-    font-weight: 500;
-    color: var(--gray-800);
-}
-
-/* ─── Value ──────────────────────────────────────────────────────────────── */
-.dc-value {
-    font-weight: 600;
-    color: var(--gray-800);
-    display: flex;
-    align-items: center;
-}
-
-/* ─── View Modal ─────────────────────────────────────────────────────────── */
 .dc-details-view {
     display: flex;
     align-items: center;
@@ -137,7 +107,6 @@
     margin: 0;
 }
 
-/* ─── Tax Selection Grid (Add Tax Modal) ─────────────────────────────────── */
 .tax-selection-modal {
     padding: 8px 0;
 }
@@ -183,7 +152,6 @@
     line-clamp: 2;
 }
 
-/* ─── Delete Confirmation ────────────────────────────────────────────────── */
 .delete-confirmation {
     text-align: center;
     padding: 20px 0;
@@ -208,7 +176,6 @@
     font-weight: 500;
 }
 
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .taxes-container {
         padding: 16px;

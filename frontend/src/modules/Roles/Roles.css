@@ -2,7 +2,6 @@
     padding: 24px;
 }
 
-/* Header */
 .roles-header {
     display: flex;
     justify-content: space-between;
@@ -29,7 +28,6 @@
     gap: 12px;
 }
 
-/* Loading State */
 .roles-loading {
     display: flex;
     flex-direction: column;
@@ -44,37 +42,14 @@
     font-size: 14px;
 }
 
-/* Roles Table Card */
 .roles-table-card {
     overflow-x: auto;
 }
 
 .roles-table {
-    min-width: 700px;
+    min-width: 800px;
 }
 
-/* Role Name Cell */
-.role-name-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.role-description {
-    color: var(--gray-600);
-    font-size: 12px;
-    max-width: 250px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.role-id {
-    color: var(--gray-600);
-    font-weight: 500;
-}
-
-/* Action Buttons */
 .action-buttons {
     display: flex;
     gap: 8px;
@@ -91,7 +66,6 @@
     cursor: not-allowed;
 }
 
-/* Modal Styles */
 .role-form {
     display: flex;
     flex-direction: column;
@@ -99,6 +73,9 @@
 }
 
 .form-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     padding: 12px;
     background: var(--gray-50);
     border-radius: 6px;
@@ -107,7 +84,10 @@
     border-left: 3px solid var(--primary-color);
 }
 
-/* Delete Confirmation */
+.form-info small {
+    color: var(--gray-600);
+}
+
 .delete-confirmation {
     text-align: center;
     padding: 20px 0;
@@ -126,6 +106,7 @@
 
 .delete-warning {
     color: var(--danger-color) !important;
+    font-size: 14px !important;
     font-weight: 500;
 }
 
@@ -138,7 +119,49 @@
     border-radius: 6px;
 }
 
-/* Responsive */
+.role-details-view {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.role-icon-large {
+    font-size: 40px;
+    background: var(--primary-light);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--primary-color);
+}
+
+.role-info-text h3 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    color: var(--gray-800);
+}
+
+.role-info-text p {
+    margin: 4px 0;
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.role-users-section {
+    margin-top: 24px;
+}
+
+.role-users-section h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 16px;
+}
+
 @media (max-width: 768px) {
     .roles-container {
         padding: 16px;

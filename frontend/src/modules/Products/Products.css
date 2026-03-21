@@ -1,7 +1,3 @@
-/* ─── Products Module CSS ───────────────────────────────────────────────────
-   Tabbed interface styles and consistent action menu
-   ─────────────────────────────────────────────────────────────────────────── */
-
 .products-container {
     padding: 24px;
 }
@@ -11,147 +7,20 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 .products-header h1 {
     font-size: 28px;
-    margin-bottom: 4px;
+    font-weight: 600;
     color: var(--gray-800);
+    margin-bottom: 8px;
 }
 
 .products-header p {
     color: var(--gray-600);
-}
-
-/* ─── Tabs Navigation ────────────────────────────────────────────────────── */
-.tabs-card {
-    border-radius: 8px;
-}
-
-.tabs-navigation {
-    display: flex;
-    border-bottom: 1px solid var(--gray-200);
-    margin-bottom: 20px;
-    padding: 0 10px;
-}
-
-.tab-btn {
-    padding: 12px 24px;
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    font-weight: 500;
-    color: var(--gray-600);
-    transition: all 0.2s;
-}
-
-.tab-btn:hover {
-    color: var(--primary-color);
-}
-
-.tab-btn.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-}
-
-/* ─── Table Items ────────────────────────────────────────────────────────── */
-.item-name {
-    font-weight: 500;
-    color: var(--gray-800);
-}
-
-
-
-/* ─── Action Menu ─────────────────────────────────────────────────────────── */
-
-
-/* ─── Modal Content ──────────────────────────────────────────────────────── */
-.item-view {
-    padding: 10px 0;
-}
-
-.view-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--gray-100);
-}
-
-.view-icon {
-    font-size: 32px;
-    background: var(--gray-100);
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-.view-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.view-item label {
-    display: block;
-    font-size: 12px;
-    color: var(--gray-500);
-    text-transform: uppercase;
-    margin-bottom: 4px;
-}
-
-.view-item p {
-    margin: 0;
-    font-weight: 500;
-}
-
-.item-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-
-.form-field select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--gray-300);
-    border-radius: 6px;
-    background: white;
-}
-
-.required-star {
-    color: #ef4444;
-}
-
-.error-text {
-    font-size: 12px;
-    color: #ef4444;
-}
-
-.delete-confirmation {
-    text-align: center;
-}
-
-.delete-icon {
-    font-size: 40px;
-    margin-bottom: 10px;
-}
-
-.delete-warning {
-    color: #ef4444;
-    font-size: 13px;
-    margin-top: 5px;
+    font-size: 14px;
 }
 
 .products-loading {
@@ -160,27 +29,184 @@
     align-items: center;
     justify-content: center;
     min-height: 400px;
+    gap: 16px;
 }
 
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
-@media (max-width: 600px) {
-    .view-grid, .form-row {
-        grid-template-columns: 1fr;
+.products-loading p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.products-table-card {
+    overflow-x: auto;
+}
+
+.products-table {
+    min-width: 1000px;
+}
+
+.product-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 2px 6px;
+    background: var(--gray-100);
+    border-radius: 4px;
+    color: var(--gray-700);
+}
+
+.stock-badge {
+    padding: 4px 8px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.field-note {
+    color: var(--gray-500);
+    margin-top: -8px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--gray-600);
+    border-left: 3px solid var(--primary-color);
+}
+
+.form-info small {
+    color: var(--gray-600);
+}
+
+.delete-confirmation {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.delete-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.delete-confirmation p {
+    font-size: 16px;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.delete-warning {
+    color: var(--danger-color) !important;
+    font-size: 14px !important;
+    font-weight: 500;
+}
+
+.product-details-view {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.product-icon-large {
+    font-size: 40px;
+    background: var(--primary-light);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.product-info-text h3 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    color: var(--gray-800);
+}
+
+.product-info-text p {
+    margin: 4px 0;
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.view-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.view-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.view-group p {
+    font-size: 15px;
+    color: var(--gray-800);
+    margin: 0;
+}
+
+.price-section {
+    margin-top: 24px;
+}
+
+.price-section h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+    .products-container {
+        padding: 16px;
     }
+
     .products-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 15px;
     }
+
     .header-actions {
         width: 100%;
     }
-    .header-actions button {
+
+    .header-actions .btn {
         width: 100%;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .view-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-/* ─── Extra View Styles ──────────────────────────────────────────────────── */
 .view-products-list {
     margin-top: 30px;
     padding-top: 20px;

@@ -2,7 +2,6 @@
     padding: 24px;
 }
 
-/* Header */
 .stores-header {
     display: flex;
     justify-content: space-between;
@@ -29,7 +28,6 @@
     gap: 12px;
 }
 
-/* Loading State */
 .stores-loading {
     display: flex;
     flex-direction: column;
@@ -44,7 +42,6 @@
     font-size: 14px;
 }
 
-/* Stores Table Card */
 .stores-table-card {
     overflow-x: auto;
 }
@@ -53,11 +50,6 @@
     min-width: 900px;
 }
 
-
-
-
-
-/* Employee Badge */
 .employee-badge {
     padding: 4px 8px;
     min-width: 40px;
@@ -70,41 +62,6 @@
     background: var(--gray-100);
 }
 
-/* Store Info Cell */
-.store-info-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.store-location {
-    color: var(--gray-500);
-    background: var(--gray-100);
-    padding: 2px 6px;
-    border-radius: 4px;
-    display: inline-block;
-    width: fit-content;
-}
-
-/* Contact Info */
-.contact-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.store-contact {
-    font-weight: 500;
-    color: var(--gray-800);
-}
-
-.contact-city {
-    color: var(--gray-500);
-}
-
-
-
-/* Modal Form */
 .store-form {
     display: flex;
     flex-direction: column;
@@ -140,7 +97,6 @@
     color: var(--gray-600);
 }
 
-/* Delete Confirmation */
 .delete-confirmation {
     text-align: center;
     padding: 20px 0;
@@ -172,7 +128,6 @@
     border-radius: 6px;
 }
 
-/* Store View Modal */
 .store-details-view {
     display: flex;
     align-items: center;
@@ -225,7 +180,6 @@
     margin: 0;
 }
 
-/* Store Employees Section */
 .store-employees {
     margin-top: 24px;
     padding-top: 20px;
@@ -237,11 +191,6 @@
     font-weight: 600;
     color: var(--gray-800);
     margin-bottom: 16px;
-}
-
-.store-contact-phone {
-    font-weight: 500;
-    color: var(--gray-800);
 }
 
 .employee-list {
@@ -264,12 +213,10 @@
     color: var(--gray-800);
 }
 
-/* Input with icon */
 .input-icon {
     font-size: 16px;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .stores-container {
         padding: 16px;

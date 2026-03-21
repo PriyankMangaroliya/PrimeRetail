@@ -17,7 +17,7 @@ const Table = ({ columns, data = [], className = '', searchable = true, columnSe
                 return columns.some(col => {
                     const value = row[col.key];
                     if (value === null || value === undefined) return false;
-                    if (col.key === 'actions') return false;
+                    if (col.key === 'actions' || col.key === 'index' || col.title === 'No') return false;
                     return String(value).toLowerCase().includes(lowerCaseTerm);
                 });
             });
@@ -27,7 +27,8 @@ const Table = ({ columns, data = [], className = '', searchable = true, columnSe
             result = result.filter(row => {
                 return Object.entries(columnSearch).every(([key, term]) => {
                     if (!term) return true;
-                    if (key === 'actions') return true;
+                    const column = columns.find(c => c.key === key);
+                    if (key === 'actions' || key === 'index' || (column && column.title === 'No')) return true;
                     
                     const value = row[key];
                     if (value === null || value === undefined) return false;
@@ -80,7 +81,7 @@ const Table = ({ columns, data = [], className = '', searchable = true, columnSe
                         <tr className="table-column-search-row">
                             {columns.map((column, index) => (
                                 <th key={`header-search-${index}`} className="table-column-search-th">
-                                    {column.key !== 'actions' && (
+                                    {column.key !== 'actions' && column.key !== 'index' && column.title !== 'No' && (
                                         <input
                                             type="text"
                                             className="table-column-search-input"

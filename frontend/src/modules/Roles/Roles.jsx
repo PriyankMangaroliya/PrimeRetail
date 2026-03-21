@@ -184,16 +184,16 @@ const Roles = () => {
         {
             title: 'No',
             key: 'index',
-            render: (_, __, index) => <span className="role-no">{index + 1}</span>
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'Role Name',
             key: 'role_name',
             render: (value, record) => (
-                <div className="role-name-cell">
-                    <strong>{value}</strong>
+                <div className="table-info-group">
+                    <span className="table-name-cell">{value}</span>
                     {record.description && (
-                        <small className="role-description">{record.description}</small>
+                        <small className="table-secondary-text">{record.description}</small>
                     )}
                 </div>
             )
@@ -260,12 +260,12 @@ const Roles = () => {
         {
             title: 'No',
             key: 'index',
-            render: (_, __, index) => index + 1
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'Name',
             key: 'name',
-            render: (val) => <strong>{val}</strong>
+            className: 'table-name-cell'
         },
         {
             title: 'Email',

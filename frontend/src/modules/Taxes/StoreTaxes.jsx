@@ -140,12 +140,12 @@ const StoreTaxes = () => {
         {
             title: 'No',
             key: 'index',
-            render: (_, __, index) => <span className="dc-row-no">{index + 1}</span>
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'Name',
             key: 'tax_name',
-            render: (value) => <span className="dc-name">{value}</span>
+            className: 'table-name-cell'
         },
         {
             title: 'Rate',
@@ -207,7 +207,7 @@ const StoreTaxes = () => {
         {
             title: 'Product Name',
             key: 'product_name',
-            render: (val) => <strong>{val}</strong>
+            className: 'table-name-cell'
         },
         {
             title: 'SKU',

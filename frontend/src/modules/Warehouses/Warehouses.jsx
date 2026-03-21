@@ -273,7 +273,7 @@ const Warehouses = () => {
         {
             title: 'No',
             key: 'index',
-            render: (_, __, index) => <span className="wh-no">{index + 1}</span>
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'Code',
@@ -284,13 +284,14 @@ const Warehouses = () => {
         },
         {
             title: 'Name',
-            key: 'warehouse_name'
+            key: 'warehouse_name',
+            className: 'table-name-cell'
         },
         {
             title: 'Phone',
             key: 'contact_number',
             render: (value) => (
-                <span className="wh-contact">{value}</span>
+                <span className="table-contact-phone">{value}</span>
             )
         },
         {
@@ -370,12 +371,12 @@ const Warehouses = () => {
         {
             title: 'No',
             key: 'index',
-            render: (_, __, index) => index + 1
+            render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
             title: 'Name',
             key: 'name',
-            render: (val) => <strong>{val}</strong>
+            render: (val) => <span className="table-name-cell">{val}</span>
         },
         {
             title: 'Role',
