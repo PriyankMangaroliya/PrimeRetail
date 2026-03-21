@@ -50,7 +50,7 @@ const warehouseService = {
     },
 
     // Get warehouse by ID with role-based access
-    getWarehouseById: async (id, userRole, userId) => {
+    getWarehouseById: async (id, userRole, userId, warehouseId) => {
         try {
             let result;
 
@@ -60,12 +60,9 @@ const warehouseService = {
             } else if (userRole === 'Store Owner') {
                 // Store Owner can only view their own warehouses
                 result = await warehouseModel.getWarehouseById(id, userRole, userId);
-            } else if (userRole === 'Warehouse Staff') {
-                // Warehouse Staff can only view their assigned warehouse
-                if (parseInt(id) !== parseInt(userId)) {
-                    throw new Error('You do not have permission to view this warehouse');
-                }
-                result = await warehouseModel.getWarehouseById(id, userRole, userId);
+            } else if (warehouseId && parseInt(id) === parseInt(warehouseId)) {
+                // Any staff member (Warehouse Staff or others) can view their assigned warehouse
+                result = await warehouseModel.getWarehouseById(id, userRole, warehouseId);
             } else {
                 throw new Error('You do not have permission to view warehouses');
             }

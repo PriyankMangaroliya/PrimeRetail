@@ -44,7 +44,7 @@ const Login = () => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
-        
+
         // Clear field error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
@@ -107,7 +107,7 @@ const Login = () => {
                 // Redirect based on role
                 const role = result.user.role_name;
 
-                switch(role) {
+                switch (role) {
                     case 'Super Admin':
                         navigate('/admin/dashboard');
                         break;
@@ -141,81 +141,116 @@ const Login = () => {
 
     return (
         <div className="login-container">
-            <div className="login-background">
-                <div className="login-overlay"></div>
+            {/* Left Section: Illustration */}
+            <div className="login-illustration-area">
+                <div className="pattern-bg"></div>
+                <div className="illustration-content">
+                    <h2>Advance Your Retail Operations with PrimeRetail</h2>
+                </div>
+
+                <div className="mockup-container">
+                    <img
+                        src="/PrimeRetail logo.png"
+                        alt="PrimeRetail Illustration"
+                        className="mockup-image"
+                        style={{ padding: '2rem', backgroundColor: '#fff' }}
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://plus.unsplash.com/premium_photo-1661301051253-12502c462be1?q=80&w=2070&auto=format&fit=crop';
+                        }}
+                    />
+                </div>
             </div>
 
-            <div className="login-wrapper">
-                <Card className="login-card">
-                    <div className="login-header">
-                        <h1 className="login-title">PrimeRetail</h1>
-                        <p className="login-subtitle">Welcome back! Please login to your account</p>
+            {/* Right Section: Form */}
+            <div className="login-form-area">
+                <div className="brand-header">
+                    <div className="brand-logo">
+                        <img src="/PrimeRetail logo.png" alt="Logo" />
+                    </div>
+                </div>
+
+                <div className="login-welcome">
+                    <p>Enter your email and password to access your account.</p>
+                </div>
+
+                {loginError && (
+                    <Alert type="danger" dismissible onClose={() => setLoginError('')} style={{ marginBottom: '1.5rem' }}>
+                        {loginError}
+                    </Alert>
+                )}
+
+                <form onSubmit={handleSubmit} className="login-form-custom" style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className="form-group-custom">
+                        <label>Email</label>
+                        <div className="input-wrapper-custom">
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="sellostore@company.com"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
                     </div>
 
-                    {loginError && (
-                        <Alert type="danger" dismissible onClose={() => setLoginError('')}>
-                            {loginError}
-                        </Alert>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="login-form">
-                        <Input
-                            type="email"
-                            name="email"
-                            label="Email Address"
-                            placeholder="Enter your email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            error={errors.email}
-                            icon={
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                    <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M22 6L12 13L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <div className="form-group-custom">
+                        <label>Password</label>
+                        <div className="input-wrapper-custom">
+                            <input
+                                type={formData.showPassword ? 'text' : 'password'}
+                                name="password"
+                                placeholder="••••••••"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                            />
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() => setFormData(prev => ({ ...prev, showPassword: !prev.showPassword }))}
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    {formData.showPassword ? (
+                                        <>
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </>
+                                    )}
                                 </svg>
-                            }
-                        />
-
-                        <Input
-                            type="password"
-                            name="password"
-                            label="Password"
-                            placeholder="Enter your password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            error={errors.password}
-                            icon={
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                    <path d="M19 11H5C3.9 11 3 11.9 3 13V20C3 21.1 3.9 22 5 22H19C20.1 22 21 21.1 21 20V13C21 11.9 20.1 11 19 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                            }
-                        />
-
-                        <div className="login-options">
-                            <label className="remember-me">
-                                <input 
-                                    type="checkbox" 
-                                    name="rememberMe"
-                                    checked={formData.rememberMe}
-                                    onChange={handleChange}
-                                /> Remember me
-                            </label>
-                            <a href="/forgot-password" className="forgot-password">
-                                Forgot Password?
-                            </a>
+                            </button>
                         </div>
+                    </div>
 
-                        <Button
-                            type="submit"
-                            fullWidth
-                            size="large"
-                            disabled={loading}
-                        >
-                            {loading ? <Loader size="small" /> : 'Sign In'}
-                        </Button>
-                    </form>
-                </Card>
+                    <div className="form-extras">
+                        <label className="remember-me">
+                            <input
+                                type="checkbox"
+                                name="rememberMe"
+                                checked={formData.rememberMe}
+                                onChange={handleChange}
+                            />
+                            <span>Remember Me</span>
+                        </label>
+                        <a href="/forgot-password" className="forgot-password">
+                            Forgot Your Password?
+                        </a>
+                    </div>
+
+                    <button type="submit" className="btn-login-main" disabled={loading}>
+                        {loading ? <Loader size="small" /> : 'Log In'}
+                    </button>
+
+                </form>
             </div>
+
+
         </div>
     );
 };

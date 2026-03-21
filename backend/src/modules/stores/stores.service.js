@@ -57,14 +57,14 @@ const storeService = {
         try {
             let result;
 
-            if (userRole === 'Store Owner') {
+            if (userRole === 'Super Admin') {
+                // Super Admin can view any store
+                result = await storeModel.getStoreById(id, 'Super Admin', userId);
+            } else if (userRole === 'Store Owner') {
                 // Store Owner can only view their own stores
                 result = await storeModel.getStoreById(id, 'Store Owner', userId);
-            } else if (userRole === 'Store Manager') {
-                // Store Manager can only view their single assigned store
-                if (!storeId || parseInt(id) !== parseInt(storeId)) {
-                    throw new Error('You do not have permission to view this store');
-                }
+            } else if (storeId && parseInt(id) === parseInt(storeId)) {
+                // Any staff member (Manager, Cashier, Inventory, etc.) can view their assigned store
                 result = await storeModel.getStoreByAssignedId(storeId);
             } else {
                 throw new Error('You do not have permission to view this store');

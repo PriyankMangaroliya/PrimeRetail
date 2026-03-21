@@ -9,7 +9,7 @@ router.use(authMiddleware.verifyToken);
 
 // View routes - accessible by Store Owner and Store Manager only
 // Super Admin has no access to the stores module
-const storeViewRoles = ['Store Owner', 'Store Manager'];
+const storeViewRoles = ['Super Admin', 'Store Owner', 'Store Manager', 'Cashier', 'Inventory Staff'];
 
 router.get('/dropdown', roleMiddleware.hasRole(storeViewRoles), storeController.getStoreDropdown);
 router.get('/stats', roleMiddleware.hasRole(storeViewRoles), storeController.getStoreStats);

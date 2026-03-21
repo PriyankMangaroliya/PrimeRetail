@@ -124,6 +124,8 @@ const storeModel = {
             // Owner can view their own stores
             query = {
                 text: `SELECT s.*,
+                              u.name as owner_name,
+                              u.email as owner_email,
                               u1.name as created_by_name,
                               u2.name as updated_by_name,
                               JSON_AGG(
@@ -135,19 +137,23 @@ const storeModel = {
                                       ) ORDER BY emp.id
                               ) FILTER (WHERE emp.id IS NOT NULL) as employees
                        FROM store_master s
+                                LEFT JOIN user_master u ON s.owner_id = u.id
                                 LEFT JOIN user_master u1 ON s.created_by = u1.id
                                 LEFT JOIN user_master u2 ON s.updated_by = u2.id
                                 LEFT JOIN user_master emp ON s.id = emp.store_id AND emp.is_deleted = false
                                 LEFT JOIN role_master r ON emp.role_id = r.id
                        WHERE s.id = $1 AND s.owner_id = $2 AND s.is_deleted = false
-                       GROUP BY s.id, u1.name, u2.name`,
+                       GROUP BY s.id, u.name, u.email, u1.name, u2.name`,
                 values: [id, userId]
             };
         } else {
             // Store Manager, Cashier, Inventory Staff can view only their assigned store
             query = {
-                text: `SELECT s.*
+                text: `SELECT s.*, 
+                              u.name as owner_name, 
+                              u.email as owner_email
                        FROM store_master s
+                       LEFT JOIN user_master u ON s.owner_id = u.id
                        WHERE s.id = $1 AND s.id = $2 AND s.is_deleted = false`,
                 values: [id, userId] // userId is store_id for these roles
             };
@@ -171,6 +177,8 @@ const storeModel = {
     getStoreByAssignedId: (storeId) => {
         const query = {
             text: `SELECT s.*,
+                          u.name as owner_name,
+                          u.email as owner_email,
                           u1.name as created_by_name,
                           u2.name as updated_by_name,
                           COUNT(DISTINCT emp.id) as employee_count,
@@ -183,12 +191,13 @@ const storeModel = {
                               ) ORDER BY emp.id
                           ) FILTER (WHERE emp.id IS NOT NULL) as employees
                    FROM store_master s
+                            LEFT JOIN user_master u ON s.owner_id = u.id
                             LEFT JOIN user_master u1 ON s.created_by = u1.id
                             LEFT JOIN user_master u2 ON s.updated_by = u2.id
                             LEFT JOIN user_master emp ON s.id = emp.store_id AND emp.is_deleted = false
                             LEFT JOIN role_master r ON emp.role_id = r.id
                    WHERE s.id = $1 AND s.is_deleted = false
-                   GROUP BY s.id, u1.name, u2.name`,
+                   GROUP BY s.id, u.name, u.email, u1.name, u2.name`,
             values: [storeId]
         };
         return db.query(query);

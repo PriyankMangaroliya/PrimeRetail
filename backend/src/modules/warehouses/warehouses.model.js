@@ -119,6 +119,8 @@ const warehouseModel = {
         } else if (userRole === 'Store Owner') {
             query = {
                 text: `SELECT w.*,
+                              u.name AS owner_name,
+                              u.email AS owner_email,
                               uc.name AS created_by_name,
                               uu.name AS updated_by_name,
                               JSON_AGG(
@@ -132,24 +134,28 @@ const warehouseModel = {
                            COUNT(DISTINCT s.id)          AS total_stock_items,
                               COALESCE(SUM(s.quantity), 0) AS total_quantity
                        FROM warehouse_master w
+                                LEFT JOIN user_master u     ON w.owner_id = u.id
                                 LEFT JOIN user_master uc    ON w.created_by  = uc.id
                                 LEFT JOIN user_master uu    ON w.updated_by  = uu.id
                                 LEFT JOIN user_master staff ON w.id = staff.warehouse_id AND staff.is_deleted = false
                                 LEFT JOIN role_master r     ON staff.role_id = r.id
                                 LEFT JOIN stock_master s    ON w.id = s.location_id AND s.location_type = 'Warehouse'
                        WHERE w.id = $1 AND w.owner_id = $2
-                       GROUP BY w.id, uc.name, uu.name`,
+                       GROUP BY w.id, u.name, u.email, uc.name, uu.name`,
                 values: [id, userId]
             };
         } else if (userRole === 'Warehouse Staff') {
             query = {
                 text: `SELECT w.*,
+                              u.name AS owner_name,
+                              u.email AS owner_email,
                               COUNT(DISTINCT s.id) as total_stock_items,
                               COALESCE(SUM(s.quantity), 0) as total_quantity
                        FROM warehouse_master w
+                                LEFT JOIN user_master u ON w.owner_id = u.id
                                 LEFT JOIN stock_master s ON w.id = s.location_id AND s.location_type = 'Warehouse'
                        WHERE w.id = $1 AND w.id = $2
-                       GROUP BY w.id`,
+                       GROUP BY w.id, u.name, u.email`,
                 values: [id, userId]
             };
         } else {

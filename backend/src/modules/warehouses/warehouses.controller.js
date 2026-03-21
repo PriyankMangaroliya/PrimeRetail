@@ -64,8 +64,9 @@ const warehouseController = {
 
             const userRole = req.user.role_name;
             const userId = req.user.id;
+            const warehouseId = req.user.warehouse_id; // Warehouse Staff's assigned warehouse
 
-            const warehouse = await warehouseService.getWarehouseById(id, userRole, userId);
+            const warehouse = await warehouseService.getWarehouseById(id, userRole, userId, warehouseId);
 
             return responseUtils.success(res, 200, 'Warehouse retrieved successfully', warehouse);
         } catch (error) {
