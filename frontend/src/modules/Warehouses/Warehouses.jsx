@@ -430,6 +430,7 @@ const Warehouses = () => {
                             className="warehouses-table"
                             columnSearchable={true}
                             searchable={false}
+                            itemName="Warehouses"
                         />
                     ) : (
                         <EmptyState

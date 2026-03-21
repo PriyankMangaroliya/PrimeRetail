@@ -162,9 +162,10 @@ const TransactionHistory = () => {
                         <Table
                             columns={columns}
                             data={transactions}
+                            className="transactions-table"
                             columnSearchable={true}
                             searchable={false}
-                            className="inventory-table"
+                            itemName="Transactions"
                         />
                     ) : (
                         <EmptyState

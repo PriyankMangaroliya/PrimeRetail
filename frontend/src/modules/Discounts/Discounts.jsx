@@ -364,6 +364,7 @@ const Discounts = () => {
                             className="discounts-table"
                             columnSearchable={true}
                             searchable={false}
+                            itemName="Discounts"
                         />
                     ) : (
                         <EmptyState

@@ -374,6 +374,7 @@ const StockList = () => {
                             columnSearchable={true}
                             searchable={false}
                             className="inventory-table"
+                            itemName="Stock Items"
                         />
                     ) : (
                         <EmptyState

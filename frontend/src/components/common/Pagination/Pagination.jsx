@@ -1,11 +1,15 @@
-import React from 'react';
 import Icons from '../Icons';
+import Select from '../Select/Select';
 import './Pagination.css';
 
 const Pagination = ({
     currentPage,
     totalPages,
     onPageChange,
+    totalItems = 0,
+    itemName = 'Items',
+    itemsPerPage = 10,
+    onItemsPerPageChange,
     siblingCount = 1
 }) => {
     const getPageNumbers = () => {
@@ -52,28 +56,23 @@ const Pagination = ({
         }
     };
 
-    if (totalPages <= 1) return null;
+    // if (totalPages <= 1) return null;
 
     const pages = getPageNumbers();
 
     return (
         <div className="pagination-wrapper">
-            <div className="pagination-container">
-                <button
-                    className="pagination-btn nav-btn"
-                    onClick={() => onPageChange(1)}
-                    disabled={currentPage === 1}
-                    title="First Page"
-                >
-                    <Icons.ChevronsLeft size={18} />
-                </button>
+            <div className="pagination-left">
+                Total {itemName}: <span className="total-count">{totalItems}</span>
+            </div>
+
+            <div className="pagination-center">
                 <button
                     className="pagination-btn nav-btn"
                     onClick={() => onPageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    title="Previous Page"
                 >
-                    <Icons.ChevronLeft size={18} />
+                    <Icons.ChevronLeft size={16} />
                 </button>
 
                 <div className="pagination-numbers">
@@ -93,21 +92,26 @@ const Pagination = ({
                     className="pagination-btn nav-btn"
                     onClick={() => onPageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    title="Next Page"
                 >
-                    <Icons.ChevronRight size={18} />
-                </button>
-                <button
-                    className="pagination-btn nav-btn"
-                    onClick={() => onPageChange(totalPages)}
-                    disabled={currentPage === totalPages}
-                    title="Last Page"
-                >
-                    <Icons.ChevronsRight size={18} />
+                    <Icons.ChevronRight size={16} />
                 </button>
             </div>
-            <div className="pagination-info-text">
-                Page {currentPage} of {totalPages}
+
+            <div className="pagination-right">
+                <span className="show-per-page-label">Show per Page:</span>
+                <Select
+                    className="per-page-select"
+                    value={itemsPerPage}
+                    style={{ marginTop: '20px' }}
+                    onChange={(e) => onItemsPerPageChange && onItemsPerPageChange(Number(e.target.value))}
+                    options={[
+                        { value: 5, label: '5' },
+                        { value: 10, label: '10' },
+                        { value: 20, label: '20' },
+                        { value: 50, label: '50' },
+                        { value: 100, label: '100' }
+                    ]}
+                />
             </div>
         </div>
     );

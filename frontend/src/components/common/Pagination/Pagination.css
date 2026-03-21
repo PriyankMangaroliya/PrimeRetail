@@ -1,96 +1,130 @@
 .pagination-wrapper {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    margin-top: 24px;
-    padding: 16px;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: #ffffff;
+    border-top: 1px solid var(--gray-200);
+    width: 100%;
+    margin-top: 0;
 }
 
-.pagination-container {
+.pagination-left {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.total-count {
+    font-weight: 700;
+}
+
+.pagination-center {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    gap: 12px;
 }
 
 .pagination-numbers {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
 }
 
 .pagination-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 36px;
-    height: 36px;
-    padding: 0 8px;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    background: transparent;
-    color: #e0e0e0;
+    min-width: 32px;
+    height: 32px;
+    padding: 4px 8px;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    background: #ffffff;
+    color: var(--gray-600);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
 }
 
 .pagination-btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--gray-50);
+    color: var(--primary-color);
+    border-color: var(--primary-light);
 }
 
 .pagination-btn.active {
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    background: #eef2ff;
+    color: #4f46e5;
+    border-color: transparent;
+    font-weight: 700;
 }
 
 .pagination-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.5;
     cursor: not-allowed;
+    color: var(--gray-400);
 }
 
 .pagination-btn.dots {
     cursor: default;
-    background: transparent !important;
-    border-color: transparent !important;
+    border: none;
+    background: transparent;
 }
 
 .nav-btn {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.05);
+    border: none;
+    background: transparent;
+    color: var(--gray-400);
 }
 
-.pagination-info-text {
-    font-size: 13px;
-    color: #94a3b8;
-    font-weight: 400;
+.nav-btn:hover:not(:disabled) {
+    background: var(--gray-100);
+    color: var(--gray-800);
 }
 
-/* Light mode adjustments if needed, assuming dark mode as default premium feel */
-@media (prefers-color-scheme: light) {
-    .pagination-container {
-        background: rgba(0, 0, 0, 0.02);
-        border-color: rgba(0, 0, 0, 0.05);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    }
-    .pagination-btn {
-        color: #475569;
-    }
-    .pagination-btn:hover:not(:disabled) {
-        background: rgba(0, 0, 0, 0.05);
-        color: #1e293b;
-    }
-    .pagination-info-text {
-        color: #64748b;
-    }
+.pagination-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.show-per-page-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.per-page-select {
+    width: 70px !important;
+    margin-bottom: 0 !important;
+}
+
+.per-page-select .select-field {
+    height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 13px !important;
+}
+
+/* Dark mode overrides if needed */
+[data-theme='dark'] .pagination-wrapper {
+    background: var(--gray-800);
+    border-top-color: var(--gray-700);
+}
+
+[data-theme='dark'] .pagination-left,
+[data-theme='dark'] .show-per-page-label {
+    color: var(--gray-200);
+}
+
+[data-theme='dark'] .pagination-btn {
+    background: var(--gray-800);
+    border-color: var(--gray-700);
+    color: var(--gray-400);
+}
+
+[data-theme='dark'] .pagination-btn.active {
+    background: rgba(99, 102, 241, 0.2);
+    color: #818cf8;
 }

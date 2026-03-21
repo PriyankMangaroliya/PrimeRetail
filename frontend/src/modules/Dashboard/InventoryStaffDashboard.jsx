@@ -107,9 +107,11 @@ const InventoryStaffDashboard = () => {
                     <div className="inventory-table-container">
                         <Table
                             columns={stockColumns}
-                            data={stockData}
+                            data={lowStockItems}
+                            className="dashboard-table"
                             searchable={false}
-                            itemsPerPage={5}
+                            initialItemsPerPage={5}
+                            itemName="Stock Items"
                         />
                     </div>
                 </Card>

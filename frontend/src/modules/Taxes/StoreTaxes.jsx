@@ -281,9 +281,10 @@ const StoreTaxes = () => {
                         <Table
                             columns={columns}
                             data={storeTaxes}
-                            className="taxes-table"
+                            className="store-taxes-table"
                             columnSearchable={true}
                             searchable={false}
+                            itemName="Store Taxes"
                         />
                     ) : (
                         <EmptyState

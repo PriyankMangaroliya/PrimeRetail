@@ -2,10 +2,19 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Pagination from '../Pagination/Pagination';
 import './Table.css';
 
-const Table = ({ columns, data = [], className = '', searchable = true, columnSearchable = false, itemsPerPage = 10 }) => {
+const Table = ({ 
+    columns, 
+    data = [], 
+    className = '', 
+    searchable = true, 
+    columnSearchable = false, 
+    initialItemsPerPage = 10,
+    itemName = 'Items'
+}) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [columnSearch, setColumnSearch] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
 
     // Filter data based on search term and column search
     const filteredData = useMemo(() => {
@@ -121,13 +130,17 @@ const Table = ({ columns, data = [], className = '', searchable = true, columnSe
             </div>
             
             <div className="table-pagination-footer">
-                <div className="pagination-info">
-                    Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} entries
-                </div>
                 <Pagination 
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
+                    totalItems={filteredData.length}
+                    itemName={itemName}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={(val) => {
+                        setItemsPerPage(val);
+                        setCurrentPage(1);
+                    }}
                 />
             </div>
         </div>

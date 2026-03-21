@@ -375,9 +375,10 @@ const Products = () => {
                         <Table
                             columns={columns}
                             data={products}
+                            className="products-table"
                             columnSearchable={true}
                             searchable={false}
-                            className="category-table"
+                            itemName="Products"
                         />
                     ) : (
                         <EmptyState

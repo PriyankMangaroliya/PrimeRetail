@@ -335,8 +335,9 @@ const Taxes = () => {
                             columns={columns}
                             data={taxes}
                             className="taxes-table"
-                            searchable={false}
                             columnSearchable={true}
+                            searchable={false}
+                            itemName="Taxes"
                         />
                     ) : (
                         <EmptyState

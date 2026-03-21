@@ -105,9 +105,11 @@ const StoreManagerDashboard = () => {
                     <div className="orders-table-container">
                         <Table
                             columns={orderColumns}
-                            data={orderData}
+                            data={recentOrders}
+                            className="dashboard-table"
                             searchable={false}
-                            itemsPerPage={5}
+                            initialItemsPerPage={5}
+                            itemName="Orders"
                         />
                     </div>
                 </Card>

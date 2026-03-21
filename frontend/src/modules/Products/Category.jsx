@@ -281,6 +281,7 @@ const Category = () => {
                             columnSearchable={true}
                             searchable={false}
                             className="category-table"
+                            itemName="Categories"
                         />
                     ) : (
                         <EmptyState

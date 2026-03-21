@@ -418,6 +418,7 @@ const StoreOwners = () => {
                             className="owners-table"
                             searchable={false}
                             columnSearchable={true}
+                            itemName="Store Owners"
                         />
                     ) : (
                         <EmptyState

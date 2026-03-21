@@ -308,10 +308,11 @@ const PaymentMethods = () => {
                     {methods.length > 0 ? (
                         <Table
                             columns={columns}
-                            data={methods}
-                            className="methods-table"
-                            searchable={false}
+                            data={paymentMethods}
+                            className="payment-methods-table"
                             columnSearchable={true}
+                            searchable={false}
+                            itemName="Payment Methods"
                         />
                     ) : (
                         <EmptyState

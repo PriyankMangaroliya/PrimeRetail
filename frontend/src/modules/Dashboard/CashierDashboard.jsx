@@ -67,7 +67,15 @@ const CashierDashboard = () => {
                                     <span>${item.price}</span>
                                     <span>x{item.qty}</span>
                                     <span>${(item.price * item.qty).toFixed(2)}</span>
-                                    <button className="remove-item"><Icons.X size={14} /></button>
+                                    <Button
+                                        variant="ghost"
+                                        size="small"
+                                        className="remove-item"
+                                        onClick={() => setCart(cart.filter(c => c.id !== item.id))}
+                                        title="Remove item"
+                                    >
+                                        <Icons.X size={14} />
+                                    </Button>
                                 </div>
                             ))}
                         </div>

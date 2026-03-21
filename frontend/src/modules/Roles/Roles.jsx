@@ -316,8 +316,9 @@ const Roles = () => {
                             columns={columns}
                             data={roles}
                             className="roles-table"
-                            searchable={false}
                             columnSearchable={true}
+                            searchable={false}
+                            itemName="Roles"
                         />
                     ) : (
                         <EmptyState

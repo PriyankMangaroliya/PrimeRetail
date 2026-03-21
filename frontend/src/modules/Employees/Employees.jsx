@@ -494,6 +494,7 @@ const Employees = () => {
                                 {stores.length > 0 ? (
                                     <Select
                                         className="emp-native-select"
+                                        style={{ align : 'center' }}
                                         value={selectedStoreId}
                                         onChange={(e) => setSelectedStoreId(e.target.value)}
                                         disabled={isStoreManager}
@@ -567,8 +568,9 @@ const Employees = () => {
                             columns={columns}
                             data={employees}
                             className="employees-table"
-                            searchable={false}
                             columnSearchable={true}
+                            searchable={false}
+                            itemName="Employees"
                         />
                     ) : (
                         <EmptyState
