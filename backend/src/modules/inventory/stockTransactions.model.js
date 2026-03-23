@@ -2,22 +2,32 @@ const db = require('../../config/database.config');
 
 const stockTransactionModel = {
     // Create new stock transaction
-    createStockTransaction: (transactionData) => {
-        const { product_id, stock_id, movement_type, source_location_type, source_location_id,
-            destination_location_type, destination_location_id, quantity, reference_type,
-            reference_id, notes, created_by } = transactionData;
+    createStockTransaction: (transactionData, client = db) => {
+        const { 
+            product_id, stock_id, movement_type, quantity, 
+            before_qty, after_qty,
+            source_location_type, source_location_id,
+            destination_location_type, destination_location_id,
+            reference_type, reference_id, notes, exchange_product_id, created_by 
+        } = transactionData;
 
         const query = {
             text: `INSERT INTO stock_transactions 
-             (product_id, stock_id, movement_type, source_location_type, source_location_id, 
-              destination_location_type, destination_location_id, quantity, reference_type, 
-              reference_id, notes, created_by) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
-            values: [product_id, stock_id, movement_type, source_location_type, source_location_id,
-                destination_location_type, destination_location_id, quantity, reference_type,
-                reference_id, notes, created_by]
+             (product_id, stock_id, movement_type, quantity,
+              before_qty, after_qty,
+              source_location_type, source_location_id,
+              destination_location_type, destination_location_id,
+              reference_type, reference_id, notes, exchange_product_id, created_by) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *`,
+            values: [
+                product_id, stock_id, movement_type, quantity,
+                before_qty || 0, after_qty || 0,
+                source_location_type, source_location_id,
+                destination_location_type, destination_location_id,
+                reference_type, reference_id, notes, exchange_product_id, created_by
+            ]
         };
-        return db.query(query);
+        return client.query(query);
     },
 
     // Get all stock transactions

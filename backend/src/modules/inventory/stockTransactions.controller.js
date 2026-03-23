@@ -15,7 +15,7 @@ const stockTransactionController = {
                 return responseUtils.validationError(res, 'Validation failed', error.details);
             }
 
-            const transaction = await stockTransactionService.createStockTransaction(value);
+            const transaction = await stockTransactionService.createStockTransaction(value, req.user);
 
             return responseUtils.created(res, 'Stock transaction created successfully', transaction);
         } catch (error) {

@@ -45,7 +45,7 @@ const InventoryStaffDashboard = () => {
         }
     ];
 
-    const stockData = [1, 2, 3, 4, 5].map(i => ({
+    const lowStockItems = [1, 2, 3, 4, 5].map(i => ({
         id: i,
         name: `Product Name ${i}`,
         sku: `SKU-${i}234`,

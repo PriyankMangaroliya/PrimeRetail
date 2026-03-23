@@ -187,25 +187,29 @@ const productService = {
             const userRole = user.role_name;
             const userId = user.id;
             let ownerId = null;
-            let storeId = null;
+            let locationType = null;
+            let locationId = null;
 
             if (userRole === 'Store Owner') {
                 ownerId = userId;
-            } else if (userRole === 'Store Manager' || userRole === 'Cashier' || userRole === 'Inventory Staff') {
-                storeId = user.store_id; 
+            } else if (['Store Manager', 'Cashier', 'Inventory Staff'].includes(userRole)) {
+                locationType = 'Store';
+                locationId = user.store_id;
                 // Get owner_id from store
                 const db = require('../../config/database.config');
                 const storeResult = await db.query(
                     'SELECT owner_id FROM store_master WHERE id = $1',
-                    [storeId]
+                    [locationId]
                 );
                 ownerId = storeResult.rows[0]?.owner_id;
             } else if (userRole === 'Warehouse Staff') {
+                locationType = 'Warehouse';
+                locationId = user.warehouse_id;
                 // Get owner_id from warehouse
                 const db = require('../../config/database.config');
                 const warehouseResult = await db.query(
                     'SELECT owner_id FROM warehouse_master WHERE id = $1',
-                    [user.warehouse_id]
+                    [locationId]
                 );
                 ownerId = warehouseResult.rows[0]?.owner_id;
             }
@@ -214,7 +218,7 @@ const productService = {
                 return [];
             }
 
-            const result = await productModel.getAllProducts(userRole, ownerId, storeId);
+            const result = await productModel.getAllProducts(userRole, ownerId, locationType, locationId);
             return result.rows;
         } catch (error) {
             throw error;

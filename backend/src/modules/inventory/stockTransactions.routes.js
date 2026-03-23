@@ -8,7 +8,7 @@ const roleMiddleware = require('../../middlewares/role.middleware');
 router.use(authMiddleware.verifyToken);
 
 // Create stock transaction
-router.post('/', roleMiddleware.hasRole(['Store Owner', 'Store Manager', 'Warehouse Staff', 'Inventory Staff']), stockTransactionController.createStockTransaction);
+router.post('/', roleMiddleware.hasRole(['Store Owner', 'Store Manager', 'Warehouse Staff', 'Inventory Staff', 'Cashier']), stockTransactionController.createStockTransaction);
 
 // Get all transactions
 router.get('/', roleMiddleware.hasRole(['Store Owner', 'Store Manager', 'Warehouse Staff', 'Inventory Staff', 'Cashier']), stockTransactionController.getAllStockTransactions);

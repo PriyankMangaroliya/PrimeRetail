@@ -42,7 +42,7 @@ const StoreManagerDashboard = () => {
         }
     ];
 
-    const orderData = [1, 2, 3, 4, 5].map(i => ({
+    const recentOrders = [1, 2, 3, 4, 5].map(i => ({
         id: i,
         customer: 'John Doe',
         amount: 125.50,

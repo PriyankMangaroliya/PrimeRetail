@@ -78,27 +78,24 @@ const productModel = {
     },
 
     // Get all products based on user role
-    getAllProducts: (userRole, ownerId, storeId) => {
+    getAllProducts: (userRole, ownerId, locationType, locationId) => {
         let query;
 
         if (userRole === 'Store Owner') {
-            // Store Owner sees all their products
+            // Store Owner sees all their products. Stock is hidden in UI, so returning 0 here.
             query = {
                 text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate,
-                              COALESCE(s.quantity, 0) as stock_quantity
+                              0 as stock_quantity
                        FROM product_master p
                        LEFT JOIN category_master c ON p.category_id = c.id
                        LEFT JOIN store_taxes st ON p.tax_id = st.id
                        LEFT JOIN tax_master t ON st.tax_id = t.id
-                       LEFT JOIN stock_master s ON p.id = s.product_id AND s.location_type = 'Store' AND s.location_id = ANY(
-                           SELECT id FROM store_master WHERE owner_id = $1
-                       )
                        WHERE p.owner_id = $1 AND p.is_deleted = false
                        ORDER BY p.id DESC`,
                 values: [ownerId]
             };
         } else {
-            // Other roles see products from their store's owner
+            // Staff roles see products from their owner with stock levels specific to their location
             query = {
                 text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate,
                               COALESCE(s.quantity, 0) as stock_quantity
@@ -106,10 +103,12 @@ const productModel = {
                        LEFT JOIN category_master c ON p.category_id = c.id
                        LEFT JOIN store_taxes st ON p.tax_id = st.id
                        LEFT JOIN tax_master t ON st.tax_id = t.id
-                       LEFT JOIN stock_master s ON p.id = s.product_id AND s.location_type = 'Store' AND s.location_id = $2
+                       LEFT JOIN stock_master s ON p.id = s.product_id 
+                            AND s.location_type = $2 
+                            AND s.location_id = $3
                        WHERE p.owner_id = $1 AND p.is_active = true AND p.is_deleted = false
                        ORDER BY p.product_name`,
-                values: [ownerId, storeId]
+                values: [ownerId, locationType, locationId]
             };
         }
 
@@ -122,20 +121,12 @@ const productModel = {
 
         if (userRole === 'Store Owner') {
             query = {
-                text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate,
-                              JSON_AGG(
-                                  JSON_BUILD_OBJECT(
-                                      'store_id', s.location_id,
-                                      'quantity', s.quantity
-                                  ) FILTER (WHERE s.id IS NOT NULL)
-                              ) as stock_by_store
+                text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate
                        FROM product_master p
                        LEFT JOIN category_master c ON p.category_id = c.id
                        LEFT JOIN store_taxes st ON p.tax_id = st.id
                        LEFT JOIN tax_master t ON st.tax_id = t.id
-                       LEFT JOIN stock_master s ON p.id = s.product_id AND s.location_type = 'Store'
-                       WHERE p.id = $1 AND p.owner_id = $2 AND p.is_deleted = false
-                       GROUP BY p.id, c.category_name, t.tax_name, t.tax_rate`,
+                       WHERE p.id = $1 AND p.owner_id = $2 AND p.is_deleted = false`,
                 values: [id, ownerId]
             };
         } else {

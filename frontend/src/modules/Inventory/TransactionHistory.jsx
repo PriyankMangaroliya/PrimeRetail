@@ -50,16 +50,16 @@ const TransactionHistory = () => {
     };
 
     const getMovementBadge = (type) => {
-        switch (type) {
-            case 'Add': return <Badge variant="success">Add</Badge>;
-            case 'Damaged': return <Badge variant="danger">Damaged</Badge>;
-            case 'Return': return <Badge variant="info">Return</Badge>;
-            case 'Exchange': return <Badge variant="orange">Exchange</Badge>;
-            case 'By Mistake Add': return <Badge variant="secondary">By Mistake</Badge>;
-            case 'Sell': return <Badge variant="primary">Sell</Badge>;
-            case 'Transfer': return <Badge variant="purple">Transfer</Badge>;
-            case 'Remove': return <Badge variant="dark">Remove</Badge>;
-            case 'Others': return <Badge variant="light">Others</Badge>;
+        const typeUpper = type?.toUpperCase();
+        switch (typeUpper) {
+            case 'ADD': return <Badge variant="success">ADD</Badge>;
+            case 'SELL': return <Badge variant="danger">SELL</Badge>;
+            case 'RETURN': return <Badge variant="info">RETURN</Badge>;
+            case 'EXCHANGE': return <Badge variant="orange">EXCHANGE</Badge>;
+            case 'TRANSFER': return <Badge variant="purple">TRANSFER</Badge>;
+            case 'DAMAGED': return <Badge variant="danger">DAMAGED</Badge>;
+            case 'MANUAL_ADD': return <Badge variant="success">MANUAL_ADD</Badge>;
+            case 'MANUAL_REMOVE': return <Badge variant="danger">MANUAL_REMOVE</Badge>;
             default: return <Badge variant="secondary">{type}</Badge>;
         }
     };
@@ -71,12 +71,12 @@ const TransactionHistory = () => {
             render: (_, __, index) => <span className="table-no-cell">{index + 1}</span>
         },
         {
-            title: 'Product',
-            key: 'product_name',
-            className: 'table-name-cell'
+            title: 'SKU',
+            key: 'sku',
+            render: (value) => <Badge variant="primary" className="badge-code">{value}</Badge>
         },
         {
-            title: 'Movement Type',
+            title: 'Movement',
             key: 'movement_type',
             render: (val) => getMovementBadge(val)
         },
@@ -84,10 +84,32 @@ const TransactionHistory = () => {
             title: 'Quantity',
             key: 'quantity',
             render: (val, record) => {
-                const isDecrease = ['Damaged', 'By Mistake Add', 'Sell', 'Remove', 'Transfer'].includes(record.movement_type);
+                const typeUpper = record.movement_type?.toUpperCase();
+                let isDecrease = ['SELL', 'DAMAGED', 'MANUAL_REMOVE'].includes(typeUpper);
+                let isIncrease = ['ADD', 'RETURN', 'EXCHANGE', 'MANUAL_ADD'].includes(typeUpper);
+
+                if (typeUpper === 'EXCHANGE') {
+                    if (record.after_qty > record.before_qty) {
+                        isIncrease = true; // Old product returned (+)
+                    } else if (record.after_qty < record.before_qty) {
+                        isDecrease = true; // New product issued (-)
+                    }
+                }
+
+                if (typeUpper === 'TRANSFER') {
+                    const userLocType = user?.role_name === 'Warehouse Staff' ? 'Warehouse' : 'Store';
+                    const userLocId = user?.role_name === 'Warehouse Staff' ? user.warehouse_id : user.store_id;
+
+                    if (record.source_location_type === userLocType && record.source_location_id === userLocId) {
+                        isDecrease = true;
+                    } else if (record.destination_location_type === userLocType && record.destination_location_id === userLocId) {
+                        isIncrease = true;
+                    }
+                }
+
                 return (
-                    <Badge variant={isDecrease ? 'danger' : 'success'}>
-                        {isDecrease ? '-' : '+'}{val}
+                    <Badge variant={isDecrease ? 'danger' : 'success'} className="fw-bold">
+                        {isDecrease ? '-' : isIncrease ? '+' : ''}{val}
                     </Badge>
                 );
             }
@@ -96,31 +118,31 @@ const TransactionHistory = () => {
             title: 'Source',
             key: 'source_location_type',
             render: (_, record) => (
-                record.source_location_type ? 
-                <Badge variant={record.source_location_type === 'Warehouse' ? 'primary' : 'secondary'}>
-                    {record.source_code || `${record.source_location_type} #${record.source_location_id}`}
-                </Badge> : 
-                <span className="text-gray-400">N/A</span>
+                record.source_location_type ?
+                    <Badge variant={record.source_location_type === 'Warehouse' ? 'primary' : 'secondary'}>
+                        {record.source_code || `${record.source_location_type} #${record.source_location_id}`}
+                    </Badge> :
+                    <span className="text-gray-400">N/A</span>
             )
         },
         {
             title: 'Destination',
             key: 'destination_location_type',
             render: (_, record) => (
-                record.destination_location_type ? 
-                <Badge variant={record.destination_location_type === 'Warehouse' ? 'primary' : 'secondary'}>
-                    {record.destination_code || `${record.destination_location_type} #${record.destination_location_id}`}
-                </Badge> : 
-                <span className="text-gray-400">N/A</span>
+                record.destination_location_type ?
+                    <Badge variant={record.destination_location_type === 'Warehouse' ? 'primary' : 'secondary'}>
+                        {record.destination_code || `${record.destination_location_type} #${record.destination_location_id}`}
+                    </Badge> :
+                    <span className="text-gray-400">N/A</span>
             )
         },
         {
             title: 'Reference',
-            key: 'reference_type',
+            key: 'reference_id',
             render: (_, record) => (
-                record.reference_type ? 
-                <Badge variant="warning">{record.reference_type} #{record.reference_id}</Badge> : 
-                <span className="text-gray-400">N/A</span>
+                record.reference_id ?
+                    <Badge variant="warning">{record.reference_type || 'REF'} #{record.reference_id}</Badge> :
+                    <span className="text-gray-400">N/A</span>
             )
         },
         {

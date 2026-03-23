@@ -16,6 +16,9 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useNavigate } from 'react-router-dom';
 import './Inventory.css';
 
+const movementsDecreasingStock = ['SELL', 'DAMAGED', 'MANUAL_REMOVE', 'TRANSFER'];
+const movementsIncreasingStock = ['ADD', 'RETURN', 'EXCHANGE', 'MANUAL_ADD'];
+
 const StockList = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -29,9 +32,9 @@ const StockList = () => {
     const canManageStock = isInventory || isWarehouse || isCashier;
 
     const getMovementOptions = () => {
-        if (isWarehouse) return ['Add', 'Transfer', 'Damaged', 'By Mistake Add'];
-        if (isInventory) return ['Transfer', 'Damaged', 'Return', 'Exchange'];
-        if (isCashier) return ['Sell'];
+        if (isWarehouse) return ['ADD', 'TRANSFER', 'DAMAGED', 'MANUAL_ADD', 'MANUAL_REMOVE'];
+        if (isInventory) return ['TRANSFER', 'DAMAGED', 'RETURN', 'EXCHANGE', 'MANUAL_ADD', 'MANUAL_REMOVE'];
+        if (isCashier) return ['SELL'];
         return [];
     };
 
@@ -51,12 +54,16 @@ const StockList = () => {
         quantity: '',
         notes: '',
         destination_location_type: '',
-        destination_location_id: ''
+        destination_location_id: '',
+        reference_id: ''
     });
 
     const [formErrors, setFormErrors] = useState({});
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [destinationDropdownOpen, setDestinationDropdownOpen] = useState(false);
+    const [exchangeProductSearch, setExchangeProductSearch] = useState('');
+    const [exchangeProductDropdownOpen, setExchangeProductDropdownOpen] = useState(false);
+    const [selectedExchangeProduct, setSelectedExchangeProduct] = useState(null);
 
     // Close dropdowns on outside click
     useEffect(() => {
@@ -67,6 +74,7 @@ const StockList = () => {
             if (!e.target.closest('.custom-search-dropdown')) {
                 setProductDropdownOpen(false);
                 setDestinationDropdownOpen(false);
+                setExchangeProductDropdownOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -132,12 +140,15 @@ const StockList = () => {
 
         const options = getMovementOptions();
         setFormData({
-            movement_type: stockItem ? (options[0] || 'Others') : 'Add',
+            movement_type: stockItem ? (options[0] || '') : (options.includes('ADD') ? 'ADD' : options[0] || ''),
             quantity: '',
             notes: '',
             destination_location_type: '',
-            destination_location_id: ''
+            destination_location_id: '',
+            reference_id: ''
         });
+        setExchangeProductSearch('');
+        setSelectedExchangeProduct(null);
         setFormErrors({});
         setShowModal(true);
     };
@@ -154,12 +165,16 @@ const StockList = () => {
         if (!formData.quantity || isNaN(formData.quantity) || parseInt(formData.quantity) <= 0) {
             errors.quantity = 'Please enter a valid quantity';
         }
-        if (selectedStock && formData.movement_type !== 'Add' && parseInt(formData.quantity) > selectedStock.quantity) {
+
+        if (selectedStock && movementsDecreasingStock.includes(formData.movement_type) && parseInt(formData.quantity) > selectedStock.quantity) {
             errors.quantity = `Insufficient stock. Current: ${selectedStock.quantity}`;
         }
-        if (formData.movement_type === 'Transfer' && (!formData.destination_location_id)) {
-            errors.destination = 'Please select a destination location';
+
+
+        if (formData.movement_type === 'EXCHANGE' && !selectedExchangeProduct) {
+            errors.exchange_product = 'Please select a new product for exchange';
         }
+
         return errors;
     };
 
@@ -172,33 +187,64 @@ const StockList = () => {
         }
 
         try {
-            if (formData.movement_type === 'Add') {
-                await inventoryApi.createStock({
-                    product_id: selectedProduct.id,
-                    quantity: parseInt(formData.quantity),
-                    notes: formData.notes,
-                    movement_type: 'Add'
-                });
-                showAlert('success', 'Stock added/refilled successfully');
-            } else {
-                const payload = {
-                    product_id: selectedProduct.id,
-                    stock_id: selectedStock.id,
-                    movement_type: formData.movement_type,
-                    quantity: parseInt(formData.quantity),
-                    notes: `[${formData.movement_type}] ` + formData.notes,
-                    source_location_type: selectedStock.location_type,
-                    source_location_id: selectedStock.location_id,
-                };
+            const payload = {
+                product_id: selectedProduct.id,
+                stock_id: selectedStock?.id || null,
+                movement_type: formData.movement_type,
+                quantity: parseInt(formData.quantity),
+                notes: formData.notes,
+                reference_id: formData.reference_id,
+                source_location_type: null,
+                source_location_id: null,
+                destination_location_type: null,
+                destination_location_id: null,
+                exchange_product_id: selectedExchangeProduct?.id || null
+            };
 
-                if (formData.movement_type === 'Transfer') {
-                    payload.destination_location_type = formData.destination_location_type;
-                    payload.destination_location_id = formData.destination_location_id;
+            if (formData.movement_type === 'ADD' && !selectedStock) {
+                // If it's a new ADD for a product that doesn't exist in the current location (owner/manager view)
+                // We need to know WHICH location to add to. 
+                // However, for Staff/Cashier, their location is fixed/implied.
+                // For simplicity in this UI, we use the user's primary location if not selected.
+                if (isWarehouse) {
+                    payload.destination_location_type = 'Warehouse';
+                    payload.destination_location_id = user.warehouse_id;
+                } else if (isInventory || isCashier || isManager) {
+                    payload.destination_location_type = 'Store';
+                    payload.destination_location_id = user.store_id;
                 }
-
-                await inventoryApi.createTransaction(payload);
-                showAlert('success', 'Stock adjustment/transfer recorded successfully');
             }
+
+            if (movementsIncreasingStock.includes(formData.movement_type)) {
+                if (selectedStock) {
+                    payload.destination_location_type = selectedStock.location_type;
+                    payload.destination_location_id = selectedStock.location_id;
+                } else {
+                    // Fallback to user's location for ADD/RETURN/etc.
+                    payload.destination_location_type = isWarehouse ? 'Warehouse' : 'Store';
+                    payload.destination_location_id = isWarehouse ? user.warehouse_id : user.store_id;
+                }
+            }
+
+            if (movementsDecreasingStock.includes(formData.movement_type)) {
+                if (selectedStock) {
+                    payload.source_location_type = selectedStock.location_type;
+                    payload.source_location_id = selectedStock.location_id;
+                } else {
+                    // Fallback to user's location for SELL/DAMAGED/etc.
+                    payload.source_location_type = isWarehouse ? 'Warehouse' : 'Store';
+                    payload.source_location_id = isWarehouse ? user.warehouse_id : user.store_id;
+                }
+            }
+
+            if (formData.movement_type === 'TRANSFER') {
+                payload.destination_location_type = formData.destination_location_type;
+                payload.destination_location_id = formData.destination_location_id;
+            }
+
+            await inventoryApi.createTransaction(payload);
+            showAlert('success', 'Stock transaction recorded successfully');
+
             setShowModal(false);
             fetchStock();
         } catch (error) {
@@ -227,7 +273,7 @@ const StockList = () => {
         },
 
         // Location column
-        ...(!(isWarehouse || isInventory || isCashier) ? [{
+        ...(!(isWarehouse || isInventory || isCashier || isManager) ? [{
             title: 'Location Code',
             key: 'location_type',
             render: (_, record) => (
@@ -237,7 +283,7 @@ const StockList = () => {
             )
         }] : []),
 
-        ...(!(isWarehouse || isInventory || isCashier) ? [{
+        ...(!(isWarehouse || isInventory || isCashier || isManager) ? [{
             title: 'Location',
             key: 'location_name',
             render: (val) => (<span>{val}</span>)
@@ -447,9 +493,10 @@ const StockList = () => {
                                                     // Auto-set movement type
                                                     if (existingStock) {
                                                         const options = getMovementOptions();
-                                                        setFormData(f => ({ ...f, movement_type: options[0] || 'Others' }));
+                                                        setFormData(f => ({ ...f, movement_type: options[0] || '' }));
                                                     } else {
-                                                        setFormData(f => ({ ...f, movement_type: 'Add' }));
+                                                        const options = getMovementOptions();
+                                                        setFormData(f => ({ ...f, movement_type: options.includes('ADD') ? 'ADD' : options[0] || '' }));
                                                     }
                                                 }}
                                             >
@@ -494,14 +541,83 @@ const StockList = () => {
                             />
                         </div>
 
-                        <Input
-                            type="text"
-                            label="Notes / Reason"
-                            value={formData.notes}
-                            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                        />
+                        <div className="form-row">
+                            <Input
+                                type="text"
+                                label="Reference / Invoice (Optional)"
+                                value={formData.reference_id || ''}
+                                onChange={(e) => setFormData({ ...formData, reference_id: e.target.value })}
+                                error={formErrors.reference_id}
+                                placeholder="e.g. INV-12345"
+                            />
 
-                        {formData.movement_type === 'Transfer' && (
+                            <Input
+                                type="text"
+                                label="Notes / Reason"
+                                value={formData.notes || ''}
+                                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                placeholder="Additional details..."
+                            />
+                        </div>
+
+                        {formData.movement_type === 'EXCHANGE' && (
+                            <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginTop: '1rem', marginBottom: '1rem' }}>
+                                <Input
+                                    label="Select New Product (for Exchange)"
+                                    required
+                                    type="text"
+                                    placeholder="Search new product..."
+                                    value={exchangeProductSearch}
+                                    onChange={(e) => {
+                                        setExchangeProductSearch(e.target.value);
+                                        setExchangeProductDropdownOpen(true);
+                                        setSelectedExchangeProduct(null);
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setExchangeProductDropdownOpen(!exchangeProductDropdownOpen);
+                                        setProductDropdownOpen(false);
+                                        setDestinationDropdownOpen(false);
+                                    }}
+                                    error={formErrors.exchange_product}
+                                    icon={<span>▼</span>}
+                                />
+                                {exchangeProductDropdownOpen && (
+                                    <div
+                                        style={{
+                                            position: 'absolute', top: '100%', left: 0, right: 0,
+                                            background: 'white', border: '1px solid #e5e7eb',
+                                            borderRadius: '6px', maxHeight: '200px', overflowY: 'auto',
+                                            zIndex: 520, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                                            marginTop: '4px'
+                                        }}
+                                    >
+                                        {activeProducts
+                                            .filter(p => p.id !== selectedProduct?.id) // Exclude old product
+                                            .filter(p => p.stock_quantity > 0) // Only available stock
+                                            .filter(p => `${p.product_name} ${p.sku}`.toLowerCase().includes(exchangeProductSearch.toLowerCase()))
+                                            .map(p => (
+                                                <div
+                                                    key={p.id}
+                                                    style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid #f3f4f6' }}
+                                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                                    onClick={() => {
+                                                        setSelectedExchangeProduct(p);
+                                                        setExchangeProductSearch(`${p.product_name} (SKU: ${p.sku})`);
+                                                        setExchangeProductDropdownOpen(false);
+                                                    }}
+                                                >
+                                                    <div style={{ fontWeight: 500, color: '#1f2937' }}>{p.product_name}</div>
+                                                    <div style={{ fontSize: '12px', color: '#6b7280' }}>SKU: {p.sku}</div>
+                                                </div>
+                                            ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {formData.movement_type === 'TRANSFER' && (
                             <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginTop: '1rem', marginBottom: '1rem' }}>
                                 <label className="input-label">Destination Location <span className="required">*</span></label>
                                 <div

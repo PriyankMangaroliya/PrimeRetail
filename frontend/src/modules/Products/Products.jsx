@@ -204,7 +204,7 @@ const Products = () => {
             title: 'Unit',
             key: 'unit'
         },
-        {
+        ...(!isOwner ? [{
             title: 'Stock',
             key: 'stock_quantity',
             render: (value, record) => (
@@ -215,7 +215,7 @@ const Products = () => {
                     {value <= record.min_stock && <Icons.AlertTriangle size={14} color="var(--danger-color)" />}
                 </div>
             )
-        },
+        }] : []),
         {
             title: 'Status',
             key: 'is_active',
@@ -482,18 +482,6 @@ const Products = () => {
                                 </div>
                             </div>
 
-                            {/* Store-wise Stock table */}
-                            <div className="view-products-list">
-                                <h4>Store-wise Stock</h4>
-                                    <div className="products-scroll">
-                                        <Table
-                                            columns={stockColumns}
-                                            data={selectedProduct?.stock_by_store || []}
-                                            searchable={false}
-                                            itemsPerPage={5}
-                                        />
-                                    </div>
-                            </div>
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="category-form">

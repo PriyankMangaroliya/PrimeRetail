@@ -8,10 +8,11 @@ const stockTransactionValidation = {
             'number.positive': 'Product ID must be a positive number',
             'any.required': 'Product ID is required'
         }),
+        stock_id: Joi.number().integer().positive().allow(null).optional(),
         movement_type: Joi.string().trim().valid(
-            'Add', 'Damaged', 'Return', 'Exchange', 
-            'By Mistake Add', 'Sell', 
-            'Remove', 'Transfer'
+            'ADD', 'SELL', 'RETURN', 'EXCHANGE', 
+            'TRANSFER', 'DAMAGED', 
+            'MANUAL_ADD', 'MANUAL_REMOVE'
         ).required().messages({
             'any.only': 'Invalid movement type',
             'any.required': 'Movement type is required'
@@ -24,18 +25,19 @@ const stockTransactionValidation = {
             'number.min': 'Quantity must be at least 1',
             'any.required': 'Quantity is required'
         }),
-        reference_type: Joi.string().trim().max(50).allow(null).optional(),
-        reference_id: Joi.number().integer().positive().allow(null).optional(),
+        reference_type: Joi.string().trim().max(50).allow(null, '').optional(),
+        reference_id: Joi.string().trim().max(50).allow(null, '').optional(),
         notes: Joi.string().trim().max(500).allow(null, '').optional(),
+        exchange_product_id: Joi.number().integer().positive().allow(null).optional(),
         created_by: Joi.number().integer().positive().required().messages({
             'any.required': 'Creator ID is required'
         })
     }).custom((value, helpers) => {
-        // For transfer, both source and destination are required
-        if (value.movement_type === 'Transfer') {
+        // For TRANSFER, both source and destination are required
+        if (value.movement_type === 'TRANSFER') {
             if (!value.source_location_type || !value.source_location_id ||
                 !value.destination_location_type || !value.destination_location_id) {
-                return helpers.message('Transfer requires both source and destination locations');
+                return helpers.message('TRANSFER requires both source and destination locations');
             }
         }
         return value;
@@ -74,7 +76,7 @@ const stockTransactionValidation = {
         reference_type: Joi.string().trim().max(50).required().messages({
             'any.required': 'Reference type is required'
         }),
-        reference_id: Joi.number().integer().positive().required().messages({
+        reference_id: Joi.string().trim().max(50).required().messages({
             'any.required': 'Reference ID is required'
         })
     })

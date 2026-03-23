@@ -2,7 +2,7 @@ const db = require('../../config/database.config');
 
 const stockModel = {
     // Create new stock entry
-    createStock: (stockData) => {
+    createStock: (stockData, client = db) => {
         const { product_id, location_type, location_id, quantity, created_by } = stockData;
         const query = {
             text: `INSERT INTO stock_master 
@@ -10,11 +10,11 @@ const stockModel = {
              VALUES ($1, $2, $3, $4, $5, $5) RETURNING *`,
             values: [product_id, location_type, location_id, quantity, created_by]
         };
-        return db.query(query);
+        return client.query(query);
     },
 
     // Update stock quantity
-    updateStockQuantity: (id, quantity, updated_by) => {
+    updateStockQuantity: (id, quantity, updated_by, client = db) => {
         const query = {
             text: `UPDATE stock_master 
              SET quantity = $1, 
@@ -23,7 +23,7 @@ const stockModel = {
              WHERE id = $3 RETURNING *`,
             values: [quantity, updated_by, id]
         };
-        return db.query(query);
+        return client.query(query);
     },
 
     // Delete stock (hard delete)
@@ -80,13 +80,13 @@ const stockModel = {
     },
 
     // Get stock by product and location
-    getStockByLocationAndProduct: (location_type, location_id, product_id) => {
+    getStockByLocationAndProduct: (location_type, location_id, product_id, client = db) => {
         const query = {
             text: `SELECT * FROM stock_master 
              WHERE location_type = $1 AND location_id = $2 AND product_id = $3`,
             values: [location_type, location_id, product_id]
         };
-        return db.query(query);
+        return client.query(query);
     },
 
     // Get stock by product
@@ -144,6 +144,23 @@ const stockModel = {
             values: [threshold]
         };
         return db.query(query);
+    },
+
+    // Get stock by product and location (Upsert helper)
+    upsertStock: (stockData, client = db) => {
+        const { product_id, location_type, location_id, quantity, updated_by } = stockData;
+        const query = {
+            text: `INSERT INTO stock_master (product_id, location_type, location_id, quantity, created_by, updated_by)
+                   VALUES ($1, $2, $3, $4, $5, $5)
+                   ON CONFLICT (product_id, location_type, location_id)
+                   DO UPDATE SET 
+                       quantity = stock_master.quantity + EXCLUDED.quantity,
+                       updated_by = EXCLUDED.updated_by,
+                       updated_at = CURRENT_TIMESTAMP
+                   RETURNING *`,
+            values: [product_id, location_type, location_id, quantity, updated_by]
+        };
+        return client.query(query);
     }
 };
 
