@@ -54,7 +54,7 @@ const Discounts = () => {
         return (
             <MainLayout>
                 <div className="discounts-container">
-                    <div className="discounts-header">
+                    <div className="page-header">
                         <div>
                             <h1>Discount Management</h1>
                             <p>Access restricted for your role</p>
@@ -316,7 +316,7 @@ const Discounts = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="discounts-loading">
+                <div className="page-loading">
                     <Loader size="large" />
                     <p>Loading discounts...</p>
                 </div>
@@ -330,7 +330,7 @@ const Discounts = () => {
             <div className="discounts-container">
 
                 {/* Header */}
-                <div className="discounts-header">
+                <div className="page-header">
                     <div>
                         <h1>Discount Management</h1>
                         <p>
@@ -426,11 +426,11 @@ const Discounts = () => {
                         /* ── View Details ──────────────────────────────────────── */
                     ) : modalType === 'view' ? (
                         <div className="discount-view">
-                            <div className="dc-details-view">
-                                <div className="dc-brand-icon">
-                                    <Icons.Tag size={48} />
+                            <div className="common-detail-header">
+                                <div className="detail-icon-large">
+                                    <Icons.Tag size={40} />
                                 </div>
-                                <div className="dc-info-text">
+                                <div className="detail-info-text">
                                     <h3>{selectedDiscount?.discount_name}</h3>
                                     <p>
                                         <Badge variant={selectedDiscount?.discount_type === 'Percentage' ? 'info' : 'warning'}>
@@ -445,49 +445,35 @@ const Discounts = () => {
                                 </div>
                             </div>
 
-                            <div className="view-grid" style={{ marginTop: '20px' }}>
+                            <div className="view-grid">
                                 <div className="view-group">
                                     <label>Status</label>
                                     <p>
-                                        <Badge variant={selectedDiscount?.is_active ? 'success' : 'danger'} className="badge-status">
+                                        <Badge variant={selectedDiscount?.is_active ? 'success' : 'danger'}>
                                             {selectedDiscount?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </p>
                                 </div>
                                 <div className="view-group">
                                     <label>Scheduling</label>
-                                    <p>
-                                        <small>
-                                            <strong>From:</strong> {selectedDiscount?.start_date ? new Date(selectedDiscount.start_date).toLocaleDateString() : 'N/A'}<br />
-                                            <strong>To:</strong> {selectedDiscount?.end_date ? new Date(selectedDiscount.end_date).toLocaleDateString() : 'N/A'}
-                                        </small>
-                                    </p>
+                                    <div className="table-info-group">
+                                        <p><small><strong>From:</strong> {selectedDiscount?.start_date ? new Date(selectedDiscount.start_date).toLocaleDateString() : 'N/A'}</small></p>
+                                        <p><small><strong>To:</strong> {selectedDiscount?.end_date ? new Date(selectedDiscount.end_date).toLocaleDateString() : 'N/A'}</small></p>
+                                    </div>
                                 </div>
-                                <div className="view-group" style={{ gridColumn: 'span 2' }}>
+                                <div className="view-group full-width">
                                     <label>Description</label>
-                                    <p>{selectedDiscount?.description || 'N/A'}</p>
+                                    <p>{selectedDiscount?.description || 'No description provided'}</p>
                                 </div>
                                 <div className="view-group">
                                     <label>Created</label>
-                                    <p>
-                                        <small>
-                                            {selectedDiscount?.created_at
-                                                ? new Date(selectedDiscount.created_at).toLocaleString()
-                                                : 'N/A'}
-                                            {selectedDiscount?.created_by_name ? ` by ${selectedDiscount.created_by_name}` : ''}
-                                        </small>
-                                    </p>
+                                    <p>{selectedDiscount?.created_at ? new Date(selectedDiscount.created_at).toLocaleDateString() : 'N/A'}</p>
+                                    <small className="table-secondary-text">{selectedDiscount?.created_by_name ? `By ${selectedDiscount.created_by_name}` : ''}</small>
                                 </div>
                                 <div className="view-group">
                                     <label>Last Updated</label>
-                                    <p>
-                                        <small>
-                                            {selectedDiscount?.updated_at
-                                                ? new Date(selectedDiscount.updated_at).toLocaleString()
-                                                : 'N/A'}
-                                            {selectedDiscount?.updated_by_name ? ` by ${selectedDiscount.updated_by_name}` : ''}
-                                        </small>
-                                    </p>
+                                    <p>{selectedDiscount?.updated_at ? new Date(selectedDiscount.updated_at).toLocaleDateString() : 'N/A'}</p>
+                                    <small className="table-secondary-text">{selectedDiscount?.updated_by_name ? `By ${selectedDiscount.updated_by_name}` : ''}</small>
                                 </div>
                             </div>
                         </div>

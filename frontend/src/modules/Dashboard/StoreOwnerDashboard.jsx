@@ -9,10 +9,12 @@ import './Dashboard.css';
 const StoreOwnerDashboard = () => {
     return (
         <MainLayout>
-            <div className="dashboard">
-                <div className="dashboard-header">
-                    <h1>Store Owner Dashboard</h1>
-                    <p>Welcome back! Here's your store performance.</p>
+            <div className="dashboard-container">
+                <div className="page-header">
+                    <div>
+                        <h1>Store Owner Dashboard</h1>
+                        <p>Welcome back! Here's your store performance.</p>
+                    </div>
                 </div>
 
                 {/* Store Stats */}

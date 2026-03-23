@@ -342,9 +342,9 @@ const StockList = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="inventory-loading">
+                <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading stock inventory...</p>
+                    <p>Loading stock data...</p>
                 </div>
             </MainLayout>
         );
@@ -356,12 +356,12 @@ const StockList = () => {
     return (
         <MainLayout>
             <div className="inventory-container">
-                <header className="inventory-header">
-                    <div className="header-info">
+                <header className="page-header">
+                    <div>
                         <h1>Current Stock</h1>
                         <p>View and manage your inventory stock levels</p>
                     </div>
-                    <div className="header-actions" style={{ display: 'flex', gap: '10px' }}>
+                    <div className="header-actions">
                         {canManageStock && (
                             <Button
                                 variant="outline"
@@ -385,7 +385,7 @@ const StockList = () => {
                     </div>
                 </header>
 
-                <div className="inventory-stats">
+                <div className="stats-grid">
                     <div className="stat-card">
                         <div className="stat-icon primary">
                             <Icons.Package size={24} />

@@ -51,10 +51,12 @@ const StoreManagerDashboard = () => {
 
     return (
         <MainLayout>
-            <div className="dashboard">
-                <div className="dashboard-header">
-                    <h1>Store Manager Dashboard</h1>
-                    <p>Manage your store operations efficiently.</p>
+            <div className="dashboard-container">
+                <div className="page-header">
+                    <div>
+                        <h1>Store Manager Dashboard</h1>
+                        <p>Manage your store operations efficiently.</p>
+                    </div>
                 </div>
 
                 {/* Quick Stats */}

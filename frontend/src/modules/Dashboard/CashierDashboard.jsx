@@ -22,10 +22,12 @@ const CashierDashboard = () => {
 
     return (
         <MainLayout>
-            <div className="dashboard cashier-dashboard">
-                <div className="dashboard-header">
-                    <h1>Point of Sale</h1>
-                    <p>Welcome back, Cashier! Ready to process sales?</p>
+            <div className="dashboard-container cashier-dashboard">
+                <div className="page-header">
+                    <div>
+                        <h1>Point of Sale</h1>
+                        <p>Welcome back, Cashier! Ready to process sales?</p>
+                    </div>
                 </div>
 
                 <div className="pos-layout">
@@ -80,16 +82,16 @@ const CashierDashboard = () => {
                             ))}
                         </div>
 
-                        <div className="cart-totals">
-                            <div className="total-row">
+                        <div className="cart-totals common-summary-list">
+                            <div className="summary-row">
                                 <span>Subtotal:</span>
                                 <span>${calculateTotal()}</span>
                             </div>
-                            <div className="total-row">
+                            <div className="summary-row">
                                 <span>Tax (10%):</span>
                                 <span>${(parseFloat(calculateTotal()) * 0.1).toFixed(2)}</span>
                             </div>
-                            <div className="total-row grand-total">
+                            <div className="summary-row total">
                                 <span>Total:</span>
                                 <span>${(parseFloat(calculateTotal()) * 1.1).toFixed(2)}</span>
                             </div>

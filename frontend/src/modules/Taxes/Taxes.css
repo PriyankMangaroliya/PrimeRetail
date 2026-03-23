@@ -1,44 +1,6 @@
-.taxes-container {
-    padding: 24px;
-}
+/* Taxes.css */
 
-.taxes-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.taxes-header h1 {
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.taxes-header p {
-    color: var(--gray-600);
-}
-
-.header-actions {
-    display: flex;
-    gap: 12px;
-}
-
-.taxes-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    gap: 16px;
-}
-
-.taxes-loading p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
+/* Page header and loading are now global */
 
 .taxes-table-card {
     overflow-x: auto;
@@ -88,25 +50,7 @@
     color: var(--gray-600);
 }
 
-.delete-confirmation {
-    text-align: center;
-    padding: 20px 0;
-}
-
-.delete-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-}
-
-.delete-confirmation p {
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.delete-warning {
-    color: var(--danger-color) !important;
-    font-weight: 500;
-}
+/* Modal styles now global */
 
 .delete-info {
     margin-top: 16px !important;
@@ -135,32 +79,5 @@ input[type="number"]::-webkit-inner-spin-button {
 @media (max-width: 768px) {
     .taxes-container {
         padding: 16px;
-    }
-
-    .taxes-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .header-actions {
-        width: 100%;
-    }
-
-    .header-actions .btn {
-        width: 100%;
-    }
-
-    .action-buttons {
-        flex-wrap: nowrap;
-    }
-
-    .action-buttons .btn {
-        padding: 6px 8px;
-    }
-}
-
-@media (max-width: 480px) {
-    .action-buttons {
-        flex-wrap: wrap;
     }
 }

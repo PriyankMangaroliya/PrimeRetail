@@ -128,9 +128,9 @@ const Payments = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="payments-loading">
+                <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading payments...</p>
+                    <p>Loading payment records...</p>
                 </div>
             </MainLayout>
         );
@@ -139,12 +139,12 @@ const Payments = () => {
     return (
         <MainLayout>
             <div className="payments-container">
-                <header className="payments-header">
-                    <div className="header-info">
+                <div className="page-header">
+                    <div>
                         <h1>Payment Records</h1>
                         <p>Track all received payments and transaction statuses</p>
                     </div>
-                </header>
+                </div>
 
                 {alert.show && (
                     <Alert type={alert.type} dismissible>
@@ -192,28 +192,28 @@ const Payments = () => {
                                 </div>
                             </div>
 
-                            <div className="detail-grid">
-                                <div className="detail-group">
+                            <div className="view-grid">
+                                <div className="view-group">
                                     <label>Payment Date</label>
                                     <p>{new Date(selectedPayment.payment_date).toLocaleString()}</p>
                                 </div>
-                                <div className="detail-group">
+                                <div className="view-group">
                                     <label>Payment Method</label>
                                     <p><Badge variant="info">{selectedPayment.method_name || 'Cash'}</Badge></p>
                                 </div>
-                                <div className="detail-group">
+                                <div className="view-group">
                                     <label>Transaction ID</label>
                                     <p className="badge-code">{selectedPayment.transaction_id || 'N/A'}</p>
                                 </div>
-                                <div className="detail-group">
+                                <div className="view-group">
                                     <label>Status</label>
                                     <p>{getStatusBadge(selectedPayment.payment_status)}</p>
                                 </div>
-                                <div className="detail-group">
+                                <div className="view-group">
                                     <label>Store Code</label>
                                     <p>{selectedPayment.store_code}</p>
                                 </div>
-                                <div className="detail-group">
+                                <div className="view-group">
                                     <label>Recorded By</label>
                                     <p>System User</p>
                                 </div>

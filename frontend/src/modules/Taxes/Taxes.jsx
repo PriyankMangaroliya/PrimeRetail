@@ -297,9 +297,9 @@ const Taxes = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="taxes-loading">
+                <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading taxes...</p>
+                    <p>Loading tax settings...</p>
                 </div>
             </MainLayout>
         );
@@ -308,7 +308,7 @@ const Taxes = () => {
     return (
         <MainLayout>
             <div className="taxes-container">
-                <div className="taxes-header">
+                <div className="page-header">
                     <div>
                         <h1>Tax Management</h1>
                         <p>Manage tax rates and configurations</p>
@@ -318,7 +318,7 @@ const Taxes = () => {
                             variant="primary"
                             onClick={() => handleOpenModal('add')}
                         >
-                                <Icons.Plus size={18} /> Create New Tax
+                            <Icons.Plus size={18} /> Create New Tax
                         </Button>
                     </div>
                 </div>
@@ -403,28 +403,44 @@ const Taxes = () => {
                             )}
                         </div>
                     ) : modalType === 'view' ? (
-                        <div className="tax-view" style={{ textAlign: 'center', padding: '20px 0' }}>
-                            <div style={{ marginBottom: '16px' }}><Icons.Tax size={48} color="var(--primary-color)" /></div>
-                            <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--gray-800)', marginBottom: '24px' }}>{selectedTax?.tax_name}</h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', background: 'var(--gray-50)', padding: '20px', borderRadius: '8px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Tax Rate</span>
-                                    <Badge variant="primary">{selectedTax?.tax_rate}%</Badge>
+                        <div className="tax-view">
+                            <div className="view-grid">
+                                <div className="view-group">
+                                    <label>Tax Name</label>
+                                    <p>{selectedTax?.tax_name}</p>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Status</span>
-                                    <Badge variant={selectedTax?.is_active ? 'success' : 'danger'} className="badge-status">{selectedTax?.is_active ? 'Active' : 'Inactive'}</Badge>
+                                <div className="view-group">
+                                    <label>Tax Rate</label>
+                                    <p>
+                                        <Badge variant="primary">{selectedTax?.tax_rate}%</Badge>
+                                    </p>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Usage Assignments</span>
-                                    <span style={{ fontSize: '16px', fontWeight: '600', color: 'var(--primary-color)' }}>{selectedTax?.usage_count || 0}</span>
+                                <div className="view-group">
+                                    <label>Status</label>
+                                    <p>
+                                        <Badge variant={selectedTax?.is_active ? 'success' : 'danger'}>
+                                            {selectedTax?.is_active ? 'Active' : 'Inactive'}
+                                        </Badge>
+                                    </p>
                                 </div>
-                                {selectedTax?.description && (
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
-                                        <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Description</span>
-                                        <span style={{ fontSize: '14px', color: 'var(--gray-800)', maxWidth: '200px', textAlign: 'right', wordBreak: 'break-word' }}>{selectedTax.description}</span>
-                                    </div>
-                                )}
+                                <div className="view-group">
+                                    <label>Usage Count</label>
+                                    <p>{selectedTax?.usage_count || 0} items</p>
+                                </div>
+                                <div className="view-group full-width">
+                                    <label>Description</label>
+                                    <p>{selectedTax?.description || 'No description provided'}</p>
+                                </div>
+                                <div className="view-group">
+                                    <label>Created</label>
+                                    <p>{selectedTax?.created_at ? new Date(selectedTax.created_at).toLocaleDateString() : 'N/A'}</p>
+                                    <small className="table-secondary-text">{selectedTax?.created_by_name ? `By ${selectedTax.created_by_name}` : ''}</small>
+                                </div>
+                                <div className="view-group">
+                                    <label>Last Updated</label>
+                                    <p>{selectedTax?.updated_at ? new Date(selectedTax.updated_at).toLocaleDateString() : 'N/A'}</p>
+                                    <small className="table-secondary-text">{selectedTax?.updated_by_name ? `By ${selectedTax.updated_by_name}` : ''}</small>
+                                </div>
                             </div>
                         </div>
                     ) : (

@@ -10,33 +10,57 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(4px);
     z-index: 9999;
 }
 
 .loader {
-    border: 3px solid var(--gray-200);
-    border-top: 3px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+    position: relative;
+    display: inline-block;
 }
 
 .loader-small {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
 }
 
 .loader-medium {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
 }
 
 .loader-large {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.spinner-blade {
+    position: absolute;
+    left: 44.5%;
+    top: 37%;
+    width: 10%;
+    height: 25%;
+    background-color: var(--primary-color, #0056b3);
+    border-radius: 50px;
+    animation: spinner-fade 1s linear infinite;
+    transform-origin: center 50%;
 }
+
+@keyframes spinner-fade {
+    0% { background-color: #0056b3; }
+    100% { background-color: transparent; }
+}
+
+.spinner-blade:nth-child(1) { transform: rotate(0deg) translateY(-150%); animation-delay: -1s; }
+.spinner-blade:nth-child(2) { transform: rotate(30deg) translateY(-150%); animation-delay: -0.916s; }
+.spinner-blade:nth-child(3) { transform: rotate(60deg) translateY(-150%); animation-delay: -0.833s; }
+.spinner-blade:nth-child(4) { transform: rotate(90deg) translateY(-150%); animation-delay: -0.75s; }
+.spinner-blade:nth-child(5) { transform: rotate(120deg) translateY(-150%); animation-delay: -0.666s; }
+.spinner-blade:nth-child(6) { transform: rotate(150deg) translateY(-150%); animation-delay: -0.583s; }
+.spinner-blade:nth-child(7) { transform: rotate(180deg) translateY(-150%); animation-delay: -0.5s; }
+.spinner-blade:nth-child(8) { transform: rotate(210deg) translateY(-150%); animation-delay: -0.416s; }
+.spinner-blade:nth-child(9) { transform: rotate(240deg) translateY(-150%); animation-delay: -0.333s; }
+.spinner-blade:nth-child(10) { transform: rotate(270deg) translateY(-150%); animation-delay: -0.25s; }
+.spinner-blade:nth-child(11) { transform: rotate(300deg) translateY(-150%); animation-delay: -0.166s; }
+.spinner-blade:nth-child(12) { transform: rotate(330deg) translateY(-150%); animation-delay: -0.083s; }

@@ -275,7 +275,7 @@ const Roles = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="roles-loading">
+                <div className="page-loading">
                     <Loader size="large" />
                     <p>Loading roles...</p>
                 </div>
@@ -287,7 +287,7 @@ const Roles = () => {
         <MainLayout>
             <div className="roles-container">
                 {/* Header */}
-                <div className="roles-header">
+                <div className="page-header">
                     <div>
                         <h1>Role Management</h1>
                         <p>Manage system roles and permissions</p>
@@ -383,9 +383,23 @@ const Roles = () => {
                         </div>
                     ) : modalType === 'view' ? (
                         <div className="role-view">
-                            <div className="role-details">
-                                <h3>{selectedRole?.role_name}</h3>
-                                <p>{selectedRole?.description || 'No description provided'}</p>
+                            <div className="view-grid">
+                                <div className="view-group">
+                                    <label>Role Name</label>
+                                    <p>{selectedRole?.role_name}</p>
+                                </div>
+                                <div className="view-group">
+                                    <label>Status</label>
+                                    <p>
+                                        <Badge variant={selectedRole?.is_active ? 'success' : 'danger'}>
+                                            {selectedRole?.is_active ? 'Active' : 'Inactive'}
+                                        </Badge>
+                                    </p>
+                                </div>
+                                <div className="view-group full-width">
+                                    <label>Description</label>
+                                    <p>{selectedRole?.description || 'No description provided'}</p>
+                                </div>
                             </div>
                             <div className="role-users-section" style={{ marginTop: '20px' }}>
                                 <h4>Users with this role ({selectedRole?.user_count || 0})</h4>

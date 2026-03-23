@@ -9,10 +9,12 @@ import './Dashboard.css';
 const WarehouseStaffDashboard = () => {
     return (
         <MainLayout>
-            <div className="dashboard">
-                <div className="dashboard-header">
-                    <h1>Warehouse Operations</h1>
-                    <p>Manage warehouse inventory and shipments</p>
+            <div className="dashboard-container">
+                <div className="page-header">
+                    <div>
+                        <h1>Warehouse Operations</h1>
+                        <p>Manage warehouse inventory and shipments</p>
+                    </div>
                 </div>
 
                 {/* Warehouse Stats */}

@@ -1,41 +1,6 @@
-.products-container {
-    padding: 24px;
-}
+/* Products.css */
 
-.products-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.products-header h1 {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.products-header p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
-
-.products-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    gap: 16px;
-}
-
-.products-loading p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
+/* Page header and loading are now global */
 
 .products-table-card {
     overflow-x: auto;
@@ -79,43 +44,9 @@
     display: block;
 }
 
-.form-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    background: var(--gray-50);
-    border-radius: 6px;
-    font-size: 13px;
-    color: var(--gray-600);
-    border-left: 3px solid var(--primary-color);
-}
+/* form-info is now global */
 
-.form-info small {
-    color: var(--gray-600);
-}
-
-.delete-confirmation {
-    text-align: center;
-    padding: 20px 0;
-}
-
-.delete-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-}
-
-.delete-confirmation p {
-    font-size: 16px;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.delete-warning {
-    color: var(--danger-color) !important;
-    font-size: 14px !important;
-    font-weight: 500;
-}
+/* Modal styles now global */
 
 .product-details-view {
     display: flex;
@@ -148,26 +79,7 @@
     font-size: 14px;
 }
 
-.view-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-
-.view-group label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray-500);
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 4px;
-}
-
-.view-group p {
-    font-size: 15px;
-    color: var(--gray-800);
-    margin: 0;
-}
+/* View grid and groups are global */
 
 .price-section {
     margin-top: 24px;
@@ -185,24 +97,7 @@
         padding: 16px;
     }
 
-    .products-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .header-actions {
-        width: 100%;
-    }
-
-    .header-actions .btn {
-        width: 100%;
-    }
-
     .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    .view-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -218,67 +113,4 @@
     color: var(--gray-700);
 }
 
-.products-scroll {
-    overflow-x: auto;
-    border: 1px solid var(--gray-100);
-    border-radius: 8px;
-}
-
-.mini-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.mini-table th {
-    background: var(--gray-50);
-    padding: 10px 15px;
-    text-align: left;
-    color: var(--gray-600);
-    font-weight: 600;
-    border-bottom: 1px solid var(--gray-100);
-}
-
-.mini-table td {
-    padding: 10px 15px;
-    border-bottom: 1px solid var(--gray-50);
-}
-
-.mini-table tr:last-child td {
-    border-bottom: none;
-}
-
-.cat-details-view {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 25px;
-}
-
-.cat-brand-icon {
-    width: 80px;
-    height: 80px;
-    background: var(--primary-light);
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-}
-
-.cat-info-text h3 {
-    font-size: 24px;
-    margin-bottom: 5px;
-}
-
-.view-group label {
-    display: block;
-    font-size: 11px;
-    text-transform: uppercase;
-    color: var(--gray-500);
-    margin-bottom: 5px;
-}
-
-.view-group p {
-    font-weight: 500;
-    color: var(--gray-800);
-}
+/* Table and view patterns are now global */

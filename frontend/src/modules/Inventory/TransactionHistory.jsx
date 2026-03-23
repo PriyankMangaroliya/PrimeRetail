@@ -155,9 +155,9 @@ const TransactionHistory = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="inventory-loading">
+                <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading transaction history...</p>
+                    <p>Loading transactions...</p>
                 </div>
             </MainLayout>
         );
@@ -166,8 +166,8 @@ const TransactionHistory = () => {
     return (
         <MainLayout>
             <div className="inventory-container">
-                <header className="inventory-header">
-                    <div className="header-info">
+                <header className="page-header">
+                    <div>
                         <h1>Transaction History</h1>
                         <p>Track all inventory movements, damages, and transfers</p>
                     </div>

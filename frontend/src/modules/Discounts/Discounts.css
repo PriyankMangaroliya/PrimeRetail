@@ -1,42 +1,6 @@
-.discounts-container {
-    padding: 24px;
-}
-.discounts-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-.discounts-header h1 {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-.discounts-header p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
-.discounts-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    gap: 16px;
-}
-.discounts-loading p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
-.discounts-table-card {
-    overflow-x: auto;
-}
-.discounts-table {
-    min-width: 900px;
-}
+/* Discounts.css */
+
+/* Page header and loading are now global */
 .dc-view-btn {
     background: none;
     border: 1px solid var(--gray-300);
@@ -97,111 +61,24 @@
     font-size: 12px;
     color: var(--danger-color, #ef4444);
 }
-.delete-confirmation {
-    text-align: center;
-    padding: 20px 0;
-}
-.delete-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-}
-.delete-confirmation p {
-    font-size: 16px;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-.delete-warning {
-    color: var(--danger-color) !important;
-    font-size: 14px !important;
-    font-weight: 500;
-}
-.dc-details-view {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--gray-200);
-}
-.dc-brand-icon {
-    flex-shrink: 0;
-}
-.dc-icon-large {
-    font-size: 40px;
-    background: var(--primary-light, #ede9fe);
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-.dc-info-text h3 {
-    margin: 0 0 8px 0;
-    font-size: 22px;
-    color: var(--gray-800);
-}
-.dc-info-text p {
-    margin: 4px 0;
-    color: var(--gray-600);
-    font-size: 14px;
-}
+/* Shared modal styles are global */
+/* dc-details-view patterns are now global */
 .dc-value-large {
     font-size: 20px !important;
     font-weight: 700;
     color: var(--primary-color) !important;
 }
-.view-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-.view-group label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray-500);
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 4px;
-}
-.view-group p {
-    font-size: 14px;
-    color: var(--gray-800);
-    margin: 0;
-}
+/* View grid and groups are global */
 @media (max-width: 768px) {
     .discounts-container {
         padding: 16px;
     }
-    .discounts-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .header-actions {
-        width: 100%;
-    }
-    .header-actions .btn {
-        width: 100%;
-    }
-    .action-menu-dropdown {
-        right: auto;
-        left: 0;
-    }
     .form-row {
-        grid-template-columns: 1fr;
-    }
-    .view-grid {
         grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 480px) {
-    .action-menu-dropdown {
-        left: unset;
-        right: 0;
-    }
-
-    .dc-type-badge,
-    .status-badge {
-        padding: 3px 6px;
-    }
+.dc-type-badge,
+.status-badge {
+    padding: 3px 6px;
 }

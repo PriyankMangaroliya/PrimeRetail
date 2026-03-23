@@ -375,7 +375,7 @@ const StoreOwners = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="owners-loading">
+                <div className="page-loading">
                     <Loader size="large" />
                     <p>Loading store owners...</p>
                 </div>
@@ -387,7 +387,7 @@ const StoreOwners = () => {
         <MainLayout>
             <div className="owners-container">
                 {/* Header */}
-                <div className="owners-header">
+                <div className="page-header">
                     <div>
                         <h1>Store Owner Management</h1>
                         <p>Manage store owners and their stores</p>
@@ -484,20 +484,41 @@ const StoreOwners = () => {
                         </div>
                     ) : modalType === 'view' ? (
                         <div className="owner-view">
-                            <div className="owner-details-view">
-                                <div className="owner-avatar-large">
-                                    {selectedOwner?.profile_image ? (
-                                        <img src={selectedOwner.profile_image} alt={selectedOwner.name} />
-                                    ) : (
-                                        <span className="owner-initials-large">
-                                            {selectedOwner?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
-                                        </span>
-                                    )}
+                            <div className="view-grid">
+                                <div className="view-group full-width" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                                    <div className="owner-avatar-large">
+                                        {selectedOwner?.profile_image ? (
+                                            <img src={selectedOwner.profile_image} alt={selectedOwner.name} />
+                                        ) : (
+                                            <span className="owner-initials-large">
+                                                {selectedOwner?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <h3>{selectedOwner?.name}</h3>
+                                        <p className="table-secondary-text">{selectedOwner?.email}</p>
+                                    </div>
                                 </div>
-                                <div className="owner-info-text">
-                                    <h3>{selectedOwner?.name}</h3>
-                                    <p><Icons.Mail size={16} /> {selectedOwner?.email}</p>
-                                    {selectedOwner?.phone && <p><Icons.Phone size={16} /> {selectedOwner.phone}</p>}
+                                <div className="view-group">
+                                    <label>Email</label>
+                                    <p>{selectedOwner?.email}</p>
+                                </div>
+                                <div className="view-group">
+                                    <label>Phone</label>
+                                    <p>{selectedOwner?.phone || 'N/A'}</p>
+                                </div>
+                                <div className="view-group">
+                                    <label>Status</label>
+                                    <p>
+                                        <Badge variant={selectedOwner?.is_active ? 'success' : 'danger'}>
+                                            {selectedOwner?.is_active ? 'Active' : 'Inactive'}
+                                        </Badge>
+                                    </p>
+                                </div>
+                                <div className="view-group">
+                                    <label>Store Count</label>
+                                    <p>{selectedOwner?.store_count || 0} Stores</p>
                                 </div>
                             </div>
                             <div className="owner-stores-section" style={{ marginTop: '20px' }}>

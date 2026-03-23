@@ -466,7 +466,7 @@ const Stores = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="stores-loading">
+                <div className="page-loading">
                     <Loader size="large" />
                     <p>Loading stores...</p>
                 </div>
@@ -478,7 +478,7 @@ const Stores = () => {
         <MainLayout>
             <div className="stores-container">
                 {/* Header */}
-                <div className="stores-header">
+                <div className="page-header">
                     <div>
                         <h1>{isStoreOwner ? 'My Stores' : 'My Store'}</h1>
                         <p>
@@ -603,7 +603,7 @@ const Stores = () => {
                                 </div>
                             </div>
 
-                            <div className="view-grid" style={{ marginTop: '20px' }}>
+                            <div className="view-grid">
                                 <div className="view-group">
                                     <label>Location</label>
                                     <p>{selectedStore?.address || 'N/A'}</p>
@@ -612,7 +612,7 @@ const Stores = () => {
                                 <div className="view-group">
                                     <label>Status</label>
                                     <p>
-                                        <Badge variant={selectedStore?.is_active ? 'success' : 'danger'} className="badge-status">
+                                        <Badge variant={selectedStore?.is_active ? 'success' : 'danger'}>
                                             {selectedStore?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </p>
@@ -620,12 +620,12 @@ const Stores = () => {
                                 <div className="view-group">
                                     <label>Created</label>
                                     <p>{selectedStore?.created_at ? new Date(selectedStore.created_at).toLocaleString() : 'N/A'}</p>
-                                    <small style={{ color: 'var(--gray-600)' }}>{selectedStore?.created_by_name ? `By ${selectedStore.created_by_name}` : ''}</small>
+                                    <small className="table-secondary-text">{selectedStore?.created_by_name ? `By ${selectedStore.created_by_name}` : ''}</small>
                                 </div>
                                 <div className="view-group">
                                     <label>Last Updated</label>
                                     <p>{selectedStore?.updated_at ? new Date(selectedStore.updated_at).toLocaleString() : 'N/A'}</p>
-                                    <small style={{ color: 'var(--gray-600)' }}>{selectedStore?.updated_by_name ? `By ${selectedStore.updated_by_name}` : ''}</small>
+                                    <small className="table-secondary-text">{selectedStore?.updated_by_name ? `By ${selectedStore.updated_by_name}` : ''}</small>
                                 </div>
                             </div>
 

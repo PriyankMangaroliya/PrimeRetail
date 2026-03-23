@@ -1,41 +1,6 @@
-.invoices-container {
-    padding: 24px;
-}
+/* Invoices.css */
 
-.invoices-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.invoices-header h1 {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.invoices-header p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
-
-.invoices-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    gap: 16px;
-}
-
-.invoices-loading p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
+/* Page header and loading are now global */
 
 .invoices-table-card {
     overflow-x: auto;
@@ -78,29 +43,7 @@
     color: var(--gray-500);
 }
 
-.detail-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    margin-bottom: 30px;
-}
-
-.detail-group label {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--gray-500);
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-}
-
-.detail-group p {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--gray-800);
-    margin: 0;
-}
+/* Detail grid and groups are global */
 
 .detail-customer-box {
     background: var(--gray-50);
@@ -177,29 +120,14 @@
     border-top: 1px solid var(--gray-100);
 }
 
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    width: 280px;
-    font-size: 14px;
-    color: var(--gray-600);
-}
-
-.summary-row.total {
-    margin-top: 8px;
-    padding-top: 12px;
-    border-top: 2px solid var(--gray-200);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--primary-color);
-}
+/* Redundant summary-row styles removed as they are now global */
 
 @media (max-width: 768px) {
-    .detail-grid, .customer-info-grid {
-        grid-template-columns: 1fr;
+    .invoices-container {
+        padding: 16px;
     }
     
-    .summary-row {
-        width: 100%;
+    .customer-info-grid {
+        grid-template-columns: 1fr;
     }
 }

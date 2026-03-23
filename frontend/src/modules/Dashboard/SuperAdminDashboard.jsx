@@ -18,10 +18,12 @@ const SuperAdminDashboard = () => {
 
     return (
         <MainLayout>
-            <div className="dashboard">
-                <div className="dashboard-header">
-                    <h1>Super Admin Dashboard</h1>
-                    <p>Welcome back, Super Admin! Here's your system overview.</p>
+            <div className="dashboard-container">
+                <div className="page-header">
+                    <div>
+                        <h1>Super Admin Dashboard</h1>
+                        <p>Welcome back, Super Admin! Here's your system overview.</p>
+                    </div>
                 </div>
 
                 {/* Stats Cards */}

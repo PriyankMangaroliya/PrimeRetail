@@ -433,8 +433,9 @@ const Employees = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="employees-loading">
-                    <Loader size="large" /><p>Loading employees...</p>
+                <div className="page-loading">
+                    <Loader size="large" />
+                    <p>Loading employee data...</p>
                 </div>
             </MainLayout>
         );
@@ -446,7 +447,7 @@ const Employees = () => {
     return (
         <MainLayout>
             <div className="employees-container">
-                <div className="employees-header">
+                <div className="page-header">
                     <div>
                         <h1>Employee Management</h1>
                         <p>Manage staff across your stores and warehouses</p>
@@ -559,7 +560,7 @@ const Employees = () => {
 
                 <Card className="employees-table-card">
                     {tableLoading ? (
-                        <div className="emp-table-loading"><Loader /><p>Loading...</p></div>
+                        <div className="page-loading" style={{ minHeight: '200px' }}><Loader /></div>
                     ) : (activeTab === 'store' && !selectedStoreId) || (activeTab === 'warehouse' && !selectedWarehouseId) ? (
                         <EmptyState icon={<Icons.Filter size={48} />} title="Select a Location"
                             description={`Choose a ${activeTab === 'store' ? 'store' : 'warehouse'} above to view its employees.`} />
@@ -626,37 +627,36 @@ const Employees = () => {
                             <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--gray-800)', marginBottom: '8px' }}>{selectedEmployee?.name}</h3>
                             <Badge variant="primary" style={{ marginBottom: '24px' }}>{selectedEmployee?.role_name}</Badge>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', background: 'var(--gray-50)', padding: '20px', borderRadius: '8px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Employee ID</span>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-800)', fontWeight: '600' }}>#{selectedEmployee?.id}</span>
+                             <div className="view-grid">
+                                <div className="view-group">
+                                    <label>Employee ID</label>
+                                    <p>#{selectedEmployee?.id}</p>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Email</span>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-800)', fontWeight: '600' }}>{selectedEmployee?.email}</span>
+                                <div className="view-group">
+                                    <label>Email</label>
+                                    <p>{selectedEmployee?.email}</p>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Phone</span>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-800)', fontWeight: '600' }}>{selectedEmployee?.phone || '—'}</span>
+                                <div className="view-group">
+                                    <label>Phone</label>
+                                    <p>{selectedEmployee?.phone || '—'}</p>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Status</span>
-                                    <Badge variant={selectedEmployee?.is_active ? 'success' : 'danger'} className="badge-status">{selectedEmployee?.is_active ? 'Active' : 'Inactive'}</Badge>
+                                <div className="view-group">
+                                    <label>Status</label>
+                                    <p>
+                                        <Badge variant={selectedEmployee?.is_active ? 'success' : 'danger'}>
+                                            {selectedEmployee?.is_active ? 'Active' : 'Inactive'}
+                                        </Badge>
+                                    </p>
                                 </div>
-
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-200)' }}>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Created</span>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <div style={{ fontSize: '14px', color: 'var(--gray-800)', fontWeight: '600' }}>{selectedEmployee?.created_at ? new Date(selectedEmployee.created_at).toLocaleDateString() : 'N/A'}</div>
-                                        <small style={{ color: 'var(--gray-500)', fontSize: '12px' }}>{selectedEmployee?.created_by_name ? `By ${selectedEmployee.created_by_name}` : ''}</small>
-                                    </div>
+                                <div className="view-group">
+                                    <label>Created</label>
+                                    <p>{selectedEmployee?.created_at ? new Date(selectedEmployee.created_at).toLocaleDateString() : 'N/A'}</p>
+                                    <small className="table-secondary-text">{selectedEmployee?.created_by_name ? `By ${selectedEmployee.created_by_name}` : ''}</small>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
-                                    <span style={{ fontSize: '14px', color: 'var(--gray-600)', fontWeight: '500' }}>Last Updated</span>
-                                    <div style={{ textAlign: 'right' }}>
-                                        <div style={{ fontSize: '14px', color: 'var(--gray-800)', fontWeight: '600' }}>{selectedEmployee?.updated_at ? new Date(selectedEmployee.updated_at).toLocaleDateString() : 'N/A'}</div>
-                                        <small style={{ color: 'var(--gray-500)', fontSize: '12px' }}>{selectedEmployee?.updated_by_name ? `By ${selectedEmployee.updated_by_name}` : ''}</small>
-                                    </div>
+                                <div className="view-group">
+                                    <label>Last Updated</label>
+                                    <p>{selectedEmployee?.updated_at ? new Date(selectedEmployee.updated_at).toLocaleDateString() : 'N/A'}</p>
+                                    <small className="table-secondary-text">{selectedEmployee?.updated_by_name ? `By ${selectedEmployee.updated_by_name}` : ''}</small>
                                 </div>
                             </div>
                         </div>

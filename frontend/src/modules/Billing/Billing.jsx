@@ -8,6 +8,10 @@ import paymentApi from '../../api/payment.api';
 import paymentMethodApi from '../../api/paymentMethod.api';
 import discountApi from '../../api/discount.api';
 import Modal from '../../components/common/Modal/Modal.jsx';
+import Input from '../../components/common/Input/Input';
+import Button from '../../components/common/Button/Button';
+import Loader from '../../components/common/Loader/Loader';
+import Icons from '../../components/common/Icons';
 import './Billing.css';
 
 const Billing = () => {
@@ -349,12 +353,13 @@ const Billing = () => {
                 <header className="billing-header">
                     <div className="search-box">
                         <Search size={20} />
-                        <input
+                        <Input
                             ref={productInputRef}
                             type="text"
                             placeholder="Scan Barcode or Search Product (Min 2 chars)..."
                             value={productSearch}
                             onChange={(e) => handleProductSearch(e.target.value)}
+                            className="billing-product-search"
                         />
                         {searchResults.length > 0 && (
                             <div className="product-dropdown">
@@ -427,14 +432,21 @@ const Billing = () => {
                     </div>
                     {!customer ? (
                         <div className="customer-search">
-                            <input
+                            <Input
                                 type="text"
                                 placeholder="Phone Number"
                                 value={searchPhone}
                                 onChange={(e) => setSearchPhone(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleCustomerSearch()}
+                                className="billing-customer-search"
                             />
-                            <button onClick={handleCustomerSearch}><Search size={18} /></button>
+                            <Button
+                                variant="ghost"
+                                size="small"
+                                onClick={handleCustomerSearch}
+                            >
+                                <Search size={18} />
+                            </Button>
                         </div>
                     ) : (
                         <div className="customer-badge">
@@ -451,13 +463,23 @@ const Billing = () => {
                                     {customer.email && <div className="cust-email">{customer.email}</div>}
                                 </div>
                             </div>
-                            <div className="cust-actions">
-                                <button className="cust-edit-btn" onClick={() => { setEditCustomer(customer); setShowEditCustomerModal(true); }}>
+                            <div className="action-buttons">
+                                <Button
+                                    variant="ghost"
+                                    size="small"
+                                    onClick={() => { setEditCustomer(customer); setShowEditCustomerModal(true); }}
+                                    title="Edit"
+                                >
                                     <Edit2 size={16} />
-                                </button>
-                                <button className="cust-remove-btn" onClick={() => { setCustomer(null); setSearchPhone(''); }}>
-                                    <X size={16} />
-                                </button>
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="small"
+                                    onClick={() => { setCustomer(null); setSearchPhone(''); }}
+                                    title="Remove"
+                                >
+                                    <Icons.X size={16} />
+                                </Button>
                             </div>
                         </div>
                     )}
@@ -467,7 +489,7 @@ const Billing = () => {
                         <h3>Payment Summary</h3>
                     </div>
 
-                    <div className="summary-table">
+                    <div className="summary-table common-summary-list">
                         <div className="summary-row">
                             <span>Sub Total</span>
                             <span>₹{subtotal.toFixed(2)}</span>
@@ -481,9 +503,14 @@ const Billing = () => {
                         <div className="summary-row">
                             <div className="row-label">
                                 <span>Coupon</span>
-                                <button className="edit-summary-btn" onClick={() => setShowCouponModal(true)}>
-                                    <Pencil size={14} />
-                                </button>
+                                <Button
+                                    variant="ghost"
+                                    size="xs"
+                                    onClick={() => setShowCouponModal(true)}
+                                    className="edit-summary-btn"
+                                >
+                                    <Icons.Edit size={14} />
+                                </Button>
                             </div>
                             <span>₹{couponAmount.toFixed(2)}</span>
                         </div>
@@ -491,9 +518,14 @@ const Billing = () => {
                         <div className="summary-row discount-row">
                             <div className="row-label">
                                 <span className={parseFloat(manualDiscount) > 0 ? 'text-red' : ''}>Discount</span>
-                                <button className="edit-summary-btn" onClick={() => setShowDiscountModal(true)}>
-                                    <Pencil size={14} />
-                                </button>
+                                <Button
+                                    variant="ghost"
+                                    size="xs"
+                                    onClick={() => setShowDiscountModal(true)}
+                                    className="edit-summary-btn"
+                                >
+                                    <Icons.Edit size={14} />
+                                </Button>
                             </div>
 
                             <span className={parseFloat(manualDiscount) > 0 ? 'text-red' : ''}>₹{(parseFloat(manualDiscount) || 0).toFixed(2)}</span>
@@ -573,7 +605,11 @@ const Billing = () => {
                             }}
                             disabled={isProcessing}
                         >
-                            {isProcessing ? 'Processing...' : 'Yes, Complete'}
+                            {isProcessing ? (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Loader size="small" /> Processing...
+                                </div>
+                            ) : 'Yes, Complete'}
                         </button>
                     </div>
                 </div>
@@ -585,34 +621,34 @@ const Billing = () => {
                 isOpen={showCustomerModal}
                 onClose={() => setShowCustomerModal(false)}
                 className="customer-modal"
+                footer={
+                    <>
+                        <Button variant="outline" onClick={() => setShowCustomerModal(false)}>Cancel</Button>
+                        <Button variant="primary" onClick={handleCreateCustomer}>Add Customer</Button>
+                    </>
+                }
             >
                 <form onSubmit={handleCreateCustomer}>
-                    <div className="input-group">
-                        <label>Name</label>
-                        <input
-                            type="text"
-                            required
-                            value={newCustomer.name}
-                            onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
-                        />
-                    </div>
-                    <div className="input-group">
-                        <label>Phone</label>
-                        <input
-                            type="text"
-                            required
-                            value={newCustomer.phone}
-                            readOnly
-                        />
-                    </div>
-                    <div className="input-group">
-                        <label>Email (Optional)</label>
-                        <input
-                            type="email"
-                            value={newCustomer.email}
-                            onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
-                        />
-                    </div>
+                    <Input
+                        label="Name"
+                        type="text"
+                        required
+                        value={newCustomer.name}
+                        onChange={(e) => setNewCustomer({ ...newCustomer, name: e.target.value })}
+                    />
+                    <Input
+                        label="Phone"
+                        type="text"
+                        required
+                        value={newCustomer.phone}
+                        readOnly
+                    />
+                    <Input
+                        label="Email (Optional)"
+                        type="email"
+                        value={newCustomer.email}
+                        onChange={(e) => setNewCustomer({ ...newCustomer, email: e.target.value })}
+                    />
                     <div className="input-group">
                         <label>Address (Optional)</label>
                         <textarea
@@ -620,44 +656,42 @@ const Billing = () => {
                             onChange={(e) => setNewCustomer({ ...newCustomer, address: e.target.value })}
                         />
                     </div>
-                    <button type="submit" className="add-cust-btn">Add Customer</button>
                 </form>
             </Modal>
 
-            {/* Edit Customer Modal */}
             <Modal
                 title="Edit Customer Details"
                 isOpen={showEditCustomerModal}
                 onClose={() => setShowEditCustomerModal(false)}
                 className="customer-modal"
+                footer={
+                    <>
+                        <Button variant="outline" onClick={() => setShowEditCustomerModal(false)}>Cancel</Button>
+                        <Button variant="primary" onClick={handleUpdateCustomer}>Update Customer</Button>
+                    </>
+                }
             >
                 <form onSubmit={handleUpdateCustomer}>
-                    <div className="input-group">
-                        <label>Name</label>
-                        <input
-                            type="text"
-                            required
-                            value={editCustomer.name}
-                            onChange={(e) => setEditCustomer({ ...editCustomer, name: e.target.value })}
-                        />
-                    </div>
-                    <div className="input-group">
-                        <label>Phone</label>
-                        <input
-                            type="text"
-                            required
-                            value={editCustomer.phone}
-                            readOnly
-                        />
-                    </div>
-                    <div className="input-group">
-                        <label>Email (Optional)</label>
-                        <input
-                            type="email"
-                            value={editCustomer.email || ''}
-                            onChange={(e) => setEditCustomer({ ...editCustomer, email: e.target.value })}
-                        />
-                    </div>
+                    <Input
+                        label="Name"
+                        type="text"
+                        required
+                        value={editCustomer.name}
+                        onChange={(e) => setEditCustomer({ ...editCustomer, name: e.target.value })}
+                    />
+                    <Input
+                        label="Phone"
+                        type="text"
+                        required
+                        value={editCustomer.phone}
+                        readOnly
+                    />
+                    <Input
+                        label="Email (Optional)"
+                        type="email"
+                        value={editCustomer.email || ''}
+                        onChange={(e) => setEditCustomer({ ...editCustomer, email: e.target.value })}
+                    />
                     <div className="input-group">
                         <label>Address (Optional)</label>
                         <textarea
@@ -665,61 +699,55 @@ const Billing = () => {
                             onChange={(e) => setEditCustomer({ ...editCustomer, address: e.target.value })}
                         />
                     </div>
-                    <div className="modal-footer-btns">
-                        <button type="button" className="cancel-btn" onClick={() => setShowEditCustomerModal(false)}>Cancel</button>
-                        <button type="submit" className="add-cust-btn">Update Customer</button>
-                    </div>
                 </form>
             </Modal>
 
-            {/* Coupon Modal */}
             <Modal
                 title="Verify Coupon Code"
                 isOpen={showCouponModal}
                 onClose={() => setShowCouponModal(false)}
                 className="summary-modal"
+                footer={
+                    <>
+                        <Button variant="outline" onClick={() => setShowCouponModal(false)}>Cancel</Button>
+                        <Button variant="primary" onClick={applyCoupon}>Verify & Apply</Button>
+                    </>
+                }
             >
                 <form onSubmit={applyCoupon}>
-                    <div className="input-group">
-                        <label>Enter Coupon Code</label>
-                        <input
-                            type="text"
-                            required
-                            placeholder="e.g. SUMMER25"
-                            value={couponCode}
-                            onChange={(e) => setCouponCode(e.target.value)}
-                        />
-                    </div>
-                    <div className="modal-footer-btns">
-                        <button type="button" className="cancel-btn" onClick={() => setShowCouponModal(false)}>Cancel</button>
-                        <button type="submit" className="add-cust-btn">Verify & Apply</button>
-                    </div>
+                    <Input
+                        label="Enter Coupon Code"
+                        type="text"
+                        required
+                        placeholder="e.g. SUMMER25"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value)}
+                    />
                 </form>
             </Modal>
 
-            {/* Discount Modal */}
             <Modal
                 title="Add Manual Discount"
                 isOpen={showDiscountModal}
                 onClose={() => setShowDiscountModal(false)}
                 className="summary-modal"
+                footer={
+                    <>
+                        <Button variant="outline" onClick={() => setShowDiscountModal(false)}>Cancel</Button>
+                        <Button variant="primary" onClick={applyManualDiscount}>Apply Discount</Button>
+                    </>
+                }
             >
                 <form onSubmit={applyManualDiscount}>
-                    <div className="input-group">
-                        <label>Discount Amount ($)</label>
-                        <input
-                            type="number"
-                            step="0.01"
-                            required
-                            placeholder="0.00"
-                            value={manualDiscount}
-                            onChange={(e) => setManualDiscount(e.target.value)}
-                        />
-                    </div>
-                    <div className="modal-footer-btns">
-                        <button type="button" className="cancel-btn" onClick={() => setShowDiscountModal(false)}>Cancel</button>
-                        <button type="submit" className="add-cust-btn">Apply Discount</button>
-                    </div>
+                    <Input
+                        label="Discount Amount (₹)"
+                        type="number"
+                        step="0.01"
+                        required
+                        placeholder="0.00"
+                        value={manualDiscount}
+                        onChange={(e) => setManualDiscount(e.target.value)}
+                    />
                 </form>
             </Modal>
         </div>

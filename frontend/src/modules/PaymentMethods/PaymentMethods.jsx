@@ -269,7 +269,7 @@ const PaymentMethods = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="methods-loading">
+                <div className="page-loading">
                     <Loader size="large" />
                     <p>Loading payment methods...</p>
                 </div>
@@ -281,7 +281,7 @@ const PaymentMethods = () => {
         <MainLayout>
             <div className="methods-container">
                 {/* Header */}
-                <div className="methods-header">
+                <div className="page-header">
                     <div>
                         <h1>Payment Method Management</h1>
                         <p>Manage payment methods and configurations</p>
@@ -376,26 +376,38 @@ const PaymentMethods = () => {
                             )}
                         </div>
                     ) : modalType === 'usage' ? (
-                        <div className="usage-details">
-                            <div className="usage-icon"><Icons.CreditCard size={48} color="var(--primary-color)" /></div>
-                            <h3>{selectedMethod?.method_name}</h3>
-                            <div className="usage-stats">
-                                <div className="usage-stat-item">
-                                    <span className="usage-label">Total Transactions</span>
-                                    <span className="usage-value">{usageData?.usage_count || 0}</span>
+                        <div className="method-view">
+                            <div className="view-grid">
+                                <div className="view-group">
+                                    <label>Payment Method</label>
+                                    <p>{selectedMethod?.method_name}</p>
                                 </div>
-                                <div className="usage-stat-item">
-                                    <span className="usage-label">Status</span>
-                                    <Badge variant={selectedMethod?.is_active ? 'success' : 'danger'} className="badge-status">
-                                        {selectedMethod?.is_active ? 'Active' : 'Inactive'}
-                                    </Badge>
+                                <div className="view-group">
+                                    <label>Status</label>
+                                    <p>
+                                        <Badge variant={selectedMethod?.is_active ? 'success' : 'danger'}>
+                                            {selectedMethod?.is_active ? 'Active' : 'Inactive'}
+                                        </Badge>
+                                    </p>
                                 </div>
-                                {selectedMethod?.description && (
-                                    <div className="usage-stat-item">
-                                        <span className="usage-label">Description</span>
-                                        <span className="usage-description">{selectedMethod.description}</span>
-                                    </div>
-                                )}
+                                <div className="view-group">
+                                    <label>Total Transactions</label>
+                                    <p>{usageData?.usage_count || 0}</p>
+                                </div>
+                                <div className="view-group full-width">
+                                    <label>Description</label>
+                                    <p>{selectedMethod?.description || 'No description provided'}</p>
+                                </div>
+                                <div className="view-group">
+                                    <label>Created</label>
+                                    <p>{selectedMethod?.created_at ? new Date(selectedMethod.created_at).toLocaleDateString() : 'N/A'}</p>
+                                    <small className="table-secondary-text">{selectedMethod?.created_by_name ? `By ${selectedMethod.created_by_name}` : ''}</small>
+                                </div>
+                                <div className="view-group">
+                                    <label>Last Updated</label>
+                                    <p>{selectedMethod?.updated_at ? new Date(selectedMethod.updated_at).toLocaleDateString() : 'N/A'}</p>
+                                    <small className="table-secondary-text">{selectedMethod?.updated_by_name ? `By ${selectedMethod.updated_by_name}` : ''}</small>
+                                </div>
                             </div>
                         </div>
                     ) : (

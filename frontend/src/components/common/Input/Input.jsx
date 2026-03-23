@@ -7,11 +7,12 @@ const Input = ({
                    error,
                    icon,
                    suffix,
+                   noMargin = false,
                    className = '',
                    ...props
                }) => {
     return (
-        <div className="input-wrapper">
+        <div className={`input-wrapper ${noMargin ? 'no-margin' : ''}`}>
             {label && <label className="input-label">{label}</label>}
             <div className="input-container">
                 {icon && <span className="input-icon left">{icon}</span>}

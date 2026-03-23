@@ -312,7 +312,7 @@ const Products = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="cat-loading">
+                <div className="page-loading">
                     <Loader size="large"/>
                     <p>Loading products...</p>
                 </div>
@@ -346,9 +346,9 @@ const Products = () => {
 
     return (
         <MainLayout>
-            <div className="category-container">
-                <header className="category-header">
-                    <div className="header-info">
+            <div className="products-container">
+                <div className="page-header">
+                    <div>
                         <h1>Products</h1>
                         <p>Manage your product catalog and inventory</p>
                     </div>
@@ -362,7 +362,7 @@ const Products = () => {
                             </Button>
                         </div>
                     )}
-                </header>
+                </div>
 
                 {alert.show && (
                     <Alert type={alert.type} dismissible>
@@ -370,7 +370,7 @@ const Products = () => {
                     </Alert>
                 )}
 
-                <Card className="category-table-card">
+                <Card className="products-table-card">
                     {products.length > 0 ? (
                         <Table
                             columns={columns}
@@ -432,17 +432,7 @@ const Products = () => {
                             <p className="delete-warning">This action cannot be undone and will fail if transactions exist.</p>
                         </div>
                     ) : modalType === 'view' ? (
-                        <div className="category-view">
-                            <div className="cat-details-view">
-                                <div className="cat-brand-icon">
-                                    <span className="cat-icon-large"><Icons.Product size={40}/></span>
-                                </div>
-                                <div className="cat-info-text">
-                                    <h3>{selectedProduct?.product_name}</h3>
-                                    <Badge variant="primary">{selectedProduct?.sku}</Badge>
-                                </div>
-                            </div>
-
+                        <div className="products-view">
                             <div className="view-grid">
                                 <div className="view-group">
                                     <label>Barcode</label>
@@ -471,17 +461,16 @@ const Products = () => {
                                 <div className="view-group">
                                     <label>Status</label>
                                     <p>
-                                        <Badge variant={selectedProduct?.is_active ? 'success' : 'danger'} className="badge-status">
+                                        <Badge variant={selectedProduct?.is_active ? 'success' : 'danger'}>
                                             {selectedProduct?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </p>
                                 </div>
-                                <div className="view-group" style={{gridColumn: 'span 2'}}>
+                                <div className="view-group full-width">
                                     <label>Description</label>
                                     <p>{selectedProduct?.description || 'N/A'}</p>
                                 </div>
                             </div>
-
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="category-form">

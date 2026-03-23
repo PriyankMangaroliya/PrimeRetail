@@ -1,46 +1,6 @@
-.stores-container {
-    padding: 24px;
-}
+/* Stores.css */
 
-.stores-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.stores-header h1 {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.stores-header p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
-
-.header-actions {
-    display: flex;
-    gap: 12px;
-}
-
-.stores-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    gap: 16px;
-}
-
-.stores-loading p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
+/* Page header and loading are now global */
 
 .stores-table-card {
     overflow-x: auto;
@@ -81,104 +41,13 @@
     display: block;
 }
 
-.form-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    background: var(--gray-50);
-    border-radius: 6px;
-    font-size: 13px;
-    color: var(--gray-600);
-    border-left: 3px solid var(--primary-color);
-}
+/* form-info is now global */
 
-.form-info small {
-    color: var(--gray-600);
-}
+/* Modal styles now global */
 
-.delete-confirmation {
-    text-align: center;
-    padding: 20px 0;
-}
+/* detail header patterns are now global */
 
-.delete-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-}
-
-.delete-confirmation p {
-    font-size: 16px;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.delete-warning {
-    color: var(--danger-color) !important;
-    font-size: 14px !important;
-    font-weight: 500;
-}
-
-.delete-error {
-    color: var(--danger-color) !important;
-    font-size: 14px !important;
-    margin-top: 12px !important;
-    padding: 10px;
-    background: rgba(247, 37, 133, 0.1);
-    border-radius: 6px;
-}
-
-.store-details-view {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.store-icon-large {
-    font-size: 40px;
-    background: var(--primary-light);
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-.store-info-text h3 {
-    margin: 0 0 8px 0;
-    font-size: 24px;
-    color: var(--gray-800);
-}
-
-.store-info-text p {
-    margin: 4px 0;
-    color: var(--gray-600);
-    font-size: 14px;
-}
-
-.view-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-
-.view-group label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray-500);
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 4px;
-}
-
-.view-group p {
-    font-size: 15px;
-    color: var(--gray-800);
-    margin: 0;
-}
+/* View grid and groups are global */
 
 .store-employees {
     margin-top: 24px;
@@ -213,59 +82,17 @@
     color: var(--gray-800);
 }
 
-.input-icon {
-    font-size: 16px;
-}
-
 @media (max-width: 768px) {
     .stores-container {
         padding: 16px;
-    }
-
-    .stores-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .header-actions {
-        width: 100%;
-    }
-
-    .header-actions .btn {
-        width: 100%;
-    }
-
-    .action-menu-dropdown {
-        right: auto;
-        left: 0;
     }
 
     .form-row {
         grid-template-columns: 1fr;
     }
 
-    .detail-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .detail-group.full-width {
-        grid-column: span 1;
-    }
-
     .employee-list {
         grid-template-columns: 1fr;
-    }
-}
-@media (max-width: 480px) {
-    .action-menu-dropdown {
-        left: unset;
-        right: 0;
-    }
-
-    .store-code-badge,
-    .status-badge,
-    .employee-badge {
-        padding: 3px 6px;
     }
 }
 

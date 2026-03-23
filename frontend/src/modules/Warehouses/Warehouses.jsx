@@ -64,7 +64,7 @@ const Warehouses = () => {
         return (
             <MainLayout>
                 <div className="warehouses-container">
-                    <div className="warehouses-header">
+                    <div className="page-header">
                         <div>
                             <h1>Warehouse Management</h1>
                             <p>Access restricted for your role</p>
@@ -392,7 +392,7 @@ const Warehouses = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="warehouses-loading">
+                <div className="page-loading">
                     <Loader size="large" />
                     <p>Loading warehouses...</p>
                 </div>
@@ -406,7 +406,7 @@ const Warehouses = () => {
             <div className="warehouses-container">
 
                 {/* Header */}
-                <div className="warehouses-header">
+                <div className="page-header">
                     <div>
                         <h1>My Warehouses</h1>
                         <p>Manage your warehouses and storage locations</p>
@@ -511,7 +511,7 @@ const Warehouses = () => {
                                 </div>
                             </div>
 
-                            <div className="view-grid" style={{ marginTop: '20px' }}>
+                            <div className="view-grid">
                                 <div className="view-group">
                                     <label>Location</label>
                                     <p>{selectedWarehouse?.location || 'N/A'}</p>
@@ -519,7 +519,7 @@ const Warehouses = () => {
                                 <div className="view-group">
                                     <label>Status</label>
                                     <p>
-                                        <Badge variant={selectedWarehouse?.is_active ? 'success' : 'danger'} className="badge-status">
+                                        <Badge variant={selectedWarehouse?.is_active ? 'success' : 'danger'}>
                                             {selectedWarehouse?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </p>
@@ -527,12 +527,12 @@ const Warehouses = () => {
                                 <div className="view-group">
                                     <label>Created</label>
                                     <p>{selectedWarehouse?.created_at ? new Date(selectedWarehouse.created_at).toLocaleString() : 'N/A'}</p>
-                                    <small style={{ color: 'var(--gray-600)' }}>{selectedWarehouse?.created_by_name ? `By ${selectedWarehouse.created_by_name}` : ''}</small>
+                                    <small className="table-secondary-text">{selectedWarehouse?.created_by_name ? `By ${selectedWarehouse.created_by_name}` : ''}</small>
                                 </div>
                                 <div className="view-group">
                                     <label>Last Updated</label>
                                     <p>{selectedWarehouse?.updated_at ? new Date(selectedWarehouse.updated_at).toLocaleString() : 'N/A'}</p>
-                                    <small style={{ color: 'var(--gray-600)' }}>{selectedWarehouse?.updated_by_name ? `By ${selectedWarehouse.updated_by_name}` : ''}</small>
+                                    <small className="table-secondary-text">{selectedWarehouse?.updated_by_name ? `By ${selectedWarehouse.updated_by_name}` : ''}</small>
                                 </div>
                             </div>
 

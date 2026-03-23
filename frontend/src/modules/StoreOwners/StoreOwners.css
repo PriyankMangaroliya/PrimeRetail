@@ -1,49 +1,6 @@
-.owners-container {
-    padding: 24px;
-}
+/* StoreOwners.css */
 
-.owners-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.owners-header h1 {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.owners-header p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
-
-.owners-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    gap: 16px;
-}
-
-.owners-loading p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
-
-.owners-table-card {
-    overflow-x: auto;
-}
-
-.owners-table {
-    min-width: 900px;
-}
+/* Page header and loading are now global */
 
 .owner-info {
     display: flex;
@@ -102,78 +59,13 @@
     display: block;
 }
 
-.form-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    background: var(--gray-50);
-    border-radius: 6px;
-    font-size: 13px;
-    color: var(--gray-600);
-    border-left: 3px solid var(--primary-color);
-}
+/* form-info is now global */
 
-.form-info small {
-    color: var(--gray-600);
-}
+/* Shared modal styles are global */
 
-.delete-confirmation {
-    text-align: center;
-    padding: 20px 0;
-}
-
-.delete-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-}
-
-.delete-confirmation p {
-    font-size: 16px;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.delete-warning {
-    color: var(--danger-color) !important;
-    font-size: 14px !important;
-    font-weight: 500;
-}
-
-@media (max-width: 768px) {
-    .owners-container {
-        padding: 16px;
-    }
-
-    .owners-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .header-actions {
-        width: 100%;
-    }
-
-    .header-actions .btn {
-        width: 100%;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    .action-menu-dropdown {
-        right: auto;
-        left: 0;
-    }
-}
+/* Media queries for specific adjustments only */
 
 @media (max-width: 480px) {
-    .action-menu-dropdown {
-        left: unset;
-        right: 0;
-    }
-
     .owner-info {
         flex-direction: column;
         align-items: flex-start;
@@ -181,13 +73,7 @@
     }
 }
 
-.owner-details-view {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--gray-200);
-}
+/* owner detail header patterns are now global */
 
 .owner-avatar-large {
     width: 80px;

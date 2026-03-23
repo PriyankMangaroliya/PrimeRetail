@@ -249,7 +249,6 @@ const StoreTaxes = () => {
             <MainLayout>
                 <div className="taxes-loading">
                     <Loader size="large" />
-                    <p>Loading your taxes...</p>
                 </div>
             </MainLayout>
         );
@@ -365,13 +364,11 @@ const StoreTaxes = () => {
                         </div>
                     ) : modalType === 'view' ? (
                         <div className="tax-view">
-                            <div className="dc-details-view" style={{ paddingBottom: '15px', marginBottom: '15px' }}>
-                                <div className="dc-brand-icon">
-                                    <div className="dc-icon-large">
-                                        <Icons.Percent size={40} />
-                                    </div>
+                            <div className="common-detail-header" style={{ paddingBottom: '15px', marginBottom: '15px' }}>
+                                <div className="detail-icon-large">
+                                    <Icons.Percent size={40} />
                                 </div>
-                                <div className="dc-info-text">
+                                <div className="detail-info-text">
                                     <h3>{selectedTax?.tax_name}</h3>
                                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                                         <Badge variant={selectedTax?.is_active ? 'success' : 'danger'} className="badge-status">

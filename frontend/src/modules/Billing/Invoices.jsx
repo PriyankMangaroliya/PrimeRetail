@@ -112,7 +112,6 @@ const Invoices = () => {
             <MainLayout>
                 <div className="invoices-loading">
                     <Loader size="large" />
-                    <p>Loading invoices...</p>
                 </div>
             </MainLayout>
         );
@@ -121,12 +120,12 @@ const Invoices = () => {
     return (
         <MainLayout>
             <div className="invoices-container">
-                <header className="invoices-header">
-                    <div className="header-info">
+                <div className="page-header">
+                    <div>
                         <h1>Invoices</h1>
                         <p>Track and manage all sales transactions</p>
                     </div>
-                </header>
+                </div>
 
                 <Card className="invoices-table-card">
                     {invoices.length > 0 ? (
@@ -240,7 +239,7 @@ const Invoices = () => {
                             </div>
                         </div>
 
-                        <div className="detail-summary-section">
+                        <div className="detail-summary-section common-summary-list">
                             <div className="summary-row">
                                 <span>Subtotal</span>
                                 <span>₹{parseFloat(selectedInvoice.total_amount || 0).toFixed(2)}</span>

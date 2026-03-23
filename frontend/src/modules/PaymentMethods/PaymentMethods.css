@@ -1,46 +1,6 @@
-.methods-container {
-    padding: 24px;
-}
+/* PaymentMethods.css */
 
-.methods-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.methods-header h1 {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.methods-header p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
-
-.header-actions {
-    display: flex;
-    gap: 12px;
-}
-
-.methods-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    gap: 16px;
-}
-
-.methods-loading p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
+/* Page header and loading are now global */
 
 .methods-table-card {
     overflow-x: auto;
@@ -72,109 +32,13 @@
     color: var(--gray-600);
 }
 
-.delete-confirmation {
-    text-align: center;
-    padding: 20px 0;
-}
+/* Modal styles now global */
 
-.delete-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-}
-
-.delete-confirmation p {
-    font-size: 16px;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.delete-warning {
-    color: var(--danger-color) !important;
-    font-weight: 500;
-}
-
-.usage-details {
-    text-align: center;
-    padding: 20px 0;
-}
-
-.usage-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-}
-
-.usage-details h3 {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 24px;
-}
-
-.usage-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    text-align: left;
-    background: var(--gray-50);
-    padding: 20px;
-    border-radius: 8px;
-}
-
-.usage-stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.usage-stat-item:last-child {
-    border-bottom: none;
-}
-
-.usage-label {
-    font-size: 14px;
-    color: var(--gray-600);
-    font-weight: 500;
-}
-
-.usage-value {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.usage-description {
-    font-size: 14px;
-    color: var(--gray-800);
-    max-width: 200px;
-    text-align: right;
-}
+/* Usage details now follow global view-grid patterns */
 
 @media (max-width: 768px) {
     .methods-container {
         padding: 16px;
-    }
-
-    .methods-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .header-actions {
-        width: 100%;
-    }
-
-    .header-actions .btn {
-        width: 100%;
-    }
-
-    .action-buttons {
-        flex-wrap: nowrap;
-    }
-
-    .action-buttons .btn {
-        padding: 6px 8px;
     }
 
     .usage-stat-item {
@@ -185,11 +49,5 @@
 
     .usage-description {
         text-align: left;
-    }
-}
-
-@media (max-width: 480px) {
-    .action-buttons {
-        flex-wrap: wrap;
     }
 }

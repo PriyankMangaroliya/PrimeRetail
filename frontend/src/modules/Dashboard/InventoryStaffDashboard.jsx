@@ -56,10 +56,12 @@ const InventoryStaffDashboard = () => {
 
     return (
         <MainLayout>
-            <div className="dashboard">
-                <div className="dashboard-header">
-                    <h1>Inventory Management</h1>
-                    <p>Track and manage store inventory</p>
+            <div className="dashboard-container">
+                <div className="page-header">
+                    <div>
+                        <h1>Inventory Management</h1>
+                        <p>Track and manage store inventory</p>
+                    </div>
                 </div>
 
                 {/* Inventory Stats */}

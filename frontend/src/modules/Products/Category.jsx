@@ -239,7 +239,7 @@ const Category = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="cat-loading">
+                <div className="page-loading">
                     <Loader size="large"/>
                     <p>Loading categories...</p>
                 </div>
@@ -250,8 +250,8 @@ const Category = () => {
     return (
         <MainLayout>
             <div className="category-container">
-                <header className="category-header">
-                    <div className="header-info">
+                <div className="page-header">
+                    <div>
                         <h1>Categories</h1>
                         <p>Manage product categories and groupings</p>
                     </div>
@@ -265,7 +265,7 @@ const Category = () => {
                             </Button>
                         </div>
                     )}
-                </header>
+                </div>
 
                 {alert.show && (
                     <Alert type={alert.type} dismissible>
@@ -336,57 +336,33 @@ const Category = () => {
                         </div>
                     ) : modalType === 'view' ? (
                         <div className="category-view">
-                            <div className="cat-details-view">
-                                <div className="cat-brand-icon">
-                                    <span className="cat-icon-large"><Icons.Layers size={40}/></span>
-                                </div>
-                                <div className="cat-info-text">
-                                    <h3>{selectedCategory?.category_name}</h3>
-                                    <p>
-                                        <Badge variant="primary" className="badge-count">{selectedCategory?.product_count || 0} Products</Badge>
-                                    </p>
-                                </div>
-                            </div>
-
                             <div className="view-grid">
                                 <div className="view-group">
                                     <label>Status</label>
                                     <p>
-                                        <Badge variant={selectedCategory?.is_active ? 'success' : 'danger'} className="badge-status">
+                                        <Badge variant={selectedCategory?.is_active ? 'success' : 'danger'}>
                                             {selectedCategory?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </p>
                                 </div>
-                                <div className="view-group" style={{gridColumn: 'span 2'}}>
+                                <div className="view-group full-width">
                                     <label>Description</label>
-                                    <p>{selectedCategory?.description || 'N/A'}</p>
+                                    <p>{selectedCategory?.description || 'No description provided'}</p>
                                 </div>
                                 <div className="view-group">
                                     <label>Created</label>
-                                    <p>
-                                        <small>
-                                            {selectedCategory?.created_at
-                                                ? new Date(selectedCategory.created_at).toLocaleString()
-                                                : 'N/A'}
-                                            {selectedCategory?.created_by_name ? ` by ${selectedCategory.created_by_name}` : ''}
-                                        </small>
-                                    </p>
+                                    <p>{selectedCategory?.created_at ? new Date(selectedCategory.created_at).toLocaleString() : 'N/A'}</p>
+                                    <small className="table-secondary-text">{selectedCategory?.created_by_name ? `By ${selectedCategory.created_by_name}` : ''}</small>
                                 </div>
                                 <div className="view-group">
                                     <label>Last Updated</label>
-                                    <p>
-                                        <small>
-                                            {selectedCategory?.updated_at
-                                                ? new Date(selectedCategory.updated_at).toLocaleString()
-                                                : 'N/A'}
-                                            {selectedCategory?.updated_by_name ? ` by ${selectedCategory.updated_by_name}` : ''}
-                                        </small>
-                                    </p>
+                                    <p>{selectedCategory?.updated_at ? new Date(selectedCategory.updated_at).toLocaleString() : 'N/A'}</p>
+                                    <small className="table-secondary-text">{selectedCategory?.updated_by_name ? `By ${selectedCategory.updated_by_name}` : ''}</small>
                                 </div>
                             </div>
 
                             {selectedCategory?.products?.length > 0 && (
-                                <div className="view-products-list">
+                                <div className="view-products-list" style={{ marginTop: '20px' }}>
                                     <h4>Linked Products</h4>
                                     <div className="products-scroll">
                                         <Table

@@ -22,19 +22,22 @@
     display: flex;
     align-items: center;
     background: white;
-    padding: 12px 20px;
+    padding: 0 20px;
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e2e8f0;
+    border: 1px solid #000000;
 }
 
-.search-box input {
+.billing-product-search {
     flex: 1;
-    border: none;
-    outline: none;
-    margin-left: 12px;
-    font-size: 16px;
-    color: #1e293b;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.search-box .input-wrapper {
+    flex: 1;
+    margin-bottom: 0;
 }
 
 .product-dropdown {
@@ -212,24 +215,17 @@
 
 .customer-search {
     display: flex;
+    align-items: center;
     gap: 8px;
 }
 
-.customer-search input {
+.billing-customer-search {
     flex: 1;
-    padding: 8px 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    outline: none;
 }
 
-.customer-search button {
-    background: #6366f1;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
+.customer-search .input-wrapper {
+    flex: 1;
+    margin-bottom: 0;
 }
 
 .customer-badge {
@@ -292,18 +288,7 @@
     margin-top: 10px;
 }
 
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #64748b;
-    font-size: 16px;
-}
-
-.summary-row span:last-child {
-    color: #1e293b;
-    font-weight: 500;
-}
+/* Redundant summary-row styles removed as they are now global */
 
 .row-label {
     display: flex;
@@ -516,15 +501,9 @@
     gap: 8px;
 }
 
-.input-group label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #64748b;
-}
-
-.input-group input, .input-group textarea {
+.input-group textarea {
     padding: 12px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #000000;
     border-radius: 8px;
     outline: none;
     font-size: 16px;
@@ -556,88 +535,7 @@
     cursor: not-allowed;
 }
 
-.add-cust-btn {
-    width: 100%;
-    background: #6366f1;
-    color: white;
-    border: none;
-    padding: 16px;
-    border-radius: 12px;
-    font-weight: 700;
-    margin-top: 20px;
-    cursor: pointer;
-}
-.cust-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.cust-edit-btn {
-    background: none;
-    border: none;
-    color: #64748b;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px;
-    border-radius: 50%;
-    transition: all 0.2s;
-}
-
-.cust-edit-btn:hover {
-    background: #eef2ff;
-    color: #6366f1;
-}
-
-.cust-remove-btn {
-    background: none;
-    border: none;
-    color: #94a3b8;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px;
-    border-radius: 50%;
-    transition: all 0.2s;
-}
-
-.cust-remove-btn:hover {
-    background: #fee2e2;
-    color: #ef4444;
-}
-
-.modal-footer-btns {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-    align-items: stretch;
-}
-
-.cancel-btn {
-    flex: 1;
-    background: #f1f5f9;
-    color: #64748b;
-    border: none;
-    padding: 14px;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.cancel-btn:hover {
-    background: #e2e8f0;
-}
-
-.add-cust-btn:hover {
-    background: #4f46e5;
-}
+/* Modal footers and buttons are now handled by global components */
 
 /* Success Modal Styles */
 .payment-success-content {
@@ -968,21 +866,4 @@
     transform: translateY(-1px);
 }
 
-.processing-state {
-    padding: 40px 0;
-}
 
-.loader {
-    width: 44px;
-    height: 44px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #6366f1;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 20px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}

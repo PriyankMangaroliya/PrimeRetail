@@ -1,41 +1,6 @@
-.warehouses-container {
-    padding: 24px;
-}
+/* Warehouses.css */
 
-.warehouses-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.warehouses-header h1 {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.warehouses-header p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
-
-.warehouses-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    gap: 16px;
-}
-
-.warehouses-loading p {
-    color: var(--gray-600);
-    font-size: 14px;
-}
+/* Page header and loading are now global */
 
 .warehouses-table-card {
     overflow-x: auto;
@@ -70,52 +35,9 @@
     display: block;
 }
 
-.form-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    background: var(--gray-50);
-    border-radius: 6px;
-    font-size: 13px;
-    color: var(--gray-600);
-    border-left: 3px solid var(--primary-color);
-}
+/* form-info is now global */
 
-.form-info small {
-    color: var(--gray-600);
-}
-
-.delete-confirmation {
-    text-align: center;
-    padding: 20px 0;
-}
-
-.delete-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-}
-
-.delete-confirmation p {
-    font-size: 16px;
-    color: var(--gray-800);
-    margin-bottom: 8px;
-}
-
-.delete-warning {
-    color: var(--danger-color) !important;
-    font-size: 14px !important;
-    font-weight: 500;
-}
-
-.delete-error {
-    color: var(--danger-color) !important;
-    font-size: 14px !important;
-    margin-top: 12px !important;
-    padding: 10px;
-    background: rgba(247, 37, 133, 0.1);
-    border-radius: 6px;
-}
+/* Modal styles now global */
 
 .warehouse-details-view {
     display: flex;
@@ -148,26 +70,7 @@
     font-size: 14px;
 }
 
-.view-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-
-.view-group label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray-500);
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 4px;
-}
-
-.view-group p {
-    font-size: 15px;
-    color: var(--gray-800);
-    margin: 0;
-}
+/* View grid and groups are global */
 
 .warehouse-employees-section {
     margin-top: 24px;
@@ -207,51 +110,12 @@
         padding: 16px;
     }
 
-    .warehouses-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .header-actions {
-        width: 100%;
-    }
-
-    .header-actions .btn {
-        width: 100%;
-    }
-
-    .action-menu-dropdown {
-        right: auto;
-        left: 0;
-    }
-
     .form-row {
         grid-template-columns: 1fr;
     }
 
-    .detail-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .detail-group.full-width {
-        grid-column: span 1;
-    }
-
     .employee-list {
         grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    .action-menu-dropdown {
-        left: unset;
-        right: 0;
-    }
-
-    .wh-code-badge,
-    .status-badge,
-    .wh-count-badge {
-        padding: 3px 6px;
     }
 }
 
