@@ -169,13 +169,13 @@
     margin: 0;
 }
 
-.store-employees {
+.warehouse-employees-section {
     margin-top: 24px;
     padding-top: 20px;
     border-top: 1px solid var(--gray-200);
 }
 
-.store-employees h4 {
+.warehouse-employees-section h4 {
     font-size: 16px;
     font-weight: 600;
     color: var(--gray-800);
@@ -253,4 +253,23 @@
     .wh-count-badge {
         padding: 3px 6px;
     }
+}
+
+.emp-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.emp-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark, #5a3fc0));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
 }

@@ -97,23 +97,32 @@ const warehouseModel = {
         if (userRole === 'Super Admin') {
             query = {
                 text: `SELECT w.*, u.name as owner_name, u.email as owner_email,
-                              JSON_AGG(
-                                      JSON_BUILD_OBJECT(
-                                              'id', staff.id,
-                                              'name', staff.name,
-                                              'email', staff.email,
-                                              'role', r.role_name
-                                      ) ORDER BY staff.id
-                              ) FILTER (WHERE staff.id IS NOT NULL) as staff,
-                           COUNT(DISTINCT s.id) as total_stock_items,
-                              COALESCE(SUM(s.quantity), 0) as total_quantity
+                              (
+                                  SELECT JSON_AGG(
+                                             JSON_BUILD_OBJECT(
+                                                     'id', stf.id,
+                                                     'name', stf.name,
+                                                     'email', stf.email,
+                                                     'role', rl.role_name
+                                             ) ORDER BY stf.id
+                                         )
+                                  FROM user_master stf
+                                  LEFT JOIN role_master rl ON stf.role_id = rl.id
+                                  WHERE stf.warehouse_id = w.id AND stf.is_deleted = false
+                              ) as staff,
+                              (
+                                  SELECT COUNT(DISTINCT s.id)
+                                  FROM stock_master s
+                                  WHERE s.location_id = w.id AND s.location_type = 'Warehouse'
+                              ) as total_stock_items,
+                              (
+                                  SELECT COALESCE(SUM(s.quantity), 0)
+                                  FROM stock_master s
+                                  WHERE s.location_id = w.id AND s.location_type = 'Warehouse'
+                              ) as total_quantity
                        FROM warehouse_master w
                                 LEFT JOIN user_master u ON w.owner_id = u.id
-                                LEFT JOIN user_master staff ON w.id = staff.warehouse_id AND staff.is_deleted = false
-                                LEFT JOIN role_master r ON staff.role_id = r.id
-                                LEFT JOIN stock_master s ON w.id = s.location_id AND s.location_type = 'Warehouse'
-                       WHERE w.id = $1
-                       GROUP BY w.id, u.name, u.email`,
+                       WHERE w.id = $1`,
                 values: [id]
             };
         } else if (userRole === 'Store Owner') {
@@ -123,25 +132,34 @@ const warehouseModel = {
                               u.email AS owner_email,
                               uc.name AS created_by_name,
                               uu.name AS updated_by_name,
-                              JSON_AGG(
-                                      JSON_BUILD_OBJECT(
-                                              'id', staff.id,
-                                              'name', staff.name,
-                                              'email', staff.email,
-                                              'role', r.role_name
-                                      ) ORDER BY staff.id
-                              ) FILTER (WHERE staff.id IS NOT NULL) AS staff,
-                           COUNT(DISTINCT s.id)          AS total_stock_items,
-                              COALESCE(SUM(s.quantity), 0) AS total_quantity
+                              (
+                                  SELECT JSON_AGG(
+                                             JSON_BUILD_OBJECT(
+                                                     'id', stf.id,
+                                                     'name', stf.name,
+                                                     'email', stf.email,
+                                                     'role', rl.role_name
+                                             ) ORDER BY stf.id
+                                         )
+                                  FROM user_master stf
+                                  LEFT JOIN role_master rl ON stf.role_id = rl.id
+                                  WHERE stf.warehouse_id = w.id AND stf.is_deleted = false
+                              ) AS staff,
+                              (
+                                  SELECT COUNT(DISTINCT s.id)
+                                  FROM stock_master s
+                                  WHERE s.location_id = w.id AND s.location_type = 'Warehouse'
+                              ) AS total_stock_items,
+                              (
+                                  SELECT COALESCE(SUM(s.quantity), 0)
+                                  FROM stock_master s
+                                  WHERE s.location_id = w.id AND s.location_type = 'Warehouse'
+                              ) AS total_quantity
                        FROM warehouse_master w
                                 LEFT JOIN user_master u     ON w.owner_id = u.id
                                 LEFT JOIN user_master uc    ON w.created_by  = uc.id
                                 LEFT JOIN user_master uu    ON w.updated_by  = uu.id
-                                LEFT JOIN user_master staff ON w.id = staff.warehouse_id AND staff.is_deleted = false
-                                LEFT JOIN role_master r     ON staff.role_id = r.id
-                                LEFT JOIN stock_master s    ON w.id = s.location_id AND s.location_type = 'Warehouse'
-                       WHERE w.id = $1 AND w.owner_id = $2
-                       GROUP BY w.id, u.name, u.email, uc.name, uu.name`,
+                       WHERE w.id = $1 AND w.owner_id = $2`,
                 values: [id, userId]
             };
         } else if (userRole === 'Warehouse Staff') {
@@ -149,13 +167,19 @@ const warehouseModel = {
                 text: `SELECT w.*,
                               u.name AS owner_name,
                               u.email AS owner_email,
-                              COUNT(DISTINCT s.id) as total_stock_items,
-                              COALESCE(SUM(s.quantity), 0) as total_quantity
+                              (
+                                  SELECT COUNT(DISTINCT s.id)
+                                  FROM stock_master s
+                                  WHERE s.location_id = w.id AND s.location_type = 'Warehouse'
+                              ) as total_stock_items,
+                              (
+                                  SELECT COALESCE(SUM(s.quantity), 0)
+                                  FROM stock_master s
+                                  WHERE s.location_id = w.id AND s.location_type = 'Warehouse'
+                              ) as total_quantity
                        FROM warehouse_master w
                                 LEFT JOIN user_master u ON w.owner_id = u.id
-                                LEFT JOIN stock_master s ON w.id = s.location_id AND s.location_type = 'Warehouse'
-                       WHERE w.id = $1 AND w.id = $2
-                       GROUP BY w.id, u.name, u.email`,
+                       WHERE w.id = $1 AND w.id = $2`,
                 values: [id, userId]
             };
         } else {

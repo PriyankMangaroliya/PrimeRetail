@@ -308,7 +308,7 @@ const PaymentMethods = () => {
                     {methods.length > 0 ? (
                         <Table
                             columns={columns}
-                            data={paymentMethods}
+                            data={methods}
                             className="payment-methods-table"
                             columnSearchable={true}
                             searchable={false}

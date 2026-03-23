@@ -375,7 +375,11 @@ const Warehouses = () => {
         {
             title: 'Name',
             key: 'name',
-            render: (val) => <span className="table-name-cell">{val}</span>
+            render: (val) => (
+                <div className="emp-info-cell">
+                    <span className="table-name-cell">{val}</span>
+                </div>
+            )
         },
         {
             title: 'Role',
@@ -521,20 +525,18 @@ const Warehouses = () => {
                                     </p>
                                 </div>
                                 <div className="view-group">
-                                    <label>Inventory Summary</label>
-                                    <p>Items: <Badge variant="warning">{selectedWarehouse?.total_stock_items ?? selectedWarehouse?.stock_count ?? 0}</Badge></p>
-                                    {selectedWarehouse?.total_quantity != null && (
-                                        <p>Quantity: <Badge variant="secondary">{selectedWarehouse.total_quantity}</Badge></p>
-                                    )}
+                                    <label>Created</label>
+                                    <p>{selectedWarehouse?.created_at ? new Date(selectedWarehouse.created_at).toLocaleString() : 'N/A'}</p>
+                                    <small style={{ color: 'var(--gray-600)' }}>{selectedWarehouse?.created_by_name ? `By ${selectedWarehouse.created_by_name}` : ''}</small>
                                 </div>
                                 <div className="view-group">
-                                    <label>Audit Details</label>
-                                    <p><small>Created: {selectedWarehouse?.created_at ? new Date(selectedWarehouse.created_at).toLocaleDateString() : 'N/A'} {selectedWarehouse?.created_by_name ? `by ${selectedWarehouse.created_by_name}` : ''}</small></p>
-                                    <p><small>Updated: {selectedWarehouse?.updated_at ? new Date(selectedWarehouse.updated_at).toLocaleDateString() : 'N/A'} {selectedWarehouse?.updated_by_name ? `by ${selectedWarehouse.updated_by_name}` : ''}</small></p>
+                                    <label>Last Updated</label>
+                                    <p>{selectedWarehouse?.updated_at ? new Date(selectedWarehouse.updated_at).toLocaleString() : 'N/A'}</p>
+                                    <small style={{ color: 'var(--gray-600)' }}>{selectedWarehouse?.updated_by_name ? `By ${selectedWarehouse.updated_by_name}` : ''}</small>
                                 </div>
                             </div>
 
-                            <div className="staff-section" style={{ marginTop: '20px' }}>
+                            <div className="warehouse-employees-section" style={{ marginTop: '20px' }}>
                                 <h4>Employee List ({selectedWarehouse?.staff?.length || selectedWarehouse?.staff_count || 0})</h4>
                                 {fetchingDetails ? (
                                     <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
@@ -547,6 +549,7 @@ const Warehouses = () => {
                                             data={selectedWarehouse.staff}
                                             searchable={false}
                                             itemsPerPage={5}
+                                            itemName="Employee"
                                         />
                                     </div>
                                 ) : (

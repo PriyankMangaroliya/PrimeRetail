@@ -33,12 +33,26 @@
     padding-left: 36px;
 }
 
+.input-field.with-suffix {
+    padding-right: 36px;
+}
+
 .input-icon {
     position: absolute;
-    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--gray-500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-icon.left {
+    left: 12px;
+}
+
+.input-icon.right {
+    right: 12px;
 }
 
 .input-error {

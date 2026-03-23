@@ -427,7 +427,11 @@ const Stores = () => {
         {
             title: 'Name',
             key: 'name',
-            render: (val) => <span className="table-name-cell">{val}</span>
+            render: (val) => (
+                <div className="emp-info-cell">
+                    <span className="table-name-cell">{val}</span>
+                </div>
+            )
         },
         {
             title: 'Role',
@@ -638,6 +642,7 @@ const Stores = () => {
                                             data={selectedStore.employees}
                                             searchable={false}
                                             itemsPerPage={5}
+                                            itemName="Employee"
                                         />
                                     </div>
                                 ) : (
