@@ -218,8 +218,11 @@ const productService = {
                 return [];
             }
 
-            const result = await productModel.getAllProducts(userRole, ownerId, locationType, locationId);
-            return result.rows;
+            const result = await productModel.getAllProducts(userRole, ownerId, locationType, locationId, user.search);
+            return {
+                products: result.rows,
+                total: result.rows.length
+            };
         } catch (error) {
             throw error;
         }
@@ -304,9 +307,9 @@ const productService = {
     },
 
     // Get products for sale (Cashier view)
-    getProductsForSale: async (storeId) => {
+    getProductsForSale: async (storeId, search = null) => {
         try {
-            const result = await productModel.getProductsForSale(storeId);
+            const result = await productModel.getProductsForSale(storeId, search);
             return result.rows;
         } catch (error) {
             throw error;

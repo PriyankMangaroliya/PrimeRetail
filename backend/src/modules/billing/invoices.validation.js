@@ -26,12 +26,13 @@ const invoiceValidation = {
             'any.required': 'Tax amount is required'
         }),
         discount_amount: Joi.number().precision(2).min(0).default(0),
+        round_off: Joi.number().precision(2).default(0),
         grand_total: Joi.number().precision(2).min(0).required().messages({
             'number.min': 'Grand total cannot be negative',
             'any.required': 'Grand total is required'
         }),
-        status: Joi.string().trim().valid('Paid', 'Pending', 'Cancelled').default('Paid').messages({
-            'any.only': 'Invalid invoice status'
+        invoice_type: Joi.string().trim().valid('SALE', 'RETURN', 'EXCHANGE').default('SALE').messages({
+            'any.only': 'Invalid invoice type'
         }),
         created_by: Joi.number().integer().positive().required().messages({
             'any.required': 'Creator ID is required'
@@ -45,11 +46,13 @@ const invoiceValidation = {
                     'number.min': 'Item quantity must be at least 1',
                     'any.required': 'Quantity is required for items'
                 }),
-                price: Joi.number().precision(2).min(0).required().messages({
-                    'any.required': 'Item price is required'
+                unit_price: Joi.number().precision(2).min(0).required().messages({
+                    'any.required': 'Unit price is required'
                 }),
+                tax_percentage: Joi.number().precision(2).min(0).required(),
                 tax_amount: Joi.number().precision(2).min(0).required(),
                 discount_amount: Joi.number().precision(2).min(0).default(0),
+                final_price: Joi.number().precision(2).min(0).required(),
                 total_price: Joi.number().precision(2).min(0).required()
             })
         ).messages({
@@ -58,9 +61,10 @@ const invoiceValidation = {
         })
     }).custom((value, helpers) => {
         // Validate grand total calculation
-        const calculatedTotal = Number((value.total_amount + value.tax_amount - value.discount_amount).toFixed(2));
+        // Grand Total = Total Amount + Tax Amount - Discount Amount + Round Off
+        const calculatedTotal = Number((value.total_amount + value.tax_amount - value.discount_amount + value.round_off).toFixed(2));
         if (Math.abs(calculatedTotal - value.grand_total) > 0.01) {
-            return helpers.message(`Grand total does not match calculation (Expected: ${calculatedTotal})`);
+            return helpers.message(`Grand total does not match calculation (Expected: ${calculatedTotal}, Got: ${value.grand_total})`);
         }
         return value;
     }),

@@ -66,7 +66,7 @@ const Products = () => {
                 categoryApi.getActiveCategories(),
                 isOwner ? storeTaxApi.getStoreTaxes() : Promise.resolve({ data: [] })
             ]);
-            setProducts(prodRes.data || []);
+            setProducts(prodRes.data?.products || prodRes.data || []);
             setCategories(catRes.data || []);
             setStoreTaxes(taxRes.data || []);
         } catch (error) {

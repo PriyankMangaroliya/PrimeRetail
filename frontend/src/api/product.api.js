@@ -2,9 +2,19 @@ import axios from './axios';
 
 const productApi = {
     // Get all products (role-based)
-    getAllProducts: async () => {
+    getAllProducts: async (params = {}) => {
         try {
-            const response = await axios.get('/products');
+            const response = await axios.get('/products', { params });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
+    },
+
+    // Get products for sale (Cashier)
+    getProductsForSale: async (params = {}) => {
+        try {
+            const response = await axios.get('/products/for-sale', { params });
             return response.data;
         } catch (error) {
             throw error.response?.data || error;

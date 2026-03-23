@@ -1,27 +1,41 @@
 const express = require('express');
 const router = express.Router();
 const invoiceController = require('./invoices.controller');
-const { protect, authorize } = require('../../middlewares/auth.middleware');
+const invoiceValidation = require('./invoices.validation');
+const { verifyToken } = require('../../middlewares/auth.middleware');
+const { hasRole } = require('../../middlewares/role.middleware');
+const validate = require('../../middlewares/validate.middleware');
 
 // All invoice routes are protected
-router.use(protect);
+router.use(verifyToken);
 
 // Create invoice (Cashier / Store Owner / Manager)
-router.post('/', authorize('Cashier', 'Store Owner', 'Store Manager'), invoiceController.createInvoice);
+router.post('/', 
+    hasRole(['Cashier', 'Store Owner', 'Store Manager']), 
+    validate(invoiceValidation.createInvoice),
+    invoiceController.createInvoice
+);
 
 // Get sales summary
-router.get('/summary', authorize('Store Owner', 'Store Manager'), invoiceController.getSalesSummary);
+router.get('/summary', hasRole(['Store Owner', 'Store Manager']), invoiceController.getSalesSummary);
 
-// Get all invoices (Store Owner / Manager)
-router.get('/', authorize('Store Owner', 'Store Manager'), invoiceController.getAllInvoices);
+// Get all invoices (Store Owner / Manager / Cashier)
+router.get('/', hasRole(['Store Owner', 'Store Manager', 'Cashier']), invoiceController.getAllInvoices);
 
 // Get invoice by ID
-router.get('/:id', invoiceController.getInvoiceById);
+router.get('/:id', 
+    validate(invoiceValidation.invoiceIdParam, 'params'),
+    invoiceController.getInvoiceById
+);
 
 // Update status
-router.patch('/:id/status', authorize('Store Owner', 'Store Manager'), invoiceController.updateInvoiceStatus);
+router.patch('/:id/status', hasRole(['Store Owner', 'Store Manager']), invoiceController.updateInvoiceStatus);
 
 // Get invoices by store
-router.get('/store/:store_id', authorize('Store Owner', 'Store Manager'), invoiceController.getInvoicesByStore);
+router.get('/store/:store_id', 
+    hasRole(['Store Owner', 'Store Manager', 'Cashier']), 
+    validate(invoiceValidation.storeIdQuery, 'params'),
+    invoiceController.getInvoicesByStore
+);
 
 module.exports = router;

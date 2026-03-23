@@ -264,6 +264,36 @@ const discountController = {
 
             return responseUtils.error(res, 500, error.message || 'Failed to toggle discount status');
         }
+    },
+
+    // Validate discount by code (for POS)
+    validateDiscount: async (req, res) => {
+        try {
+            const { code, amount } = req.body;
+            if (!code || !amount) {
+                return responseUtils.badRequest(res, 'Code and amount are required');
+            }
+
+            const userRole = req.user.role_name;
+            let ownerId = null;
+
+            if (userRole === 'Store Owner') {
+                ownerId = req.user.id;
+            } else {
+                const db = require('../../config/database.config');
+                const storeResult = await db.query(
+                    'SELECT owner_id FROM store_master WHERE id = $1',
+                    [req.user.store_id]
+                );
+                ownerId = storeResult.rows[0]?.owner_id;
+            }
+
+            const result = await discountService.validateDiscountByCode(code, amount, ownerId);
+            return responseUtils.success(res, 200, 'Discount applied', result);
+        } catch (error) {
+            console.error('Validate Discount Error:', error);
+            return responseUtils.badRequest(res, error.message || 'Failed to validate discount');
+        }
     }
 };
 

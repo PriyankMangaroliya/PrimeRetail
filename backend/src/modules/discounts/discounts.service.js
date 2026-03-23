@@ -262,6 +262,35 @@ const discountService = {
         } catch (error) {
             throw error;
         }
+    },
+
+    // Validate discount by code
+    validateDiscountByCode: async (code, amount, ownerId) => {
+        try {
+            const result = await discountModel.getDiscountByCode(code, ownerId);
+            if (result.rows.length === 0) {
+                throw new Error('Invalid or expired discount code');
+            }
+
+            const discount = result.rows[0];
+            const discountValue = parseFloat(discount.discount_value);
+            const discountType = discount.discount_type;
+
+            let discountAmount;
+            if (discountType === 'Percentage') {
+                discountAmount = (amount * discountValue) / 100;
+            } else {
+                discountAmount = Math.min(discountValue, amount);
+            }
+
+            return {
+                valid: true,
+                discount: discount,
+                discountAmount: parseFloat(discountAmount.toFixed(2))
+            };
+        } catch (error) {
+            throw error;
+        }
     }
 };
 

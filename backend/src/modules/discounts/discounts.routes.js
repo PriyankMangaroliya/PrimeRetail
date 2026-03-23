@@ -40,4 +40,6 @@ router.patch('/:id/toggle-status',
     discountController.toggleDiscountStatus
 );
 
+router.post('/validate', discountController.validateDiscount);
+
 module.exports = router;

@@ -3,12 +3,12 @@ const db = require('../../config/database.config');
 const paymentModel = {
     // Create new payment
     createPayment: (paymentData) => {
-        const { invoice_id, payment_method_id, amount, transaction_reference, payment_status, created_by } = paymentData;
+        const { invoice_id, payment_method_id, payment_type, amount, received_amount, change_amount, transaction_reference, payment_status, created_by } = paymentData;
         const query = {
             text: `INSERT INTO payment_master 
-             (invoice_id, payment_method_id, amount, transaction_reference, payment_status, created_by) 
-             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-            values: [invoice_id, payment_method_id, amount, transaction_reference, payment_status, created_by]
+             (invoice_id, payment_method_id, payment_type, amount, received_amount, change_amount, transaction_reference, payment_status, created_by) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            values: [invoice_id, payment_method_id, payment_type || 'FULL', amount, received_amount, change_amount, transaction_reference, payment_status || 'COMPLETED', created_by]
         };
         return db.query(query);
     },
@@ -26,15 +26,25 @@ const paymentModel = {
         return db.query(query);
     },
 
-    // Get all payments
-    getAllPayments: () => {
-        const query = {
-            text: `SELECT p.*, pm.method_name, i.invoice_no 
+    getAllPayments: (user) => {
+        let text = `SELECT p.*, pm.method_name, i.invoice_no, s.store_name, s.store_code 
              FROM payment_master p
              LEFT JOIN payment_method_master pm ON p.payment_method_id = pm.id
              LEFT JOIN invoice_master i ON p.invoice_id = i.id
-             ORDER BY p.id DESC`
-        };
+             LEFT JOIN store_master s ON i.store_id = s.id `;
+        let values = [];
+
+        if (user && user.role_name === 'Store Owner') {
+            text += `WHERE s.owner_id = $1 `;
+            values.push(user.id);
+        } else if (user && user.role_name !== 'Super Admin') {
+            text += `WHERE i.store_id = $1 `;
+            values.push(user.store_id);
+        }
+
+        text += `ORDER BY p.id DESC`;
+        
+        const query = { text, values };
         return db.query(query);
     },
 

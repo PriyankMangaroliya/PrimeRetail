@@ -6,16 +6,11 @@ const paymentController = {
     // Create new payment
     createPayment: async (req, res) => {
         try {
-            // Validate request body
-            const { error, value } = paymentValidation.createPayment.validate({
+            // Validation is now handled by the middleware
+            const payment = await paymentService.createPayment({
                 ...req.body,
                 created_by: req.user.id
             });
-            if (error) {
-                return responseUtils.validationError(res, 'Validation failed', error.details);
-            }
-
-            const payment = await paymentService.createPayment(value);
 
             return responseUtils.created(res, 'Payment recorded successfully', payment);
         } catch (error) {
@@ -29,14 +24,14 @@ const paymentController = {
         }
     },
 
-    // Get all payments
+    // Get all paymentMethods
     getAllPayments: async (req, res) => {
         try {
-            const payments = await paymentService.getAllPayments();
+            const payments = await paymentService.getAllPayments(req.user);
             return responseUtils.success(res, 200, 'Payments retrieved successfully', payments);
         } catch (error) {
-            console.error('Get All Payments Error:', error);
-            return responseUtils.error(res, 500, error.message || 'Failed to retrieve payments');
+            console.error('Get All Invoices Error:', error);
+            return responseUtils.error(res, 500, error.message || 'Failed to retrieve paymentMethods');
         }
     },
 
@@ -96,7 +91,7 @@ const paymentController = {
         }
     },
 
-    // Get payments by invoice
+    // Get paymentMethods by invoice
     getPaymentsByInvoice: async (req, res) => {
         try {
             const { invoice_id } = req.params;
@@ -107,14 +102,14 @@ const paymentController = {
             }
 
             const payments = await paymentService.getPaymentsByInvoice(invoice_id);
-            return responseUtils.success(res, 200, 'Invoice payments retrieved successfully', payments);
+            return responseUtils.success(res, 200, 'Invoice paymentMethods retrieved successfully', payments);
         } catch (error) {
-            console.error('Get Payments By Invoice Error:', error);
-            return responseUtils.error(res, 500, error.message || 'Failed to retrieve invoice payments');
+            console.error('Get Invoices By Invoice Error:', error);
+            return responseUtils.error(res, 500, error.message || 'Failed to retrieve invoice paymentMethods');
         }
     },
 
-    // Get payments by store
+    // Get paymentMethods by store
     getPaymentsByStore: async (req, res) => {
         try {
             const { store_id } = req.params;
@@ -125,10 +120,10 @@ const paymentController = {
             }
 
             const payments = await paymentService.getPaymentsByStore(store_id);
-            return responseUtils.success(res, 200, 'Store payments retrieved successfully', payments);
+            return responseUtils.success(res, 200, 'Store paymentMethods retrieved successfully', payments);
         } catch (error) {
-            console.error('Get Payments By Store Error:', error);
-            return responseUtils.error(res, 500, error.message || 'Failed to retrieve store payments');
+            console.error('Get Invoices By Store Error:', error);
+            return responseUtils.error(res, 500, error.message || 'Failed to retrieve store paymentMethods');
         }
     }
 };

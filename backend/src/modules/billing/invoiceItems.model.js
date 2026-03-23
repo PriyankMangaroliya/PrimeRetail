@@ -3,28 +3,30 @@ const db = require('../../config/database.config');
 const invoiceItemModel = {
     // Add item to invoice
     addInvoiceItem: (itemData) => {
-        const { invoice_id, product_id, quantity, price, tax_amount, discount_amount, total_price } = itemData;
+        const { invoice_id, product_id, quantity, unit_price, tax_percentage, tax_amount, discount_amount, final_price, total_price } = itemData;
         const query = {
             text: `INSERT INTO invoice_items 
-             (invoice_id, product_id, quantity, price, tax_amount, discount_amount, total_price) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-            values: [invoice_id, product_id, quantity, price, tax_amount, discount_amount, total_price]
+             (invoice_id, product_id, quantity, unit_price, tax_percentage, tax_amount, discount_amount, final_price, total_price) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            values: [invoice_id, product_id, quantity, unit_price, tax_percentage, tax_amount, discount_amount, final_price, total_price]
         };
         return db.query(query);
     },
 
     // Update invoice item
     updateInvoiceItem: (id, itemData) => {
-        const { quantity, price, tax_amount, discount_amount, total_price } = itemData;
+        const { quantity, unit_price, tax_percentage, tax_amount, discount_amount, final_price, total_price } = itemData;
         const query = {
             text: `UPDATE invoice_items 
              SET quantity = COALESCE($1, quantity),
-                 price = COALESCE($2, price),
-                 tax_amount = COALESCE($3, tax_amount),
-                 discount_amount = COALESCE($4, discount_amount),
-                 total_price = COALESCE($5, total_price)
-             WHERE id = $6 RETURNING *`,
-            values: [quantity, price, tax_amount, discount_amount, total_price, id]
+                 unit_price = COALESCE($2, unit_price),
+                 tax_percentage = COALESCE($3, tax_percentage),
+                 tax_amount = COALESCE($4, tax_amount),
+                 discount_amount = COALESCE($5, discount_amount),
+                 final_price = COALESCE($6, final_price),
+                 total_price = COALESCE($7, total_price)
+             WHERE id = $8 RETURNING *`,
+            values: [quantity, unit_price, tax_percentage, tax_amount, discount_amount, final_price, total_price, id]
         };
         return db.query(query);
     },

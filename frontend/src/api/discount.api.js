@@ -1,20 +1,10 @@
 import axios from './axios';
 
 const discountApi = {
-    // Get all discounts (role-based)
-    getAllDiscounts: async () => {
+    // Validate discount code for POS
+    validateDiscount: async (code, amount) => {
         try {
-            const response = await axios.get('/discounts');
-            return response.data;
-        } catch (error) {
-            throw error.response?.data || error;
-        }
-    },
-
-    // Get discount by ID
-    getDiscountById: async (id) => {
-        try {
-            const response = await axios.get(`/discounts/${id}`);
+            const response = await axios.post('/discounts/validate', { code, amount });
             return response.data;
         } catch (error) {
             throw error.response?.data || error;
@@ -31,17 +21,17 @@ const discountApi = {
         }
     },
 
-    // Get discount statistics (Store Owner only)
-    getDiscountStats: async () => {
+    // Get all discounts
+    getAllDiscounts: async () => {
         try {
-            const response = await axios.get('/discounts/stats');
+            const response = await axios.get('/discounts');
             return response.data;
         } catch (error) {
             throw error.response?.data || error;
         }
     },
 
-    // Create new discount (Store Owner only)
+    // Create a new discount
     createDiscount: async (discountData) => {
         try {
             const response = await axios.post('/discounts', discountData);
@@ -51,7 +41,7 @@ const discountApi = {
         }
     },
 
-    // Update discount (Store Owner only)
+    // Update a discount
     updateDiscount: async (id, discountData) => {
         try {
             const response = await axios.put(`/discounts/${id}`, discountData);
@@ -61,20 +51,20 @@ const discountApi = {
         }
     },
 
-    // Delete discount (Store Owner only)
-    deleteDiscount: async (id) => {
+    // Toggle discount status
+    toggleDiscountStatus: async (id) => {
         try {
-            const response = await axios.delete(`/discounts/${id}`);
+            const response = await axios.patch(`/discounts/${id}/toggle-status`);
             return response.data;
         } catch (error) {
             throw error.response?.data || error;
         }
     },
 
-    // Toggle discount status (Store Owner only)
-    toggleDiscountStatus: async (id) => {
+    // Delete a discount
+    deleteDiscount: async (id) => {
         try {
-            const response = await axios.patch(`/discounts/${id}/toggle-status`);
+            const response = await axios.delete(`/discounts/${id}`);
             return response.data;
         } catch (error) {
             throw error.response?.data || error;

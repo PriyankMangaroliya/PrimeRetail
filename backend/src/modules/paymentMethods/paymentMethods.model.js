@@ -115,7 +115,7 @@ const paymentMethodModel = {
         return db.query(query);
     },
 
-    // Get usage count for payment method (how many payments use this method)
+    // Get usage count for payment method (how many paymentMethods use this method)
     getPaymentMethodUsage: (id) => {
         const query = {
             text: `SELECT COUNT(*) as usage_count

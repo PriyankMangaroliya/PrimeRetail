@@ -1,5 +1,5 @@
 const paymentModel = require('./payments.model');
-const invoiceModel = require('../invoicing/invoices.model');
+const invoiceModel = require('../billing/invoices.model');
 
 const paymentService = {
     // Create new payment
@@ -18,11 +18,10 @@ const paymentService = {
         const result = await paymentModel.createPayment(paymentData);
 
         // 3. If payment is completed, potential logic to update invoice status
-        // (Though usually invoices are created as 'Paid' or 'Pending' and payment is a separate record)
-        if (payment_status === 'Completed') {
+        if (payment_status === 'COMPLETED') {
             // Update invoice status if it was pending
-            if (invoice.status === 'Pending') {
-                await invoiceModel.updateInvoice(invoice_id, { status: 'Paid', updated_by: paymentData.created_by });
+            if (invoice.status === 'PENDING') {
+                await invoiceModel.updateInvoice(invoice_id, { status: 'PAID', updated_by: paymentData.created_by });
             }
         }
 
@@ -39,8 +38,8 @@ const paymentService = {
     },
 
     // Get all payments
-    getAllPayments: async () => {
-        const result = await paymentModel.getAllPayments();
+    getAllPayments: async (user) => {
+        const result = await paymentModel.getAllPayments(user);
         return result.rows;
     },
 
@@ -53,19 +52,19 @@ const paymentService = {
         return result.rows[0];
     },
 
-    // Get payments by invoice
+    // Get paymentMethods by invoice
     getPaymentsByInvoice: async (invoice_id) => {
         const result = await paymentModel.getPaymentsByInvoice(invoice_id);
         return result.rows;
     },
 
-    // Get payments by store
+    // Get paymentMethods by store
     getPaymentsByStore: async (store_id) => {
         const result = await paymentModel.getPaymentsByStore(store_id);
         return result.rows;
     },
 
-    // Get payments by date range
+    // Get paymentMethods by date range
     getPaymentsByDate: async (start_date, end_date) => {
         const result = await paymentModel.getPaymentsByDate(start_date, end_date);
         return result.rows;

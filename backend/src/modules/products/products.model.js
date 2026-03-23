@@ -78,38 +78,47 @@ const productModel = {
     },
 
     // Get all products based on user role
-    getAllProducts: (userRole, ownerId, locationType, locationId) => {
+    getAllProducts: (userRole, ownerId, locationType, locationId, search = '') => {
         let query;
 
         if (userRole === 'Store Owner') {
-            // Store Owner sees all their products. Stock is hidden in UI, so returning 0 here.
-            query = {
-                text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate,
+            let text = `SELECT p.*, c.category_name, t.tax_name, t.tax_rate,
                               0 as stock_quantity
                        FROM product_master p
                        LEFT JOIN category_master c ON p.category_id = c.id
                        LEFT JOIN store_taxes st ON p.tax_id = st.id
                        LEFT JOIN tax_master t ON st.tax_id = t.id
-                       WHERE p.owner_id = $1 AND p.is_deleted = false
-                       ORDER BY p.id DESC`,
-                values: [ownerId]
-            };
+                       WHERE p.owner_id = $1 AND p.is_deleted = false`;
+            const values = [ownerId];
+            
+            if (search) {
+                text += ` AND (LOWER(p.product_name) LIKE LOWER($2) OR LOWER(p.sku) LIKE LOWER($2) OR LOWER(p.barcode) LIKE LOWER($2))`;
+                values.push(`%${search}%`);
+            }
+            
+            text += ` ORDER BY p.id DESC`;
+            query = { text, values };
         } else {
             // Staff roles see products from their owner with stock levels specific to their location
-            query = {
-                text: `SELECT p.*, c.category_name, t.tax_name, t.tax_rate,
-                              COALESCE(s.quantity, 0) as stock_quantity
-                       FROM product_master p
-                       LEFT JOIN category_master c ON p.category_id = c.id
-                       LEFT JOIN store_taxes st ON p.tax_id = st.id
-                       LEFT JOIN tax_master t ON st.tax_id = t.id
-                       LEFT JOIN stock_master s ON p.id = s.product_id 
-                            AND s.location_type = $2 
-                            AND s.location_id = $3
-                       WHERE p.owner_id = $1 AND p.is_active = true AND p.is_deleted = false
-                       ORDER BY p.product_name`,
-                values: [ownerId, locationType, locationId]
-            };
+            let text = `SELECT p.*, c.category_name, t.tax_name, t.tax_rate,
+                               COALESCE(s.quantity, 0) as stock_quantity
+                        FROM product_master p
+                        LEFT JOIN category_master c ON p.category_id = c.id
+                        LEFT JOIN store_taxes st ON p.tax_id = st.id
+                        LEFT JOIN tax_master t ON st.tax_id = t.id
+                        LEFT JOIN stock_master s ON p.id = s.product_id 
+                             AND s.location_type = $2 
+                             AND s.location_id = $3
+                        WHERE p.owner_id = $1 AND p.is_active = true AND p.is_deleted = false`;
+            const values = [ownerId, locationType, locationId];
+
+            if (search) { // search parameter
+                text += ` AND (LOWER(p.product_name) LIKE LOWER($4) OR LOWER(p.sku) LIKE LOWER($4) OR LOWER(p.barcode) LIKE LOWER($4))`;
+                values.push(`%${search}%`);
+            }
+
+            text += ` ORDER BY p.product_name`;
+            query = { text, values };
         }
 
         return db.query(query);
@@ -194,20 +203,26 @@ const productModel = {
     },
 
     // Get products for dropdown (Cashier view)
-    getProductsForSale: (storeId) => {
-        const query = {
-            text: `SELECT p.id, p.product_name, p.sku, p.price, p.unit,
-                          c.category_name,
+    getProductsForSale: (storeId, search = null) => {
+        let text = `SELECT p.id, p.product_name, p.sku, p.price, p.unit, p.barcode,
+                          c.category_name, st.tax_id, t.tax_rate as tax_percentage,
                           COALESCE(s.quantity, 0) as stock_quantity
                    FROM product_master p
                             JOIN category_master c ON p.category_id = c.id
+                            LEFT JOIN store_taxes st ON p.tax_id = st.id
+                            LEFT JOIN tax_master t ON st.tax_id = t.id
                             LEFT JOIN stock_master s ON p.id = s.product_id
                        AND s.location_type = 'Store' AND s.location_id = $1
-                   WHERE p.is_active = true AND p.is_deleted = false
-                   ORDER BY p.product_name`,
-            values: [storeId]
-        };
-        return db.query(query);
+                   WHERE p.is_active = true AND p.is_deleted = false AND COALESCE(s.quantity, 0) > 0`;
+        const values = [storeId];
+
+        if (search) {
+            text += ` AND (LOWER(p.product_name) LIKE LOWER($2) OR LOWER(p.sku) LIKE LOWER($2) OR LOWER(p.barcode) LIKE LOWER($2))`;
+            values.push(`%${search}%`);
+        }
+
+        text += ` ORDER BY p.product_name LIMIT 50`;
+        return db.query({ text, values });
     },
 
     // Get product statistics

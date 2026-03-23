@@ -50,10 +50,10 @@ const paymentMethodService = {
                 throw new Error('Payment method not found');
             }
 
-            // Check if payment method is used by any payments
+            // Check if payment method is used by any paymentMethods
             const usage = await paymentMethodModel.getPaymentMethodUsage(id);
             if (parseInt(usage.rows[0].usage_count) > 0) {
-                throw new Error('Cannot delete payment method as it is used in payments');
+                throw new Error('Cannot delete payment method as it is used in paymentMethods');
             }
 
             const result = await paymentMethodModel.deletePaymentMethod(id);

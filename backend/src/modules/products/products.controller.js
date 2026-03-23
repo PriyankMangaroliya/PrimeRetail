@@ -129,7 +129,7 @@ const productController = {
                 return responseUtils.forbidden(res, 'You do not have permission to view products');
             }
 
-            const products = await productService.getAllProducts(req.user);
+            const products = await productService.getAllProducts({ ...req.user, ...req.query });
 
             return responseUtils.success(res, 200, 'Products retrieved successfully', products);
         } catch (error) {
@@ -206,7 +206,7 @@ const productController = {
                 return responseUtils.badRequest(res, 'No store assigned');
             }
 
-            const products = await productService.getProductsForSale(storeId);
+            const products = await productService.getProductsForSale(storeId, req.query.search);
 
             return responseUtils.success(res, 200, 'Products retrieved successfully', products);
         } catch (error) {

@@ -10,14 +10,17 @@ const paymentValidation = {
         payment_method_id: Joi.number().integer().positive().required().messages({
             'any.required': 'Payment method is required'
         }),
+        payment_type: Joi.string().trim().valid('FULL', 'PARTIAL').default('FULL'),
         amount: Joi.number().precision(2).min(0).required().messages({
             'number.min': 'Amount cannot be negative',
             'any.required': 'Amount is required'
         }),
+        received_amount: Joi.number().precision(2).min(0).allow(null).optional(),
+        change_amount: Joi.number().precision(2).min(0).allow(null).optional(),
         transaction_reference: Joi.string().trim().max(100).allow(null, '').optional().messages({
             'string.max': 'Reference cannot exceed 100 characters'
         }),
-        payment_status: Joi.string().trim().valid('Completed', 'Pending', 'Failed', 'Refunded').default('Completed'),
+        payment_status: Joi.string().trim().valid('COMPLETED', 'PENDING', 'FAILED').default('COMPLETED'),
         created_by: Joi.number().integer().positive().required().messages({
             'any.required': 'Creator ID is required'
         })
@@ -25,7 +28,7 @@ const paymentValidation = {
 
     // Update payment status validation
     updatePaymentStatus: Joi.object({
-        payment_status: Joi.string().trim().valid('Completed', 'Pending', 'Failed', 'Refunded').required().messages({
+        payment_status: Joi.string().trim().valid('COMPLETED', 'PENDING', 'FAILED').required().messages({
             'any.only': 'Invalid payment status',
             'any.required': 'Payment status is required'
         }),

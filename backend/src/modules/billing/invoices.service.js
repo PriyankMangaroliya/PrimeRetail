@@ -17,8 +17,8 @@ const invoiceService = {
             const invoiceResult = await client.query(
                 `INSERT INTO invoice_master 
                  (store_id, invoice_no, cashier_id, customer_id, total_amount, tax_amount, 
-                  discount_amount, grand_total, status, created_by, updated_by) 
-                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10) RETURNING *`,
+                  discount_amount, round_off, grand_total, invoice_type, created_by, updated_by) 
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11) RETURNING *`,
                 [
                     invoiceMasterData.store_id,
                     invoiceMasterData.invoice_no,
@@ -27,8 +27,9 @@ const invoiceService = {
                     invoiceMasterData.total_amount,
                     invoiceMasterData.tax_amount,
                     invoiceMasterData.discount_amount,
+                    invoiceMasterData.round_off || 0,
                     invoiceMasterData.grand_total,
-                    invoiceMasterData.status,
+                    invoiceMasterData.invoice_type || 'SALE',
                     invoiceMasterData.created_by
                 ]
             );
@@ -40,13 +41,22 @@ const invoiceService = {
                 // Add invoice_id to item
                 await client.query(
                     `INSERT INTO invoice_items 
-                     (invoice_id, product_id, quantity, price, tax_amount, discount_amount, total_price) 
-                     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-                    [invoiceId, item.product_id, item.quantity, item.price, item.tax_amount, item.discount_amount, item.total_price]
+                     (invoice_id, product_id, quantity, unit_price, tax_percentage, tax_amount, discount_amount, final_price, total_price) 
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+                    [
+                        invoiceId, 
+                        item.product_id, 
+                        item.quantity, 
+                        item.unit_price, 
+                        item.tax_percentage, 
+                        item.tax_amount, 
+                        item.discount_amount, 
+                        item.final_price, 
+                        item.total_price
+                    ]
                 );
 
                 // Update Stock (Decrement)
-                // Assuming it's from the store where invoice is generated
                 const stockResult = await client.query(
                     `SELECT id, quantity FROM stock_master 
                      WHERE product_id = $1 AND location_type = 'Store' AND location_id = $2 AND is_deleted = false`,
@@ -74,15 +84,17 @@ const invoiceService = {
                 await client.query(
                     `INSERT INTO stock_transactions 
                      (product_id, stock_id, movement_type, source_location_type, source_location_id, 
-                      quantity, reference_type, reference_id, notes, created_by) 
-                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+                      quantity, before_qty, after_qty, reference_type, reference_id, notes, created_by) 
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
                     [
                         item.product_id,
                         currentStock.id,
-                        'Remove',
+                        'SELL',
                         'Store',
                         invoiceMasterData.store_id,
                         item.quantity,
+                        currentStock.quantity,
+                        newQuantity,
                         'Invoice',
                         invoiceId,
                         `Sales Invoice: ${invoiceMasterData.invoice_no}`,
@@ -111,8 +123,8 @@ const invoiceService = {
     },
 
     // Get all invoices
-    getAllInvoices: async () => {
-        const result = await invoiceModel.getAllInvoices();
+    getAllInvoices: async (user) => {
+        const result = await invoiceModel.getAllInvoices(user);
         return result.rows;
     },
 

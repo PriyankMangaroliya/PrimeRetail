@@ -194,6 +194,20 @@ const discountModel = {
             values: [is_active, id]
         };
         return db.query(query);
+    },
+
+    // Get discount by code (name)
+    getDiscountByCode: (code, ownerId) => {
+        const query = {
+            text: `SELECT id, discount_name, discount_type, discount_value, is_active
+                   FROM discount_master
+                   WHERE LOWER(discount_name) = LOWER($1) 
+                     AND owner_id = $2 
+                     AND is_active = true 
+                     AND is_deleted = false`,
+            values: [code, ownerId]
+        };
+        return db.query(query);
     }
 };
 

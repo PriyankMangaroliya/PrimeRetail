@@ -44,9 +44,11 @@ const Sidebar = () => {
         ],
         'Cashier': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/cashier/dashboard' },
+            { name: 'Billing', icon: Icons.Cart, url: '/cashier/billing' },
             { name: 'Products', icon: Icons.Product, url: '/cashier/products' },
             { name: 'Stock', icon: Icons.Stock, url: '/cashier/stock' },
-            { name: 'Manage Invoices', icon: Icons.Invoice, url: '/cashier/invoices' }
+            { name: 'Invoices', icon: Icons.Invoice, url: '/cashier/invoices' },
+            { name: 'Payments', icon: Icons.Currency, url: '/cashier/payments' }
         ],
         'Inventory Staff': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/inventory/dashboard' },

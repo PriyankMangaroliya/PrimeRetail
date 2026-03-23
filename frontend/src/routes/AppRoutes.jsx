@@ -25,6 +25,9 @@ import Category from '../modules/Products/Category';
 import StoreTaxes from '../modules/Taxes/StoreTaxes.jsx';
 import StockList from '../modules/Inventory/StockList';
 import TransactionHistory from '../modules/Inventory/TransactionHistory';
+import Billing from '../modules/Billing/Billing';
+import Invoices from '../modules/Billing/Invoices.jsx';
+import Payments from '../modules/Payments/Payments';
 
 
 const AppRoutes = () => {
@@ -182,6 +185,19 @@ const AppRoutes = () => {
             </PrivateRoute>}
         />
 
+        <Route
+            path="/owner/invoices"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <Invoices />
+            </PrivateRoute>}
+        />
+        <Route
+            path="/owner/payments"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <Payments />
+            </PrivateRoute>}
+        />
+
         {/* Store Manager Routes */}
         <Route
             path="/manager/dashboard"
@@ -218,6 +234,19 @@ const AppRoutes = () => {
             </PrivateRoute>}
         />
 
+        <Route
+            path="/manager/invoices"
+            element={<PrivateRoute allowedRoles={['Store Manager']}>
+                <Invoices />
+            </PrivateRoute>}
+        />
+        <Route
+            path="/manager/payments"
+            element={<PrivateRoute allowedRoles={['Store Manager']}>
+                <Payments />
+            </PrivateRoute>}
+        />
+
         {/* Cashier Routes */}
         <Route
             path="/cashier/dashboard"
@@ -244,6 +273,26 @@ const AppRoutes = () => {
             path="/cashier/transactions"
             element={<PrivateRoute allowedRoles={['Cashier']}>
                 <TransactionHistory />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/cashier/billing"
+            element={<PrivateRoute allowedRoles={['Cashier']}>
+                <Billing />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/cashier/invoices"
+            element={<PrivateRoute allowedRoles={['Cashier']}>
+                <Invoices />
+            </PrivateRoute>}
+        />
+        <Route
+            path="/cashier/payments"
+            element={<PrivateRoute allowedRoles={['Cashier']}>
+                <Payments />
             </PrivateRoute>}
         />
 

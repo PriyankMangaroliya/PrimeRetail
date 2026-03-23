@@ -1,0 +1,136 @@
+.payments-container {
+    padding: 24px;
+}
+
+.payments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.payments-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+}
+
+.payments-header p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.payments-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+}
+
+.payments-loading p {
+    color: var(--gray-600);
+    font-size: 14px;
+}
+
+.payments-table-card {
+    overflow-x: auto;
+}
+
+.payments-table {
+    min-width: 900px;
+}
+
+/* Detail Modal Styles */
+.payment-detail-view {
+    padding: 0;
+}
+
+.detail-header-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.detail-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    background: var(--primary-light);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.detail-title-info h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0 0 4px 0;
+}
+
+.detail-title-info .detail-meta {
+    font-size: 13px;
+    color: var(--gray-500);
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.detail-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.detail-group p {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--gray-800);
+    margin: 0;
+}
+
+.payment-amount-box {
+    margin-top: 20px;
+    padding: 20px;
+    background: var(--primary-light);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.payment-amount-box label {
+    display: block;
+    font-size: 12px;
+    color: var(--primary-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.payment-amount-box .amount-val {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}

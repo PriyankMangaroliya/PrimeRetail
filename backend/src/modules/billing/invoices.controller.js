@@ -6,16 +6,11 @@ const invoiceController = {
     // Create new invoice
     createInvoice: async (req, res) => {
         try {
-            // Validate request body
-            const { error, value } = invoiceValidation.createInvoice.validate({
+            // Validation is now handled by the middleware
+            const invoice = await invoiceService.createInvoice({
                 ...req.body,
                 created_by: req.user.id
             });
-            if (error) {
-                return responseUtils.validationError(res, 'Validation failed', error.details);
-            }
-
-            const invoice = await invoiceService.createInvoice(value);
 
             return responseUtils.created(res, 'Invoice created successfully', invoice);
         } catch (error) {
@@ -35,7 +30,7 @@ const invoiceController = {
     // Get all invoices
     getAllInvoices: async (req, res) => {
         try {
-            const invoices = await invoiceService.getAllInvoices();
+            const invoices = await invoiceService.getAllInvoices(req.user);
             return responseUtils.success(res, 200, 'Invoices retrieved successfully', invoices);
         } catch (error) {
             console.error('Get All Invoices Error:', error);

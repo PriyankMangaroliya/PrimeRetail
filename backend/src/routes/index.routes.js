@@ -6,7 +6,7 @@ const responseUtils = require('../utils/response.utils');
 const authRoutes = require('../modules/auth/auth.routes');
 const dashboardRoutes = require('../modules/dashboard/dashboard.routes');
 const discountRoutes = require('../modules/discounts/discounts.routes');
-const paymentMethodRoutes = require('../modules/payments/paymentMethods.routes');
+const paymentMethodRoutes = require('../modules/paymentMethods/paymentMethods.routes');
 const categoryRoutes = require('../modules/products/categories.routes');
 const productRoutes = require('../modules/products/products.routes');
 const roleRoutes = require('../modules/roles/roles.routes');
@@ -18,6 +18,9 @@ const userRoutes = require('../modules/users/users.routes');
 const warehouseRoutes = require('../modules/warehouses/warehouses.routes');
 const stockRoutes = require('../modules/inventory/stock.routes');
 const stockTransactionRoutes = require('../modules/inventory/stockTransactions.routes');
+const customerRoutes = require('../modules/customers/customer.routes');
+const billingRoutes = require('../modules/billing/invoices.routes');
+const paymentRoutes = require('../modules/payments/payments.routes');
 
 // Use routes
 router.use('/Auth', authRoutes);
@@ -35,6 +38,9 @@ router.use('/employees', userRoutes);
 router.use('/warehouses', warehouseRoutes);
 router.use('/inventory/stock', stockRoutes);
 router.use('/inventory/transactions', stockTransactionRoutes);
+router.use('/customers', customerRoutes);
+router.use('/billing', billingRoutes);
+router.use('/payments', paymentRoutes);
 
 // Health check route using ResponseUtils
 router.get('/health', (req, res) => {
@@ -65,6 +71,9 @@ router.get('/info', (req, res) => {
             categories: '/api/v1/categories',
             products: '/api/v1/products',
             discounts: '/api/v1/discounts',
+            customers: '/api/v1/customers',
+            billing: '/api/v1/billing',
+            payments: '/api/v1/payments',
             health: '/api/v1/health'
         }
     });
