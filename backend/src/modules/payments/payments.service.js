@@ -1,5 +1,5 @@
 const paymentModel = require('./payments.model');
-const invoiceModel = require('../billing/invoices.model');
+const invoiceModel = require('../invoicing/invoices.model');
 
 const paymentService = {
     // Create new payment
