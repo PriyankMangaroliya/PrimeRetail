@@ -14,6 +14,7 @@ import Select from '../../components/common/Select/Select';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useNavigate } from 'react-router-dom';
+import './InventoryStock.css';
 
 const movementsDecreasingStock = ['SELL', 'DAMAGED', 'MANUAL_REMOVE', 'TRANSFER'];
 const movementsIncreasingStock = ['ADD', 'RETURN', 'EXCHANGE', 'MANUAL_ADD'];
@@ -444,28 +445,27 @@ const StockList = () => {
                 >
                     <div className="common-form">
                         {selectedProduct ? (
-                            <div className="info-banner-card" style={{ marginBottom: '24px' }}>
-                                <div className="icon-box">
-                                    <Icons.Package size={24} />
-                                </div>
-                                <div className="content">
-                                    <span className="label">Managing Stock Context</span>
-                                    <span className="value">{selectedProduct.product_name}</span>
-                                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                                        <Badge variant="primary" className="badge-code">SKU: {selectedProduct.sku}</Badge>
-                                        {selectedStock && (
-                                            <Badge variant={selectedStock.quantity <= selectedStock.min_stock ? 'danger' : 'success'}>
-                                                Available: {selectedStock.quantity} {selectedProduct.unit || 'Units'}
-                                            </Badge>
-                                        )}
+                            <div className="selection-result-card" style={{ marginBottom: '16px' }}>
+                                <div className="entity-info">
+                                    <div className="entity-icon">
+                                        <Icons.Package size={20} />
                                     </div>
+                                    <div className="entity-details">
+                                        <span className="entity-name">{selectedProduct.product_name}</span>
+                                        <span className="entity-sub">
+                                            SKU: {selectedProduct.sku} • {selectedStock ? `${selectedStock.quantity} ${selectedProduct.unit || 'Units'} Available` : 'No Stock'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="entity-action" onClick={() => { setSelectedProduct(null); setSelectedStock(null); setProductSearch(''); }} title="Change Product">
+                                    <Icons.RefreshCw size={14} />
                                 </div>
                             </div>
                         ) : (
-                            <div className="form-card">
-                                <div className="form-group custom-search-dropdown" style={{ position: 'relative' }}>
+                            <div className="form-card" style={{ padding: '16px', marginBottom: '16px' }}>
+                                <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginBottom: 0 }}>
                                     <Input
-                                        label="Step 1: Select Product to Manage"
+                                        label="Select Product"
                                         required
                                         type="text"
                                         placeholder="Search by name or SKU..."
@@ -519,13 +519,13 @@ const StockList = () => {
                             </div>
                         )}
 
-                        <div className="form-card">
-                            <div className="form-section-title" style={{ marginTop: 0 }}>
+                        <div className="form-card" style={{ padding: '20px', marginBottom: '16px' }}>
+                            <div className="form-section-title" style={{ marginTop: 0, marginBottom: '16px' }}>
                                 <span className="icon"><Icons.Settings size={14} /></span>
                                 Transaction Details
                             </div>
 
-                            <div className="common-form-grid" style={{ gap: '20px' }}>
+                            <div className="common-form-grid" style={{ gap: '16px', marginBottom: (formData.movement_type === 'EXCHANGE' || formData.movement_type === 'TRANSFER') ? '16px' : 0 }}>
                                 <Select
                                     label="Movement Type"
                                     required
@@ -547,97 +547,137 @@ const StockList = () => {
                             </div>
 
                             {formData.movement_type === 'EXCHANGE' && (
-                                <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginTop: '24px' }}>
-                                    <Input
-                                        label="Select New Product (for Exchange)"
-                                        required
-                                        type="text"
-                                        placeholder="Search target product..."
-                                        value={exchangeProductSearch}
-                                        onChange={(e) => {
-                                            setExchangeProductSearch(e.target.value);
-                                            setExchangeProductDropdownOpen(true);
-                                            setSelectedExchangeProduct(null);
-                                        }}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setExchangeProductDropdownOpen(!exchangeProductDropdownOpen);
-                                        }}
-                                        error={formErrors.exchange_product}
-                                        icon={<Icons.ChevronDown size={16} />}
-                                    />
-                                    {exchangeProductDropdownOpen && (
-                                        <div className="search-dropdown-menu">
-                                            {activeProducts
-                                                .filter(p => p.id !== selectedProduct?.id)
-                                                .filter(p => p.stock_quantity > 0)
-                                                .filter(p => `${p.product_name} ${p.sku}`.toLowerCase().includes(exchangeProductSearch.toLowerCase()))
-                                                .map(p => (
-                                                    <div
-                                                        key={p.id}
-                                                        className="search-dropdown-item"
-                                                        onClick={() => {
-                                                            setSelectedExchangeProduct(p);
-                                                            setExchangeProductSearch(`${p.product_name} (SKU: ${p.sku})`);
-                                                            setExchangeProductDropdownOpen(false);
-                                                        }}
-                                                    >
-                                                        <span className="search-item-title">{p.product_name}</span>
-                                                        <div className="search-item-sub">SKU: {p.sku}</div>
-                                                    </div>
-                                                ))}
+                                <div className="form-group" style={{ position: 'relative' }}>
+                                    {selectedExchangeProduct ? (
+                                        <div className="selection-result-card" style={{ marginTop: '4px' }}>
+                                            <div className="entity-info">
+                                                <div className="entity-icon" style={{ background: 'var(--warning-light)', color: 'var(--warning-color)' }}>
+                                                    <Icons.Package size={18} />
+                                                </div>
+                                                <div className="entity-details">
+                                                    <span className="entity-name">{selectedExchangeProduct.product_name}</span>
+                                                    <span className="entity-sub">SKU: {selectedExchangeProduct.sku}</span>
+                                                </div>
+                                            </div>
+                                            <div className="entity-action" onClick={() => { setSelectedExchangeProduct(null); setExchangeProductSearch(''); }} title="Change Product">
+                                                <Icons.RefreshCw size={14} />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="custom-search-dropdown" style={{ position: 'relative' }}>
+                                            <Input
+                                                label="Select New Product (for Exchange)"
+                                                required
+                                                type="text"
+                                                placeholder="Search target product..."
+                                                value={exchangeProductSearch}
+                                                onChange={(e) => {
+                                                    setExchangeProductSearch(e.target.value);
+                                                    setExchangeProductDropdownOpen(true);
+                                                    setSelectedExchangeProduct(null);
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setExchangeProductDropdownOpen(!exchangeProductDropdownOpen);
+                                                }}
+                                                error={formErrors.exchange_product}
+                                                icon={<Icons.ChevronDown size={16} />}
+                                            />
+                                            {exchangeProductDropdownOpen && (
+                                                <div className="search-dropdown-menu">
+                                                    {activeProducts
+                                                        .filter(p => p.id !== selectedProduct?.id)
+                                                        .filter(p => p.stock_quantity > 0)
+                                                        .filter(p => `${p.product_name} ${p.sku}`.toLowerCase().includes(exchangeProductSearch.toLowerCase()))
+                                                        .map(p => (
+                                                            <div
+                                                                key={p.id}
+                                                                className="search-dropdown-item"
+                                                                onClick={() => {
+                                                                    setSelectedExchangeProduct(p);
+                                                                    setExchangeProductSearch(`${p.product_name} (SKU: ${p.sku})`);
+                                                                    setExchangeProductDropdownOpen(false);
+                                                                }}
+                                                            >
+                                                                <span className="search-item-title">{p.product_name}</span>
+                                                                <div className="search-item-sub">SKU: {p.sku}</div>
+                                                            </div>
+                                                        ))}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
                             )}
 
                             {formData.movement_type === 'TRANSFER' && (
-                                <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginTop: '24px' }}>
-                                    <label className="input-label">Destination Location <span className="required">*</span></label>
-                                    <div
-                                        className="input-field"
-                                        style={{
-                                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                            cursor: 'pointer', background: 'var(--input-bg)', padding: '0 12px',
-                                            borderRadius: '8px', border: '1px solid var(--input-border)',
-                                            height: 'var(--input-height)', marginTop: '6px'
-                                        }}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setDestinationDropdownOpen(!destinationDropdownOpen);
-                                        }}
-                                    >
-                                        <div style={{ flex: 1, color: formData.destination_location_id ? 'var(--text-primary)' : 'var(--text-muted)' }}>
-                                            {formData.destination_location_id ?
-                                                activeLocations.find(l => l.id === formData.destination_location_id && l.type === formData.destination_location_type)?.name :
-                                                'Select Destination...'}
+                                <div className="form-group" style={{ position: 'relative' }}>
+                                    {formData.destination_location_id ? (
+                                        <div className="selection-result-card" style={{ marginTop: '4px' }}>
+                                            <div className="entity-info">
+                                                <div className="entity-icon" style={{ background: 'var(--primary-light)', color: 'var(--primary-color)' }}>
+                                                    {formData.destination_location_type === 'Store' ? <Icons.Store size={18} /> : <Icons.Warehouse size={18} />}
+                                                </div>
+                                                <div className="entity-details">
+                                                    <span className="entity-name">
+                                                        {activeLocations.find(l => l.id === formData.destination_location_id && l.type === formData.destination_location_type)?.name}
+                                                    </span>
+                                                    <span className="entity-sub">
+                                                        {formData.destination_location_type} • {activeLocations.find(l => l.id === formData.destination_location_id && l.type === formData.destination_location_type)?.code}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="entity-action" onClick={() => setFormData({ ...formData, destination_location_id: null, destination_location_type: '' })} title="Change Location">
+                                                <Icons.RefreshCw size={14} />
+                                            </div>
                                         </div>
-                                        <Icons.ChevronDown size={14} style={{ color: 'var(--gray-400)' }} />
-                                    </div>
+                                    ) : (
+                                        <div className="custom-search-dropdown" style={{ position: 'relative' }}>
+                                            <label className="input-label">Destination Location <span className="required">*</span></label>
+                                            <div
+                                                className="input-field"
+                                                style={{
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                                    cursor: 'pointer', background: 'var(--input-bg)', padding: '0 12px',
+                                                    borderRadius: '8px', border: '1px solid var(--input-border)',
+                                                    height: 'var(--input-height)', marginTop: '6px'
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setDestinationDropdownOpen(!destinationDropdownOpen);
+                                                }}
+                                            >
+                                                <div style={{ flex: 1, color: 'var(--text-muted)' }}>
+                                                    Select Destination...
+                                                </div>
+                                                <Icons.ChevronDown size={14} style={{ color: 'var(--gray-400)' }} />
+                                            </div>
 
-                                    {destinationDropdownOpen && (
-                                        <div className="search-dropdown-menu" style={{ top: '100%', marginTop: '4px' }}>
-                                            {activeLocations
-                                                .filter(l => !(l.type === selectedStock?.location_type && l.id === selectedStock?.location_id))
-                                                .map(l => (
-                                                    <div
-                                                        key={`${l.type}-${l.id}`}
-                                                        className="search-dropdown-item"
-                                                        onClick={() => {
-                                                            setFormData({
-                                                                ...formData,
-                                                                destination_location_type: l.type,
-                                                                destination_location_id: l.id
-                                                            });
-                                                            setDestinationDropdownOpen(false);
-                                                        }}
-                                                    >
-                                                        <span className="search-item-title">{l.name}</span>
-                                                        <div className="search-item-sub">
-                                                            {l.type} • {l.code || `#${l.id}`}
-                                                        </div>
-                                                    </div>
-                                                ))}
+                                            {destinationDropdownOpen && (
+                                                <div className="search-dropdown-menu" style={{ top: '100%', marginTop: '4px' }}>
+                                                    {activeLocations
+                                                        .filter(l => !(l.type === selectedStock?.location_type && l.id === selectedStock?.location_id))
+                                                        .map(l => (
+                                                            <div
+                                                                key={`${l.type}-${l.id}`}
+                                                                className="search-dropdown-item"
+                                                                onClick={() => {
+                                                                    setFormData({
+                                                                        ...formData,
+                                                                        destination_location_type: l.type,
+                                                                        destination_location_id: l.id
+                                                                    });
+                                                                    setDestinationDropdownOpen(false);
+                                                                }}
+                                                            >
+                                                                <span className="search-item-title">{l.name}</span>
+                                                                <div className="search-item-sub">
+                                                                    {l.type} • {l.code || `#${l.id}`}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                     {formErrors.destination && <p className="error-message" style={{ color: 'var(--danger-color)', fontSize: '12px', marginTop: '4px' }}>{formErrors.destination}</p>}
@@ -645,13 +685,13 @@ const StockList = () => {
                             )}
                         </div>
 
-                        <div className="form-card">
-                            <div className="form-section-title" style={{ marginTop: 0 }}>
+                        <div className="form-card" style={{ padding: '20px', marginBottom: 0 }}>
+                            <div className="form-section-title" style={{ marginTop: 0, marginBottom: '16px' }}>
                                 <span className="icon"><Icons.FileText size={14} /></span>
                                 Additional Information
                             </div>
 
-                            <div className="common-form-grid" style={{ gap: '20px' }}>
+                            <div className="common-form-grid" style={{ gap: '16px' }}>
                                 <Input
                                     type="text"
                                     label="Reference / Invoice"

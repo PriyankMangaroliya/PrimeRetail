@@ -71,6 +71,8 @@ import {
     ChevronRight,
     ChevronsLeft,
     ChevronsRight,
+    Activity,
+    Truck,
     X as CloseIcon
 } from 'lucide-react';
 
@@ -193,6 +195,7 @@ export const Icons = {
     ChevronDown: ChevronDown,
     CornerUpLeft: CornerUpLeft,
     Refresh: RefreshCw,
+    RefreshCw: RefreshCw,
     PieChart: PieChart,
     ArrowUpCircle: ArrowUpCircle,
     ArrowDownCircle: ArrowDownCircle,
@@ -201,7 +204,13 @@ export const Icons = {
     ChevronLeft: ChevronLeft,
     ChevronRight: ChevronRight,
     ChevronsLeft: ChevronsLeft,
-    ChevronsRight: ChevronsRight
+    ChevronsRight: ChevronsRight,
+    Activity: Activity,
+    Truck: Truck,
+    Banknote: Banknote,
+    Smartphone: Smartphone,
+    ShoppingCart: ShoppingCart,
+    UserRoundCog: UserRoundCog
 };
 
 // React Icons (Fi)

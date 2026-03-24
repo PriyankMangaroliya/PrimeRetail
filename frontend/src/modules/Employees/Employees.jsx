@@ -515,7 +515,7 @@ const Employees = () => {
                         <div className="emp-role-info">
                             {activeTab === 'store' ? (
                                 (isStoreOwner ? ['Store Manager', 'Cashier', 'Inventory Staff'] : ['Cashier', 'Inventory Staff']).map(r => (
-                                    <Badge key={r} variant="info" size="small">{r}</Badge>
+                                    <><Badge key={r} variant="info" size="small">{r}</Badge><span> </span></>
                                 ))
                             ) : (
                                 WH_ROLES.map(r => <Badge key={r} variant="info" size="small">{r}</Badge>)
