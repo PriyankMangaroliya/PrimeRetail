@@ -3,31 +3,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    overflow: hidden;
-    padding: 20px;
+    padding: var(--gap-md);
 }
 
 .error-content {
-    position: relative;
-    z-index: 10;
     max-width: 800px;
     width: 100%;
     text-align: center;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border-radius: 20px;
+    border-radius: 24px;
     padding: 60px 40px;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-    animation: slideUp 0.6s ease;
+    box-shadow: var(--box-shadow-lg);
 }
 
 .error-animation {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: var(--gap-sm);
     margin-bottom: 30px;
     font-size: 120px;
     font-weight: 800;

@@ -1,38 +1,85 @@
-/* Page padding handled globally or via container classes */
-
-/* stats-grid handled globally */
+/* Modernized Dashboard Patterns */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--gap-lg);
+    margin-bottom: 24px;
+}
 
 .stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: var(--gap-md);
 }
 
 .stat-icon {
-    width: 60px;
-    height: 60px;
-    background: var(--gray-100);
-    border-radius: 12px;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--border-radius);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.stat-icon.primary {
+    background: var(--primary-light);
     color: var(--primary-color);
 }
 
-.stat-info h3 {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--gray-600);
-    margin-bottom: 4px;
+.stat-icon.warning {
+    background: #fef3c7;
+    color: var(--warning-color);
 }
 
-.stat-value {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 4px;
+.stat-icon.success {
+    background: #d1fae5;
+    color: var(--success-color);
 }
+
+.stat-icon.danger {
+    background: #fee2e2;
+    color: var(--danger-color);
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-sm);
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.activity-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.activity-icon.primary {
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
+/* Base Dashboard Component Styles */
 
 .revenue-chart {
     margin-bottom: 24px;
@@ -48,6 +95,7 @@
 .chart-header h3 {
     font-size: 18px;
     font-weight: 600;
+    color: var(--gray-800);
 }
 
 .chart-actions {
@@ -60,6 +108,7 @@
     justify-content: space-around;
     align-items: flex-end;
     height: 250px;
+    padding-top: 20px;
 }
 
 .chart-bar-item {
@@ -95,7 +144,7 @@
 
 .amount-label {
     font-size: 12px;
-    color: var(--gray-600);
+    color: var(--gray-500);
 }
 
 .recent-activity {
@@ -105,41 +154,8 @@
 .recent-activity h3 {
     font-size: 18px;
     font-weight: 600;
-    margin-bottom: 16px;
-}
-
-.activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.activity-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: var(--gray-50);
-    border-radius: 8px;
-}
-
-.activity-icon {
-    font-size: 20px;
-}
-
-.activity-details {
-    flex: 1;
-}
-
-.activity-text {
-    font-size: 14px;
     color: var(--gray-800);
-    margin-bottom: 4px;
-}
-
-.activity-time {
-    font-size: 12px;
-    color: var(--gray-500);
+    margin-bottom: 0;
 }
 
 .stores-grid {
@@ -174,7 +190,7 @@
 
 .metric span {
     font-size: 12px;
-    color: var(--gray-600);
+    color: var(--gray-500);
 }
 
 .metric strong {
@@ -182,7 +198,8 @@
     color: var(--gray-800);
 }
 
-.cashier-dashboard .pos-layout {
+/* POS/Cashier Specific Dashboard Layout */
+.pos-layout {
     display: grid;
     grid-template-columns: 1fr 400px;
     gap: 20px;
@@ -194,19 +211,10 @@
     gap: 20px;
 }
 
-.scanner-input {
-    display: flex;
-    gap: 10px;
-}
-
-.scanner-input .input-wrapper {
-    flex: 1;
-}
-
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
 }
 
 .pos-cart {
@@ -227,7 +235,7 @@
     align-items: center;
     gap: 8px;
     padding: 10px;
-    border-bottom: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-100);
     font-size: 14px;
 }
 
@@ -246,42 +254,16 @@
     margin: 20px 0;
 }
 
-/* POS cart summary now uses global summary-row classes */
-
-.payment-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.recent-orders,
-.low-stock {
-    overflow-x: auto;
-}
-
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-/* Common table styles are handled by Table component */
-
-.stock-low {
-    color: var(--danger-color);
-    font-weight: 600;
-}
-
 .tasks-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 20px;
+    gap: 24px;
 }
 
 .tasks-card h3 {
     font-size: 18px;
     font-weight: 600;
+    color: var(--gray-800);
     margin-bottom: 16px;
 }
 
@@ -297,7 +279,8 @@
     align-items: center;
     padding: 16px;
     background: var(--gray-50);
-    border-radius: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--gray-100);
 }
 
 .task-info {
@@ -313,11 +296,11 @@
 
 .task-info span {
     font-size: 12px;
-    color: var(--gray-600);
+    color: var(--gray-500);
 }
 
 @media (max-width: 1024px) {
-    .cashier-dashboard .pos-layout {
+    .pos-layout {
         grid-template-columns: 1fr;
     }
 
@@ -327,18 +310,6 @@
 }
 
 @media (max-width: 768px) {
-    .dashboard {
-        padding: 16px;
-    }
-
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .stores-grid {
-        grid-template-columns: 1fr;
-    }
-
     .product-grid {
         grid-template-columns: repeat(2, 1fr);
     }
