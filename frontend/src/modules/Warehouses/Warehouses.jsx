@@ -12,7 +12,7 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useAuth } from '../../context/AuthContext';
 import warehouseApi from '../../api/warehouse.api';
 import Icons from '../../components/common/Icons';
-import './Warehouses.css';
+
 
 const Warehouses = () => {
     const { user } = useAuth();
@@ -306,11 +306,11 @@ const Warehouses = () => {
             title: 'Created',
             key: 'created_at',
             render: (value, record) => (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="table-info-group">
                     <span>{new Date(value).toLocaleDateString()}</span>
-                    <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                    <span className="sub-text">
                         {record.created_by_name ? `By ${record.created_by_name}` : 'By System'}
-                    </small>
+                    </span>
                 </div>
             )
         },
@@ -318,11 +318,11 @@ const Warehouses = () => {
             title: 'Updated',
             key: 'updated_at',
             render: (value, record) => (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="table-info-group">
                     <span>{new Date(value).toLocaleDateString()}</span>
-                    <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                    <span className="sub-text">
                         {record.updated_by_name ? `By ${record.updated_by_name}` : 'By System'}
-                    </small>
+                    </span>
                 </div>
             )
         },
@@ -355,7 +355,7 @@ const Warehouses = () => {
                             <button
                                 onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }}
                                 disabled={Number(record.staff_count) > 0 || Number(record.stock_count) > 0}
-                                className="delete-action-btn"
+                                className="action-item delete-item"
                             >
                                 <Icons.Delete size={16} /> Delete
                             </button>
@@ -394,7 +394,6 @@ const Warehouses = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading warehouses...</p>
                 </div>
             </MainLayout>
         );
@@ -431,7 +430,7 @@ const Warehouses = () => {
                         <Table
                             columns={columns}
                             data={warehouses}
-                            className="warehouses-table"
+                            className="common-table"
                             columnSearchable={true}
                             searchable={false}
                             itemName="Warehouses"
@@ -468,7 +467,7 @@ const Warehouses = () => {
                                 <Button variant="danger" onClick={handleDelete}>Delete Warehouse</Button>
                             </>
                         ) : modalType === 'view' ? (
-                            <Button variant="primary" onClick={handleCloseModal}>Close</Button>
+                            <Button variant="outline" onClick={handleCloseModal}>Close</Button>
                         ) : (
                             <>
                                 <Button variant="outline" onClick={handleCloseModal}>Cancel</Button>
@@ -486,9 +485,9 @@ const Warehouses = () => {
                     {/* ── Delete Confirmation ──────────────────────────────── */}
                     {modalType === 'delete' ? (
                         <div className="delete-confirmation">
-                            <div className="delete-icon"><Icons.Warning size={48} color="var(--warning-color)" /></div>
+                            <div className="delete-icon"><Icons.AlertTriangle size={48} color="var(--danger-color)" /></div>
                             <p>Are you sure you want to delete warehouse <strong>{selectedWarehouse?.warehouse_name}</strong>?</p>
-                            <p className="delete-warning">This action cannot be undone.</p>
+                            <p className="sub-text mt-8">This action cannot be undone.</p>
                             {(Number(selectedWarehouse?.staff_count) > 0 || Number(selectedWarehouse?.stock_count) > 0) && (
                                 <p className="delete-error">
                                     Cannot delete warehouse with {selectedWarehouse.staff_count} staff member(s) or {selectedWarehouse.stock_count} stock item(s).
@@ -499,69 +498,68 @@ const Warehouses = () => {
 
                         /* ── View Details ──────────────────────────────────────── */
                     ) : modalType === 'view' ? (
-                        <div className="warehouse-view">
-                            <div className="warehouse-details-view">
-                                <div className="warehouse-brand-icon">
-                                    <span className="warehouse-icon-large"><Icons.Warehouse size={40} /></span>
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
+                                    <Icons.Warehouse size={32} />
                                 </div>
-                                <div className="warehouse-info-text">
-                                    <h3>{selectedWarehouse?.warehouse_name}</h3>
-                                    <p><Badge variant="primary">{selectedWarehouse?.warehouse_code}</Badge></p>
-                                    <p><Icons.Phone size={14} style={{ marginRight: '4px' }} /> {selectedWarehouse?.contact_number}</p>
-                                </div>
-                            </div>
-
-                            <div className="view-grid">
-                                <div className="view-group">
-                                    <label>Location</label>
-                                    <p>{selectedWarehouse?.location || 'N/A'}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>
-                                        <Badge variant={selectedWarehouse?.is_active ? 'success' : 'danger'}>
+                                <div className="detail-title-group">
+                                    <h2>{selectedWarehouse?.warehouse_name}</h2>
+                                    <div className="detail-meta">
+                                        <Badge variant="primary" className="badge-code">#{selectedWarehouse?.warehouse_code}</Badge>
+                                        <Badge variant={selectedWarehouse?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedWarehouse?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                    </p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Created</label>
-                                    <p>{selectedWarehouse?.created_at ? new Date(selectedWarehouse.created_at).toLocaleString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedWarehouse?.created_by_name ? `By ${selectedWarehouse.created_by_name}` : ''}</small>
-                                </div>
-                                <div className="view-group">
-                                    <label>Last Updated</label>
-                                    <p>{selectedWarehouse?.updated_at ? new Date(selectedWarehouse.updated_at).toLocaleString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedWarehouse?.updated_by_name ? `By ${selectedWarehouse.updated_by_name}` : ''}</small>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="warehouse-employees-section" style={{ marginTop: '20px' }}>
-                                <h4>Employee List ({selectedWarehouse?.staff?.length || selectedWarehouse?.staff_count || 0})</h4>
+                            <div className="view-section">
+                                <h4 className="view-section-header">Location Details</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Contact Number</label>
+                                        <p>{selectedWarehouse?.contact_number}</p>
+                                    </div>
+                                    <div className="view-group full-width">
+                                        <label>Exact Location / Address</label>
+                                        <p>{selectedWarehouse?.location || 'No address provided'}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="view-section" style={{ marginTop: '24px' }}>
+                                <h4 className="view-section-header">
+                                    <Icons.Users size={18} />
+                                    Staff Members ({selectedWarehouse?.staff?.length || selectedWarehouse?.staff_count || 0})
+                                </h4>
                                 {fetchingDetails ? (
-                                    <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
-                                        <Loader size="medium" />
+                                    <div style={{ textAlign: 'center', padding: '24px' }}>
+                                        <Loader size="small" />
                                     </div>
                                 ) : selectedWarehouse?.staff && selectedWarehouse.staff.length > 0 ? (
-                                    <div className="owner-stores-table-container" style={{ marginTop: '15px' }}>
+                                    <div className="mt-16" style={{ border: '1px solid var(--gray-100)', borderRadius: '8px', overflow: 'hidden' }}>
                                         <Table
                                             columns={staffColumns}
                                             data={selectedWarehouse.staff}
+                                            className="common-table"
                                             searchable={false}
                                             itemsPerPage={5}
                                             itemName="Employee"
                                         />
                                     </div>
                                 ) : (
-                                    <p style={{ color: '#666', marginTop: '10px' }}>No staff members found for this warehouse.</p>
+                                    <div className="info-banner-flat mt-8">
+                                        <p>No staff members are currently assigned to this warehouse.</p>
+                                    </div>
                                 )}
                             </div>
                         </div>
 
                         /* ── Add / Edit Form ────────────────────────────────────── */
                     ) : (
-                        <div className="warehouse-form">
-                            <div className="form-row">
+                        <div className="common-form">
+                            <div className="common-form-grid">
                                 <Input
                                     label="Warehouse Code"
                                     value={formData.warehouse_code}
@@ -578,10 +576,6 @@ const Warehouses = () => {
                                         ) : null
                                     }
                                 />
-                                {/*{modalType === 'edit' && (*/}
-                                {/*    <small className="field-note">Warehouse code cannot be changed</small>*/}
-                                {/*)}*/}
-
                                 <Input
                                     label="Warehouse Name"
                                     value={formData.warehouse_name}
@@ -590,33 +584,28 @@ const Warehouses = () => {
                                     placeholder="Enter warehouse name"
                                     required
                                 />
-                            </div>
-
-                            <div className="form-row">
                                 <Input
                                     label="Contact Number"
                                     value={formData.contact_number}
                                     onChange={(e) => setFormData({ ...formData, contact_number: e.target.value })}
                                     error={formErrors.contact_number}
-                                    placeholder="10 digits"
+                                    placeholder="Enter 10 digit number"
                                     required
                                 />
-                            </div>
-
-                            <Input
-                                label="Location / Address"
-                                value={formData.location}
-                                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                                error={formErrors.location}
-                                placeholder="Enter warehouse address or location (optional)"
-                            />
-
-                            {modalType === 'edit' && (
-                                <div className="form-info">
-                                    <small>• Status can be toggled using the button in the table</small>
-                                    <small>• Warehouse code cannot be changed once created</small>
+                                <div className="form-full-width">
+                                    <Input
+                                        label="Location / Address"
+                                        value={formData.location}
+                                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                        error={formErrors.location}
+                                        placeholder="Enter warehouse address or location (optional)"
+                                    />
                                 </div>
-                            )}
+                            </div>
+                            <div className="form-info">
+                                <small>• Status can be toggled using the action menu in the table</small>
+                                <small>• Warehouse code cannot be changed once created</small>
+                            </div>
                         </div>
                     )}
                 </Modal>

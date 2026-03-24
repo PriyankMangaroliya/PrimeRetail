@@ -12,7 +12,7 @@ import Input from '../../components/common/Input/Input';
 import Button from '../../components/common/Button/Button';
 import Loader from '../../components/common/Loader/Loader';
 import Icons from '../../components/common/Icons';
-import './Billing.css';
+import '../../styles/billing.css';
 
 const Billing = () => {
     const { user } = useAuth();
@@ -351,15 +351,14 @@ const Billing = () => {
         <div className="billing-container">
             <div className="billing-main">
                 <header className="billing-header">
-                    <div className="search-box">
-                        <Search size={20} />
-                        <Input
+                    <div className="common-search-box">
+                        <Search size={20} color="var(--gray-400)" />
+                        <input
                             ref={productInputRef}
                             type="text"
                             placeholder="Scan Barcode or Search Product (Min 2 chars)..."
                             value={productSearch}
                             onChange={(e) => handleProductSearch(e.target.value)}
-                            className="billing-product-search"
                         />
                         {searchResults.length > 0 && (
                             <div className="product-dropdown">
@@ -431,22 +430,15 @@ const Billing = () => {
                         {!customer && <span className="walkin-tag">Walk-in</span>}
                     </div>
                     {!customer ? (
-                        <div className="customer-search">
-                            <Input
+                        <div className="common-search-box">
+                            <Search size={18} color="var(--gray-400)" />
+                            <input
                                 type="text"
                                 placeholder="Phone Number"
                                 value={searchPhone}
                                 onChange={(e) => setSearchPhone(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleCustomerSearch()}
-                                className="billing-customer-search"
                             />
-                            <Button
-                                variant="ghost"
-                                size="small"
-                                onClick={handleCustomerSearch}
-                            >
-                                <Search size={18} />
-                            </Button>
                         </div>
                     ) : (
                         <div className="customer-badge">
@@ -534,13 +526,14 @@ const Billing = () => {
                         <div className="summary-row toggle-row">
                             <div className="row-label">
                                 <span>Roundoff</span>
-                                <div
-                                    className={`toggle-switch ${isRoundOffEnabled ? 'active' : ''}`}
-                                    onClick={() => setIsRoundOffEnabled(!isRoundOffEnabled)}
-                                >
-                                    <div className="toggle-thumb" />
-                                </div>
-
+                                <label className="common-toggle">
+                                    <div
+                                        className={`toggle-switch ${isRoundOffEnabled ? 'active' : ''}`}
+                                        onClick={() => setIsRoundOffEnabled(!isRoundOffEnabled)}
+                                    >
+                                        <div className="toggle-thumb" />
+                                    </div>
+                                </label>
                             </div>
                             <span>{roundoff >= 0 ? '+' : ''}{roundoff.toFixed(2)}</span>
                         </div>

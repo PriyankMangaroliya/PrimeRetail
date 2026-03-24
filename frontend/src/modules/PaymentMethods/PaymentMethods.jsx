@@ -12,7 +12,6 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useAuth } from '../../context/AuthContext';
 import paymentMethodApi from '../../api/paymentMethod.api';
 import Icons from '../../components/common/Icons';
-import './PaymentMethods.css';
 
 const PaymentMethods = () => {
     const { user } = useAuth();
@@ -189,7 +188,9 @@ const PaymentMethods = () => {
                 <div className="table-info-group">
                     <span className="table-name-cell">{value}</span>
                     {record.description && (
-                        <small className="table-secondary-text">{record.description}</small>
+                        <small className="sub-text" style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {record.description}
+                        </small>
                     )}
                 </div>
             )
@@ -207,9 +208,9 @@ const PaymentMethods = () => {
             title: 'Created',
             key: 'created_at',
             render: (value, record) => (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="table-info-group">
                     <span>{new Date(value).toLocaleDateString()}</span>
-                    <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                    <small className="sub-text">
                         {record.created_by_name ? `By ${record.created_by_name}` : (record.created_by ? `By User #${record.created_by}` : 'By System')}
                     </small>
                 </div>
@@ -219,9 +220,9 @@ const PaymentMethods = () => {
             title: 'Updated',
             key: 'updated_at',
             render: (value, record) => (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="table-info-group">
                     <span>{new Date(value).toLocaleDateString()}</span>
-                    <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                    <small className="sub-text">
                         {record.updated_by_name ? `By ${record.updated_by_name}` : (record.updated_by ? `By User #${record.updated_by}` : 'By System')}
                     </small>
                 </div>
@@ -232,8 +233,8 @@ const PaymentMethods = () => {
             key: 'actions',
             render: (_, record) => (
                 <div className="common-action-menu" onClick={(e) => { e.stopPropagation(); }}>
-                    <button 
-                        className="action-trigger" 
+                    <button
+                        className="action-trigger"
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
@@ -252,8 +253,8 @@ const PaymentMethods = () => {
                             <button className="action-item" onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
-                            <button 
-                                onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }} 
+                            <button
+                                onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }}
                                 disabled={Number(record.usage_count) > 0}
                                 className="action-item delete-item"
                             >
@@ -271,7 +272,6 @@ const PaymentMethods = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading payment methods...</p>
                 </div>
             </MainLayout>
         );
@@ -279,7 +279,7 @@ const PaymentMethods = () => {
 
     return (
         <MainLayout>
-            <div className="methods-container">
+            <div className="common-module-container">
                 {/* Header */}
                 <div className="page-header">
                     <div>
@@ -304,12 +304,12 @@ const PaymentMethods = () => {
                 )}
 
                 {/* Payment Methods Table */}
-                <Card className="methods-table-card">
+                <Card className="common-table-card">
                     {methods.length > 0 ? (
                         <Table
                             columns={columns}
                             data={methods}
-                            className="payment-methods-table"
+                            className="common-table"
                             columnSearchable={true}
                             searchable={false}
                             itemName="Payment Methods"
@@ -349,7 +349,7 @@ const PaymentMethods = () => {
                                 </Button>
                             </>
                         ) : modalType === 'usage' ? (
-                            <Button variant="primary" onClick={handleCloseModal}>
+                            <Button variant="outline" onClick={handleCloseModal}>
                                 Close
                             </Button>
                         ) : (
@@ -376,62 +376,64 @@ const PaymentMethods = () => {
                             )}
                         </div>
                     ) : modalType === 'usage' ? (
-                        <div className="method-view">
-                            <div className="view-grid">
-                                <div className="view-group">
-                                    <label>Payment Method</label>
-                                    <p>{selectedMethod?.method_name}</p>
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
+                                    <Icons.CreditCard size={32} />
                                 </div>
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>
-                                        <Badge variant={selectedMethod?.is_active ? 'success' : 'danger'}>
+                                <div className="detail-title-group">
+                                    <h2>{selectedMethod?.method_name}</h2>
+                                    <div className="detail-meta">
+                                        <Badge variant={selectedMethod?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedMethod?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                    </p>
+                                    </div>
                                 </div>
-                                <div className="view-group">
-                                    <label>Total Transactions</label>
-                                    <p>{usageData?.usage_count || 0}</p>
-                                </div>
-                                <div className="view-group full-width">
-                                    <label>Description</label>
-                                    <p>{selectedMethod?.description || 'No description provided'}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Created</label>
-                                    <p>{selectedMethod?.created_at ? new Date(selectedMethod.created_at).toLocaleDateString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedMethod?.created_by_name ? `By ${selectedMethod.created_by_name}` : ''}</small>
-                                </div>
-                                <div className="view-group">
-                                    <label>Last Updated</label>
-                                    <p>{selectedMethod?.updated_at ? new Date(selectedMethod.updated_at).toLocaleDateString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedMethod?.updated_by_name ? `By ${selectedMethod.updated_by_name}` : ''}</small>
+                            </div>
+
+                            <div className="view-section">
+                                <h4 className="view-section-header">Method Details</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Method Name</label>
+                                        <p>{selectedMethod?.method_name}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Usage Count</label>
+                                        <p>{usageData?.usage_count || 0} Transactions</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Status</label>
+                                        <p>{selectedMethod?.is_active ? 'Active' : 'Inactive'}</p>
+                                    </div>
+                                    <div className="view-group full-width">
+                                        <label>Description</label>
+                                        <p>{selectedMethod?.description || 'No description provided for this payment method.'}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        <div className="method-form">
+                        <div className="common-form">
                             <Input
-                                label="Payment Method Name"
+                                label="Method Name"
                                 value={formData.method_name}
-                                onChange={(e) => setFormData({...formData, method_name: e.target.value})}
+                                onChange={(e) => setFormData({ ...formData, method_name: e.target.value })}
                                 error={formErrors.method_name}
-                                placeholder="e.g., Cash, Credit Card, UPI, Bank Transfer"
+                                placeholder="Enter payment method name"
                                 required
                             />
-
                             <Input
                                 label="Description"
                                 value={formData.description}
-                                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 error={formErrors.description}
                                 placeholder="Enter payment method description (optional)"
                             />
 
                             {modalType === 'edit' && (
                                 <div className="form-info">
-                                    <small>• Status can be toggled using the button in the table</small>
+                                    <small>• Status can be toggled using the action menu in the table</small>
                                 </div>
                             )}
                         </div>

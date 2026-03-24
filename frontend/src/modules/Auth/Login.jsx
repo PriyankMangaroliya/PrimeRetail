@@ -6,7 +6,7 @@ import Input from '../../components/common/Input/Input';
 import Button from '../../components/common/Button/Button';
 import Alert from '../../components/common/Alert/Alert';
 import Loader from '../../components/common/Loader/Loader';
-import './Login.css';
+import '../../styles/login.css';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -153,7 +153,6 @@ const Login = () => {
                         src="/PrimeRetail logo.png"
                         alt="PrimeRetail Illustration"
                         className="mockup-image"
-                        e={{ padding: '2rem', backgroundColor: '#fff' }}
                         onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = 'https://plus.unsplash.com/premium_photo-1661301051253-12502c462be1?q=80&w=2070&auto=format&fit=crop';
@@ -176,13 +175,13 @@ const Login = () => {
 
                 {
                     loginError && (
-                        <Alert type="danger" dismissible onClose={() => setLoginError('')} style={{ marginBottom: '1.5rem' }}>
+                        <Alert type="danger" dismissible onClose={() => setLoginError('')} className="login-alert">
                             {loginError}
                         </Alert>
                     )
                 }
 
-                <form onSubmit={handleSubmit} className="login-form-custom" style={{ display: 'flex', flexDirection: 'column' }}>
+                <form onSubmit={handleSubmit} className="login-form-custom">
                     <Input
                         label="Email"
                         type="email"
@@ -194,38 +193,37 @@ const Login = () => {
                         required
                     />
 
-                        <Input
-                            label="Password"
-                            type={formData.showPassword ? 'text' : 'password'}
-                            name="password"
-                            placeholder="••••••••"
-                            value={formData.password}
-                            onChange={handleChange}
-                            error={errors.password}
-                            required
-                            suffix={
-                                <button
-                                    type="button"
-                                    className="password-toggle"
-                                    onClick={() => setFormData(prev => ({ ...prev, showPassword: !prev.showPassword }))}
-                                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
-                                >
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        {formData.showPassword ? (
-                                            <>
-                                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                                                <line x1="1" y1="1" x2="23" y2="23"></line>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                <circle cx="12" cy="12" r="3"></circle>
-                                            </>
-                                        )}
-                                    </svg>
-                                </button>
-                            }
-                        />
+                    <Input
+                        label="Password"
+                        type={formData.showPassword ? 'text' : 'password'}
+                        name="password"
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                        required
+                        suffix={
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() => setFormData(prev => ({ ...prev, showPassword: !prev.showPassword }))}
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    {formData.showPassword ? (
+                                        <>
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </>
+                                    )}
+                                </svg>
+                            </button>
+                        }
+                    />
 
                     <div className="form-extras">
                         <label className="remember-me">

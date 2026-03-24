@@ -5,7 +5,7 @@ import Button from '../../components/common/Button/Button';
 import Badge from '../../components/common/Badge/Badge';
 import Table from '../../components/common/Table/Table';
 import Icons from '../../components/common/Icons';
-import './Dashboard.css';
+import '../../styles/dashboard.css';
 
 const StoreManagerDashboard = () => {
     const orderColumns = [
@@ -62,8 +62,8 @@ const StoreManagerDashboard = () => {
                 {/* Quick Stats */}
                 <div className="stats-grid">
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.DollarSign size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon success"><Icons.DollarSign size={24} /></div>
+                        <div className="stat-content">
                             <h3>Today's Sales</h3>
                             <p className="stat-value">$5,230</p>
                             <Badge variant="success">+15%</Badge>
@@ -71,8 +71,8 @@ const StoreManagerDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.Package size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon warning"><Icons.Package size={24} /></div>
+                        <div className="stat-content">
                             <h3>Orders</h3>
                             <p className="stat-value">78</p>
                             <Badge variant="warning">12 Pending</Badge>
@@ -80,8 +80,8 @@ const StoreManagerDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.Users size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon primary"><Icons.Users size={24} /></div>
+                        <div className="stat-content">
                             <h3>Staff on Duty</h3>
                             <p className="stat-value">8/15</p>
                             <Badge variant="info">+2 in 1hr</Badge>
@@ -89,8 +89,8 @@ const StoreManagerDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.AlertTriangle size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon danger"><Icons.AlertTriangle size={24} /></div>
+                        <div className="stat-content">
                             <h3>Low Stock Items</h3>
                             <p className="stat-value">23</p>
                             <Badge variant="danger">Need reorder</Badge>

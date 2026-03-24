@@ -1,11 +1,11 @@
 .card {
     background: white;
     border-radius: var(--border-radius);
-    padding: 20px;
+    padding: 24px;
     box-shadow: var(--box-shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--box-shadow-lg);
 }

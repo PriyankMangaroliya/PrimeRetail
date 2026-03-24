@@ -12,7 +12,6 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 import storeOwnerApi from '../../api/storeOwner.api';
 import storeApi from '../../api/store.api';
 import Icons from '../../components/common/Icons';
-import './StoreOwners.css';
 
 const StoreOwners = () => {
     const [owners, setOwners] = useState([]);
@@ -259,14 +258,12 @@ const StoreOwners = () => {
             title: 'Owner Name',
             key: 'name',
             render: (value, record) => (
-                <div className="owner-info">
-                    <div className="owner-avatar">
+                <div className="table-profile-cell">
+                    <div className="table-profile-avatar">
                         {record.profile_image ? (
                             <img src={record.profile_image} alt={value} />
                         ) : (
-                            <span className="owner-initials">
-                                {value.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
-                            </span>
+                            value.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
                         )}
                     </div>
                     <div className="table-info-group">
@@ -300,9 +297,9 @@ const StoreOwners = () => {
             title: 'Created',
             key: 'created_at',
             render: (value, record) => (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="table-info-group">
                     <span>{new Date(value).toLocaleDateString()}</span>
-                    <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                    <small className="table-secondary-text">
                         {record.creator_name ? `By ${record.creator_name}` : (record.created_by ? `By User #${record.created_by}` : 'By System')}
                     </small>
                 </div>
@@ -312,9 +309,9 @@ const StoreOwners = () => {
             title: 'Updated',
             key: 'updated_at',
             render: (value, record) => (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="table-info-group">
                     <span>{new Date(value).toLocaleDateString()}</span>
-                    <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                    <small className="table-secondary-text">
                         {record.updater_name ? `By ${record.updater_name}` : (record.updated_by ? `By User #${record.updated_by}` : 'By System')}
                     </small>
                 </div>
@@ -325,8 +322,8 @@ const StoreOwners = () => {
             key: 'actions',
             render: (_, record) => (
                 <div className="common-action-menu" onClick={(e) => { e.stopPropagation(); }}>
-                    <button 
-                        className="action-trigger" 
+                    <button
+                        className="action-trigger"
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
@@ -345,8 +342,8 @@ const StoreOwners = () => {
                             <button className="action-item" onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
-                            <button 
-                                onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }} 
+                            <button
+                                onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }}
                                 disabled={Number(record.store_count) > 0}
                                 className="action-item delete-item"
                             >
@@ -377,7 +374,6 @@ const StoreOwners = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading store owners...</p>
                 </div>
             </MainLayout>
         );
@@ -385,7 +381,7 @@ const StoreOwners = () => {
 
     return (
         <MainLayout>
-            <div className="owners-container">
+            <div className="common-module-container">
                 {/* Header */}
                 <div className="page-header">
                     <div>
@@ -410,12 +406,12 @@ const StoreOwners = () => {
                 )}
 
                 {/* Owners Table */}
-                <Card className="owners-table-card">
+                <Card className="common-table-card">
                     {owners.length > 0 ? (
                         <Table
                             columns={columns}
                             data={owners}
-                            className="owners-table"
+                            className="common-table"
                             searchable={false}
                             columnSearchable={true}
                             itemName="Store Owners"
@@ -483,50 +479,53 @@ const StoreOwners = () => {
                             )}
                         </div>
                     ) : modalType === 'view' ? (
-                        <div className="owner-view">
-                            <div className="view-grid">
-                                <div className="view-group full-width" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                                    <div className="owner-avatar-large">
-                                        {selectedOwner?.profile_image ? (
-                                            <img src={selectedOwner.profile_image} alt={selectedOwner.name} />
-                                        ) : (
-                                            <span className="owner-initials-large">
-                                                {selectedOwner?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <h3>{selectedOwner?.name}</h3>
-                                        <p className="table-secondary-text">{selectedOwner?.email}</p>
-                                    </div>
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
+                                    {selectedOwner?.profile_image ? (
+                                        <img src={selectedOwner.profile_image} alt={selectedOwner.name} />
+                                    ) : (
+                                        selectedOwner?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                                    )}
                                 </div>
-                                <div className="view-group">
-                                    <label>Email</label>
-                                    <p>{selectedOwner?.email}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Phone</label>
-                                    <p>{selectedOwner?.phone || 'N/A'}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>
-                                        <Badge variant={selectedOwner?.is_active ? 'success' : 'danger'}>
+                                <div className="detail-title-group">
+                                    <h2>{selectedOwner?.name}</h2>
+                                    <div className="detail-meta">
+                                        <Badge variant={selectedOwner?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedOwner?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                    </p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Store Count</label>
-                                    <p>{selectedOwner?.store_count || 0} Stores</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="owner-stores-section" style={{ marginTop: '20px' }}>
-                                <h4>Stores Owned ({selectedOwner?.store_count || 0})</h4>
+
+                            <div className="view-section">
+                                <h4 className="view-section-header">Contact Information</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Full Name</label>
+                                        <p>{selectedOwner?.name}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Email Address</label>
+                                        <p>{selectedOwner?.email}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Phone Number</label>
+                                        <p>{selectedOwner?.phone || 'N/A'}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Member Since</label>
+                                        <p>{new Date(selectedOwner?.created_at).toLocaleDateString()}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="view-section">
+                                <h4 className="view-section-header">Stores Owned ({selectedOwner?.store_count || 0})</h4>
                                 {loadingStores ? (
                                     <Loader size="small" />
                                 ) : ownerStores.length > 0 ? (
-                                    <div className="owner-stores-table-container" style={{ marginTop: '15px' }}>
+                                    <div className="mt-16">
                                         <Table
                                             columns={storeColumns}
                                             data={ownerStores}
@@ -535,17 +534,17 @@ const StoreOwners = () => {
                                         />
                                     </div>
                                 ) : (
-                                    <p style={{ color: '#666', marginTop: '10px' }}>No stores found for this owner.</p>
+                                    <p className="sub-text mt-8">No stores found for this owner.</p>
                                 )}
                             </div>
                         </div>
                     ) : (
-                        <div className="owner-form">
-                            <div className="owner-form-grid">
+                        <div className="common-form">
+                            <div className="common-form-grid">
                                 <Input
                                     label="Full Name"
                                     value={formData.name}
-                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     error={formErrors.name}
                                     placeholder="Enter full name"
                                     required
@@ -555,7 +554,7 @@ const StoreOwners = () => {
                                     type="email"
                                     label="Email Address"
                                     value={formData.email}
-                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     error={formErrors.email}
                                     placeholder="Enter email address"
                                     required
@@ -565,7 +564,7 @@ const StoreOwners = () => {
                                     type="password"
                                     label="Password"
                                     value={formData.password}
-                                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     error={formErrors.password}
                                     placeholder={modalType === 'edit' ? "Leave blank to keep current" : "Enter password"}
                                     required={modalType === 'add'}
@@ -575,7 +574,7 @@ const StoreOwners = () => {
                                     type="password"
                                     label="Confirm Password"
                                     value={formData.confirm_password}
-                                    onChange={(e) => setFormData({...formData, confirm_password: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, confirm_password: e.target.value })}
                                     error={formErrors.confirm_password}
                                     placeholder={modalType === 'edit' ? "Leave blank to keep current" : "Confirm password"}
                                     required={modalType === 'add' || formData.password}
@@ -584,7 +583,7 @@ const StoreOwners = () => {
                                 <Input
                                     label="Phone Number"
                                     value={formData.phone}
-                                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                     error={formErrors.phone}
                                     placeholder="Enter phone number (optional)"
                                 />
@@ -592,15 +591,16 @@ const StoreOwners = () => {
                                 <Input
                                     label="Profile Image URL"
                                     value={formData.profile_image}
-                                    onChange={(e) => setFormData({...formData, profile_image: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, profile_image: e.target.value })}
                                     error={formErrors.profile_image}
                                     placeholder="Enter image URL (optional)"
                                 />
                             </div>
+
                             {modalType === 'edit' && (
-                                <div className="form-info" style={{ marginTop: '15px' }}>
+                                <div className="form-info">
                                     <small>• Leave password blank to keep current password</small>
-                                    <small>• Status can be toggled using the button in the table</small>
+                                    <small>• Status can be toggled using the action menu in the table</small>
                                 </div>
                             )}
                         </div>

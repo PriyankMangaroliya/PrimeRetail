@@ -4,7 +4,7 @@ import Card from '../../components/common/Card/Card';
 import Button from '../../components/common/Button/Button';
 import Badge from '../../components/common/Badge/Badge';
 import Icons from '../../components/common/Icons';
-import './Dashboard.css';
+import '../../styles/dashboard.css';
 
 const SuperAdminDashboard = () => {
     const revenueData = [
@@ -29,8 +29,8 @@ const SuperAdminDashboard = () => {
                 {/* Stats Cards */}
                 <div className="stats-grid">
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.Store size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon primary"><Icons.Store size={24} /></div>
+                        <div className="stat-content">
                             <h3>Total Stores</h3>
                             <p className="stat-value">24</p>
                             <Badge variant="success">+3 this month</Badge>
@@ -38,8 +38,8 @@ const SuperAdminDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.Users size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon primary"><Icons.Users size={24} /></div>
+                        <div className="stat-content">
                             <h3>Total Users</h3>
                             <p className="stat-value">156</p>
                             <Badge variant="success">+12 this month</Badge>
@@ -47,8 +47,8 @@ const SuperAdminDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.DollarSign size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon success"><Icons.DollarSign size={24} /></div>
+                        <div className="stat-content">
                             <h3>Total Revenue</h3>
                             <p className="stat-value">$1.2M</p>
                             <Badge variant="success">+18%</Badge>
@@ -56,8 +56,8 @@ const SuperAdminDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.Package size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon warning"><Icons.Package size={24} /></div>
+                        <div className="stat-content">
                             <h3>Total Products</h3>
                             <p className="stat-value">5,678</p>
                             <Badge variant="warning">+234 this month</Badge>
@@ -99,11 +99,14 @@ const SuperAdminDashboard = () => {
 
                 {/* Recent Activity */}
                 <Card className="recent-activity">
-                    <h3>Recent System Activity</h3>
+                    <div className="card-header">
+                        <h3>Recent System Activity</h3>
+                        <Button variant="ghost" size="small">View All</Button>
+                    </div>
                     <div className="activity-list">
-                        {[1,2,3,4,5].map((item) => (
+                        {[1, 2, 3, 4, 5].map((item) => (
                             <div key={item} className="activity-item">
-                                <div className="activity-icon"><Icons.Bell size={18} /></div>
+                                <div className="activity-icon primary"><Icons.Bell size={18} /></div>
                                 <div className="activity-details">
                                     <p className="activity-text">New store "Downtown Store" was created</p>
                                     <span className="activity-time">2 minutes ago</span>

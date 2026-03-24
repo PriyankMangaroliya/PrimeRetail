@@ -41,14 +41,14 @@
     top: 37%;
     width: 10%;
     height: 25%;
-    background-color: var(--primary-color, #0056b3);
+    background-color: var(--primary-color);
     border-radius: 50px;
     animation: spinner-fade 1s linear infinite;
     transform-origin: center 50%;
 }
 
 @keyframes spinner-fade {
-    0% { background-color: #0056b3; }
+    0% { background-color: var(--primary-color); }
     100% { background-color: transparent; }
 }
 

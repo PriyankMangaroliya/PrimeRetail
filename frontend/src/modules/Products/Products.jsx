@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Icons from '../../components/common/Icons';
 import MainLayout from '../../components/layout/MainLayout/MainLayout';
-import { useAuth } from '../../context/AuthContext';
+import {useAuth} from '../../context/AuthContext';
 import productApi from '../../api/product.api';
 import categoryApi from '../../api/category.api';
 import storeTaxApi from '../../api/storeTax.api';
@@ -15,10 +15,10 @@ import Card from '../../components/common/Card/Card';
 import Select from '../../components/common/Select/Select';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
-import './Products.css';
+
 
 const Products = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
     const isOwner = user?.role_name === 'Store Owner';
     const isSuperAdmin = user?.role_name === 'Super Admin';
 
@@ -42,7 +42,7 @@ const Products = () => {
         description: ''
     });
     const [formErrors, setFormErrors] = useState({});
-    const [alert, setAlert] = useState({ show: false, type: '', message: '' });
+    const [alert, setAlert] = useState({show: false, type: '', message: ''});
     const [activeDropdown, setActiveDropdown] = useState(null);
 
     // Close dropdown on outside click
@@ -64,7 +64,7 @@ const Products = () => {
             const [prodRes, catRes, taxRes] = await Promise.all([
                 productApi.getAllProducts(),
                 categoryApi.getActiveCategories(),
-                isOwner ? storeTaxApi.getStoreTaxes() : Promise.resolve({ data: [] })
+                isOwner ? storeTaxApi.getStoreTaxes() : Promise.resolve({data: []})
             ]);
             setProducts(prodRes.data?.products || prodRes.data || []);
             setCategories(catRes.data || []);
@@ -77,8 +77,8 @@ const Products = () => {
     };
 
     const showAlert = (type, message) => {
-        setAlert({ show: true, type, message });
-        setTimeout(() => setAlert({ show: false, type: '', message: '' }), 5000);
+        setAlert({show: true, type, message});
+        setTimeout(() => setAlert({show: false, type: '', message: ''}), 5000);
     };
 
     const resetForm = () => ({
@@ -208,15 +208,12 @@ const Products = () => {
             title: 'Stock',
             key: 'stock_quantity',
             render: (value, record) => (
-                <div className="flex items-center gap-2">
-                    <span className={value <= record.min_stock ? 'text-danger fw-bold' : ''}>
-                        {value} {record.unit}
-                    </span>
-                    {value <= record.min_stock && <Icons.AlertTriangle size={14} color="var(--danger-color)" />}
-                </div>
+                <Badge variant={value <= record.min_stock ? 'danger' : 'success'} className="badge-status">
+                    {value}
+                </Badge>
             )
         }] : []),
-        {
+        ...(isOwner ? [{
             title: 'Status',
             key: 'is_active',
             render: (value) => (
@@ -224,7 +221,7 @@ const Products = () => {
                     {value ? 'Active' : 'Inactive'}
                 </Badge>
             )
-        },
+        }] : []),
         {
             title: 'Actions',
             key: 'actions',
@@ -237,17 +234,25 @@ const Products = () => {
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
                         }}
                     >
-                        <Icons.Actions size={16} />
+                        <Icons.Actions size={16}/>
                     </button>
                     {activeDropdown === record.id && (
                         <div className="action-dropdown">
-                            <button className="action-item" onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
+                            <button className="action-item" onClick={() => {
+                                handleOpenModal('view', record);
+                                setActiveDropdown(null);
+                            }}>
                                 <Icons.View size={16}/> View
                             </button>
                             {isOwner && (
                                 <>
-                                    <button className="action-item" onClick={() => { handleToggleStatus(record); setActiveDropdown(null); }}>
-                                        {record.is_active ? <><Icons.XCircle size={16} color="#ef4444" /> Deactivate</> : <><Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
+                                    <button className="action-item" onClick={() => {
+                                        handleToggleStatus(record);
+                                        setActiveDropdown(null);
+                                    }}>
+                                        {record.is_active ? <><Icons.XCircle size={16}
+                                                                             color="#ef4444"/> Deactivate</> : <>
+                                            <Icons.CheckCircle size={16} color="#10b981"/> Activate</>}
                                     </button>
                                     <button className="action-item" onClick={() => {
                                         handleOpenModal('edit', record);
@@ -273,34 +278,12 @@ const Products = () => {
         }
     ];
 
-    const stockColumns = [
-        {
-            title: 'Store Name',
-            key: 'store_name',
-            render: (val, record) => val || `Store #${record.store_id}`
-        },
-        {
-            title: 'Location',
-            key: 'location',
-            render: (val) => val || 'N/A'
-        },
-        {
-            title: 'Stock Quantity',
-            key: 'quantity',
-            render: (val) => (
-                <Badge variant={val > 0 ? 'success' : 'danger'}>
-                    {val} {selectedProduct?.unit}
-                </Badge>
-            )
-        }
-    ];
-
     if (isSuperAdmin) {
         return (
             <MainLayout>
                 <div className="products-container">
                     <EmptyState
-                        icon={<Icons.Lock size={48} />}
+                        icon={<Icons.Lock size={48}/>}
                         title="Access Denied"
                         description="Super Admins do not have access to this module."
                     />
@@ -314,7 +297,6 @@ const Products = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large"/>
-                    <p>Loading products...</p>
                 </div>
             </MainLayout>
         );
@@ -327,8 +309,8 @@ const Products = () => {
             .substring(0, 50);
 
         setFormData(prev => {
-            const updates = { product_name: name };
-            
+            const updates = {product_name: name};
+
             // Auto-generate SKU if it was empty or matches the slug of the old name
             const oldSlug = prev.product_name.toUpperCase().replace(/[^A-Z0-9]/g, '_').substring(0, 50);
             if (!prev.sku || prev.sku === oldSlug) {
@@ -340,7 +322,7 @@ const Products = () => {
                 updates.barcode = slug;
             }
 
-            return { ...prev, ...updates };
+            return {...prev, ...updates};
         });
     };
 
@@ -375,7 +357,7 @@ const Products = () => {
                         <Table
                             columns={columns}
                             data={products}
-                            className="products-table"
+                            className="common-table"
                             columnSearchable={true}
                             searchable={false}
                             itemName="Products"
@@ -413,7 +395,7 @@ const Products = () => {
                                 <Button variant="danger" onClick={handleDelete}>Delete Product</Button>
                             </>
                         ) : modalType === 'view' ? (
-                            <Button variant="primary" onClick={() => setShowModal(false)}>Close</Button>
+                            <Button variant="outline" onClick={() => setShowModal(false)}>Close</Button>
                         ) : (
                             <>
                                 <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
@@ -426,74 +408,87 @@ const Products = () => {
                 >
                     {modalType === 'delete' ? (
                         <div className="delete-confirmation">
-                            <div className="delete-icon"><Icons.Warning size={48} color="var(--warning-color)"/></div>
-                            <p>Are you sure you want to delete
-                                product <strong>{selectedProduct?.product_name}</strong>?</p>
-                            <p className="delete-warning">This action cannot be undone and will fail if transactions exist.</p>
+                            <div className="delete-icon"><Icons.AlertTriangle size={48} color="var(--danger-color)"/>
+                            </div>
+                            <p>Are you sure you want to delete product <strong>{selectedProduct?.product_name}</strong>?
+                            </p>
+                            <p className="sub-text mt-8">This action cannot be undone and will fail if transactions
+                                exist.</p>
                         </div>
                     ) : modalType === 'view' ? (
-                        <div className="products-view">
-                            <div className="view-grid">
-                                <div className="view-group">
-                                    <label>Barcode</label>
-                                    <p>{selectedProduct?.barcode || 'N/A'}</p>
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
+                                    <Icons.Product size={32}/>
                                 </div>
-                                <div className="view-group">
-                                    <label>Category</label>
-                                    <p>{selectedProduct?.category_name}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Price</label>
-                                    <p>₹{parseFloat(selectedProduct?.price).toFixed(2)}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Unit</label>
-                                    <p>{selectedProduct?.unit}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Min Stock Threshold</label>
-                                    <p>{selectedProduct?.min_stock} {selectedProduct?.unit}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Tax</label>
-                                    <p>{selectedProduct?.tax_name} ({selectedProduct?.tax_rate}%)</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>
-                                        <Badge variant={selectedProduct?.is_active ? 'success' : 'danger'}>
+                                <div className="detail-title-group">
+                                    <h2>{selectedProduct?.product_name}</h2>
+                                    <div className="detail-meta">
+                                        <Badge variant="primary" className="badge-code">#{selectedProduct?.sku}</Badge>
+                                        <Badge variant={selectedProduct?.is_active ? 'success' : 'danger'}
+                                               className="badge-status">
                                             {selectedProduct?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                    </p>
+                                    </div>
                                 </div>
-                                <div className="view-group full-width">
-                                    <label>Description</label>
-                                    <p>{selectedProduct?.description || 'N/A'}</p>
+                            </div>
+
+                            <div className="view-section">
+                                <h4 className="view-section-header">General Information</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Product Category</label>
+                                        <p>{selectedProduct?.category_name || 'Uncategorized'}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Sale Price</label>
+                                        <p className="price-tag">₹{parseFloat(selectedProduct?.price).toFixed(2)}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Unit of Measure</label>
+                                        <p>{selectedProduct?.unit}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Barcode</label>
+                                        <p>{selectedProduct?.barcode || 'N/A'}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Tax Rule</label>
+                                        <p>{selectedProduct?.tax_name} ({selectedProduct?.tax_rate}%)</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Low Stock Threshold</label>
+                                        <p>{selectedProduct?.min_stock} {selectedProduct?.unit}</p>
+                                    </div>
+                                    <div className="view-group full-width">
+                                        <label>Product Description</label>
+                                        <p>{selectedProduct?.description || 'No description provided.'}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        <form onSubmit={handleSubmit} className="category-form">
-                            <div className="form-row">
+                        <div className="common-form">
+                            <div className="common-form-grid">
                                 <Input
                                     label="Product Name"
                                     value={formData.product_name}
                                     onChange={(e) => handleProductNameChange(e.target.value)}
                                     error={formErrors.product_name}
+                                    placeholder="Enter product name"
                                     required
                                 />
                                 <Input
-                                    label="SKU"
+                                    label="SKU / Item Code"
                                     value={formData.sku}
                                     onChange={(e) => setFormData({...formData, sku: e.target.value})}
                                     placeholder="e.g. ELECTRONICS_01"
                                 />
-                            </div>
-                            <div className="form-row">
                                 <Input
-                                    label="Barcode"
+                                    label="Barcode (EAN/UPC)"
                                     value={formData.barcode}
                                     onChange={(e) => setFormData({...formData, barcode: e.target.value})}
+                                    placeholder="Scan or enter barcode"
                                 />
                                 <Select
                                     label="Category"
@@ -502,12 +497,10 @@ const Products = () => {
                                     onChange={(e) => setFormData({...formData, category_id: e.target.value})}
                                     error={formErrors.category_id}
                                     options={[
-                                        { value: '', label: 'Select Category' },
-                                        ...categories.map(c => ({ value: c.id, label: c.category_name }))
+                                        {value: '', label: 'Select Category'},
+                                        ...categories.map(c => ({value: c.id, label: c.category_name}))
                                     ]}
                                 />
-                            </div>
-                            <div className="form-row">
                                 <Select
                                     label="Tax Rule"
                                     required
@@ -515,12 +508,15 @@ const Products = () => {
                                     onChange={(e) => setFormData({...formData, tax_id: e.target.value})}
                                     error={formErrors.tax_id}
                                     options={[
-                                        { value: '', label: 'Select Tax' },
-                                        ...storeTaxes.filter(t => t.is_active).map(t => ({ value: t.id, label: `${t.tax_name} (${t.tax_rate}%)` }))
+                                        {value: '', label: 'Select Tax'},
+                                        ...storeTaxes.filter(t => t.is_active).map(t => ({
+                                            value: t.id,
+                                            label: `${t.tax_name} (${t.tax_rate}%)`
+                                        }))
                                     ]}
                                 />
                                 <Input
-                                    label="Price (₹)"
+                                    label="Sale Price (₹)"
                                     type="number"
                                     step="0.01"
                                     value={formData.price}
@@ -528,30 +524,36 @@ const Products = () => {
                                     error={formErrors.price}
                                     required
                                 />
-                            </div>
-                            <div className="form-row">
                                 <Input
-                                    label="Unit"
+                                    label="Unit of Measure"
                                     value={formData.unit}
                                     onChange={(e) => setFormData({...formData, unit: e.target.value})}
                                     error={formErrors.unit}
+                                    placeholder="e.g. Pcs, Kg, Box"
                                     required
                                 />
                                 <Input
-                                    label="Min Stock Alert Level"
+                                    label="Min Stock Threshold"
                                     type="number"
                                     min="0"
                                     value={formData.min_stock}
                                     onChange={(e) => setFormData({...formData, min_stock: e.target.value})}
-                                    placeholder="e.g. 10"
+                                    placeholder="Alert level (e.g. 10)"
                                 />
+                                <div className="form-full-width">
+                                    <Input
+                                        label="Description"
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                        placeholder="Add product details or specifications..."
+                                    />
+                                </div>
                             </div>
-                            <Input
-                                label="Description"
-                                value={formData.description}
-                                onChange={(e) => setFormData({...formData, description: e.target.value})}
-                            />
-                        </form>
+                            <div className="form-info">
+                                <small>• Product name will auto-generate SKU if left blank</small>
+                                <small>• Minimum stock alert will trigger low stock warnings</small>
+                            </div>
+                        </div>
                     )}
                 </Modal>
             </div>

@@ -4,7 +4,7 @@ import Card from '../../components/common/Card/Card';
 import Button from '../../components/common/Button/Button';
 import Badge from '../../components/common/Badge/Badge';
 import Icons from '../../components/common/Icons';
-import './Dashboard.css';
+import '../../styles/dashboard.css';
 
 const WarehouseStaffDashboard = () => {
     return (
@@ -20,8 +20,8 @@ const WarehouseStaffDashboard = () => {
                 {/* Warehouse Stats */}
                 <div className="stats-grid">
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.Warehouse size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon primary"><Icons.Warehouse size={24} /></div>
+                        <div className="stat-content">
                             <h3>Warehouse Capacity</h3>
                             <p className="stat-value">78%</p>
                             <Badge variant="success">12,450/16,000 units</Badge>
@@ -29,8 +29,8 @@ const WarehouseStaffDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.Package size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon info"><Icons.Package size={24} /></div>
+                        <div className="stat-content">
                             <h3>Total Items</h3>
                             <p className="stat-value">12,450</p>
                             <Badge variant="info">+234 today</Badge>
@@ -38,8 +38,8 @@ const WarehouseStaffDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.ArrowDownCircle size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon warning"><Icons.ArrowDownCircle size={24} /></div>
+                        <div className="stat-content">
                             <h3>Incoming Shipments</h3>
                             <p className="stat-value">8</p>
                             <Badge variant="warning">Today</Badge>
@@ -47,8 +47,8 @@ const WarehouseStaffDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.ArrowUpCircle size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon success"><Icons.ArrowUpCircle size={24} /></div>
+                        <div className="stat-content">
                             <h3>Outgoing Shipments</h3>
                             <p className="stat-value">15</p>
                             <Badge variant="success">Ready to dispatch</Badge>
@@ -61,7 +61,7 @@ const WarehouseStaffDashboard = () => {
                     <Card className="tasks-card">
                         <h3>Receiving Tasks</h3>
                         <div className="task-list">
-                            {[1,2,3].map((item) => (
+                            {[1, 2, 3].map((item) => (
                                 <div key={item} className="task-item">
                                     <div className="task-info">
                                         <strong>PO-2024-{item}234</strong>
@@ -77,7 +77,7 @@ const WarehouseStaffDashboard = () => {
                     <Card className="tasks-card">
                         <h3>Picking Tasks</h3>
                         <div className="task-list">
-                            {[1,2,3,4].map((item) => (
+                            {[1, 2, 3, 4].map((item) => (
                                 <div key={item} className="task-item">
                                     <div className="task-info">
                                         <strong>Order #WH-{item}45</strong>

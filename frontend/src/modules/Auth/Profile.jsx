@@ -6,7 +6,7 @@ import Icons from '../../components/common/Icons';
 import storeApi from '../../api/store.api';
 import warehouseApi from '../../api/warehouse.api';
 import Loader from '../../components/common/Loader/Loader';
-import './Profile.css';
+import '../../styles/profile.css';
 
 const Profile = () => {
     const { user } = useAuth();

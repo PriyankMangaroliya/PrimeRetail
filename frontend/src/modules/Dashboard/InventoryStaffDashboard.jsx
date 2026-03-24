@@ -5,7 +5,7 @@ import Button from '../../components/common/Button/Button';
 import Badge from '../../components/common/Badge/Badge';
 import Table from '../../components/common/Table/Table';
 import Icons from '../../components/common/Icons';
-import './Dashboard.css';
+import '../../styles/dashboard.css';
 
 const InventoryStaffDashboard = () => {
     const stockColumns = [
@@ -67,8 +67,8 @@ const InventoryStaffDashboard = () => {
                 {/* Inventory Stats */}
                 <div className="stats-grid">
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.Package size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon primary"><Icons.Package size={24} /></div>
+                        <div className="stat-content">
                             <h3>Total Products</h3>
                             <p className="stat-value">1,234</p>
                             <Badge variant="success">+45 this week</Badge>
@@ -76,8 +76,8 @@ const InventoryStaffDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.AlertTriangle size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon danger"><Icons.AlertTriangle size={24} /></div>
+                        <div className="stat-content">
                             <h3>Low Stock</h3>
                             <p className="stat-value">23</p>
                             <Badge variant="danger">Need reorder</Badge>
@@ -85,8 +85,8 @@ const InventoryStaffDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.ArrowDownCircle size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon warning"><Icons.ArrowDownCircle size={24} /></div>
+                        <div className="stat-content">
                             <h3>Pending Receiving</h3>
                             <p className="stat-value">5</p>
                             <Badge variant="warning">Orders</Badge>
@@ -94,8 +94,8 @@ const InventoryStaffDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.ArrowUpCircle size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon info"><Icons.ArrowUpCircle size={24} /></div>
+                        <div className="stat-content">
                             <h3>To be Dispatched</h3>
                             <p className="stat-value">12</p>
                             <Badge variant="info">Ready to ship</Badge>

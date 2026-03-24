@@ -16,16 +16,16 @@
 }
 
 .btn-primary:hover {
-    background: var(--secondary-color);
+    background: var(--primary-dark);
 }
 
 .btn-secondary {
-    background: var(--gray-200);
-    color: var(--gray-700);
+    background: var(--gray-100);
+    color: var(--gray-600);
 }
 
 .btn-secondary:hover {
-    background: var(--gray-300);
+    background: var(--gray-200);
 }
 
 .btn-outline {
@@ -37,6 +37,15 @@
 .btn-outline:hover {
     background: var(--primary-color);
     color: white;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: var(--danger-dark);
 }
 
 .btn-small {

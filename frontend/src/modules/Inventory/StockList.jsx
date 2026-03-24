@@ -14,7 +14,6 @@ import Select from '../../components/common/Select/Select';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useNavigate } from 'react-router-dom';
-import './Inventory.css';
 
 const movementsDecreasingStock = ['SELL', 'DAMAGED', 'MANUAL_REMOVE', 'TRANSFER'];
 const movementsIncreasingStock = ['ADD', 'RETURN', 'EXCHANGE', 'MANUAL_ADD'];
@@ -29,7 +28,7 @@ const StockList = () => {
     const isInventory = user?.role_name === 'Inventory Staff';
     const isWarehouse = user?.role_name === 'Warehouse Staff';
 
-    const canManageStock = isInventory || isWarehouse || isCashier;
+    const canManageStock = isInventory || isWarehouse;
 
     const getMovementOptions = () => {
         if (isWarehouse) return ['ADD', 'TRANSFER', 'DAMAGED', 'MANUAL_ADD', 'MANUAL_REMOVE'];
@@ -96,7 +95,8 @@ const StockList = () => {
                 try {
                     const { default: productApi } = await import('../../api/product.api.js');
                     const prodRes = await productApi.getAllProducts();
-                    setActiveProducts((prodRes.data || []).filter(p => p.is_active !== false));
+                    const products = prodRes.data?.products || prodRes.data || [];
+                    setActiveProducts(products.filter(p => p.is_active !== false));
                 } catch (e) {
                     console.error("Could not fetch product list", e);
                 }
@@ -273,7 +273,7 @@ const StockList = () => {
         },
 
         // Location column
-        ...(!(isWarehouse || isInventory || isCashier || isManager) ? [{
+        ...(isOwner ? [{
             title: 'Location Code',
             key: 'location_type',
             render: (_, record) => (
@@ -283,7 +283,7 @@ const StockList = () => {
             )
         }] : []),
 
-        ...(!(isWarehouse || isInventory || isCashier || isManager) ? [{
+        ...(isOwner ? [{
             title: 'Location',
             key: 'location_name',
             render: (val) => (<span>{val}</span>)
@@ -292,10 +292,10 @@ const StockList = () => {
         {
             title: 'Quantity',
             key: 'quantity',
-            render: (val, record) => (
-                <span className={val <= record.min_stock ? 'text-danger fw-bold' : ''}>
-                    {val} {val <= record.min_stock && <Icons.AlertTriangle size={14} className="ms-1" color="var(--danger-color)" />}
-                </span>
+            render: (value, record) => (
+                <Badge variant={value <= record.min_stock ? 'danger' : 'success'} className="badge-status">
+                    {value}
+                </Badge>
             )
         },
         {
@@ -344,7 +344,6 @@ const StockList = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading stock data...</p>
                 </div>
             </MainLayout>
         );
@@ -419,7 +418,7 @@ const StockList = () => {
                             data={stock}
                             columnSearchable={true}
                             searchable={false}
-                            className="inventory-table"
+                            className="common-table"
                             itemName="Stock Items"
                         />
                     ) : (
@@ -435,7 +434,7 @@ const StockList = () => {
                     isOpen={showModal}
                     onClose={() => setShowModal(false)}
                     title="Manage Stock"
-                    size="md"
+                    size="large"
                     footer={
                         <>
                             <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
@@ -443,239 +442,235 @@ const StockList = () => {
                         </>
                     }
                 >
-                    <form onSubmit={handleSubmit} className="transaction-form">
-                        <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginBottom: '1rem' }}>
-                            <Input
-                                label="Select Product"
-                                required
-                                type="text"
-                                placeholder="Search by name or SKU..."
-                                value={productSearch}
-                                onChange={(e) => {
-                                    setProductSearch(e.target.value);
-                                    setProductDropdownOpen(true);
-                                    setSelectedProduct(null); // Reset when user types
-                                    setSelectedStock(null);
-                                }}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setProductDropdownOpen(!productDropdownOpen);
-                                    setDestinationDropdownOpen(false);
-                                }}
-                                icon={<span>▼</span>}
-                            />
-
-                            {productDropdownOpen && (
-                                <div
-                                    style={{
-                                        position: 'absolute', top: '100%', left: 0, right: 0,
-                                        background: 'white', border: '1px solid #e5e7eb',
-                                        borderRadius: '6px', maxHeight: '250px', overflowY: 'auto',
-                                        zIndex: 500, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                                        marginTop: '4px'
-                                    }}
-                                >
-                                    {activeProducts
-                                        .filter(p => `${p.product_name} ${p.sku}`.toLowerCase().includes(productSearch.toLowerCase()))
-                                        .map(p => (
-                                            <div
-                                                key={p.id}
-                                                style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid #f3f4f6' }}
-                                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                                                onClick={() => {
-                                                    const existingStock = stock.find(s => s.product_id === p.id);
-                                                    setSelectedProduct(p);
-                                                    setSelectedStock(existingStock || null);
-                                                    setProductSearch(`${p.product_name} (SKU: ${p.sku})`);
-                                                    setProductDropdownOpen(false);
-
-                                                    // Auto-set movement type
-                                                    if (existingStock) {
-                                                        const options = getMovementOptions();
-                                                        setFormData(f => ({ ...f, movement_type: options[0] || '' }));
-                                                    } else {
-                                                        const options = getMovementOptions();
-                                                        setFormData(f => ({ ...f, movement_type: options.includes('ADD') ? 'ADD' : options[0] || '' }));
-                                                    }
-                                                }}
-                                            >
-                                                <div style={{ fontWeight: 500, color: '#1f2937' }}>{p.product_name}</div>
-                                                <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
-                                                    SKU: {p.sku} {stock.find(s => s.product_id === p.id) ? `| Current Stock: ${stock.find(s => s.product_id === p.id).quantity}` : '| No Stock'}
-                                                </div>
-                                            </div>
-                                        ))}
+                    <div className="common-form">
+                        {selectedProduct ? (
+                            <div className="info-banner-card" style={{ marginBottom: '24px' }}>
+                                <div className="icon-box">
+                                    <Icons.Package size={24} />
                                 </div>
-                            )}
+                                <div className="content">
+                                    <span className="label">Managing Stock Context</span>
+                                    <span className="value">{selectedProduct.product_name}</span>
+                                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                                        <Badge variant="primary" className="badge-code">SKU: {selectedProduct.sku}</Badge>
+                                        {selectedStock && (
+                                            <Badge variant={selectedStock.quantity <= selectedStock.min_stock ? 'danger' : 'success'}>
+                                                Available: {selectedStock.quantity} {selectedProduct.unit || 'Units'}
+                                            </Badge>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="form-card">
+                                <div className="form-group custom-search-dropdown" style={{ position: 'relative' }}>
+                                    <Input
+                                        label="Step 1: Select Product to Manage"
+                                        required
+                                        type="text"
+                                        placeholder="Search by name or SKU..."
+                                        value={productSearch}
+                                        onChange={(e) => {
+                                            setProductSearch(e.target.value);
+                                            setProductDropdownOpen(true);
+                                            setSelectedProduct(null);
+                                            setSelectedStock(null);
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setProductDropdownOpen(!productDropdownOpen);
+                                        }}
+                                        icon={<Icons.ChevronDown size={16} />}
+                                    />
 
-                            {selectedProduct && (
-                                <div className="mt-2 flex items-center gap-2">
-                                    {selectedStock ? (
-                                        <Badge variant="success">Current Stock: {selectedStock.quantity}</Badge>
-                                    ) : (
-                                        <Badge variant="warning">Product not in stock</Badge>
+                                    {productDropdownOpen && (
+                                        <div className="search-dropdown-menu">
+                                            {activeProducts
+                                                .filter(p => `${p.product_name} ${p.sku}`.toLowerCase().includes(productSearch.toLowerCase()))
+                                                .map(p => (
+                                                    <div
+                                                        key={p.id}
+                                                        className="search-dropdown-item"
+                                                        onClick={() => {
+                                                            const existingStock = stock.find(s => s.product_id === p.id);
+                                                            setSelectedProduct(p);
+                                                            setSelectedStock(existingStock || null);
+                                                            setProductSearch(`${p.product_name} (SKU: ${p.sku})`);
+                                                            setProductDropdownOpen(false);
+                                                            const options = getMovementOptions();
+                                                            setFormData(f => ({
+                                                                ...f,
+                                                                movement_type: existingStock ? options[0] : (options.includes('ADD') ? 'ADD' : options[0])
+                                                            }));
+                                                        }}
+                                                    >
+                                                        <span className="search-item-title">{p.product_name}</span>
+                                                        <div className="search-item-sub">
+                                                            <span>SKU: {p.sku}</span>
+                                                            {stock.find(s => s.product_id === p.id) ?
+                                                                <span style={{ color: 'var(--success-color)', fontWeight: '600' }}>Stock: {stock.find(s => s.product_id === p.id).quantity}</span> :
+                                                                <span style={{ color: 'var(--warning-color)' }}>No Stock</span>}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="form-card">
+                            <div className="form-section-title" style={{ marginTop: 0 }}>
+                                <span className="icon"><Icons.Settings size={14} /></span>
+                                Transaction Details
+                            </div>
+
+                            <div className="common-form-grid" style={{ gap: '20px' }}>
+                                <Select
+                                    label="Movement Type"
+                                    required
+                                    value={formData.movement_type}
+                                    onChange={(e) => setFormData({ ...formData, movement_type: e.target.value })}
+                                    options={getMovementOptions().map(opt => ({ value: opt, label: opt }))}
+                                />
+
+                                <Input
+                                    label="Quantity"
+                                    type="number"
+                                    min="1"
+                                    value={formData.quantity}
+                                    onWheel={(e) => e.target.blur()}
+                                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                                    error={formErrors.quantity}
+                                    required
+                                />
+                            </div>
+
+                            {formData.movement_type === 'EXCHANGE' && (
+                                <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginTop: '24px' }}>
+                                    <Input
+                                        label="Select New Product (for Exchange)"
+                                        required
+                                        type="text"
+                                        placeholder="Search target product..."
+                                        value={exchangeProductSearch}
+                                        onChange={(e) => {
+                                            setExchangeProductSearch(e.target.value);
+                                            setExchangeProductDropdownOpen(true);
+                                            setSelectedExchangeProduct(null);
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setExchangeProductDropdownOpen(!exchangeProductDropdownOpen);
+                                        }}
+                                        error={formErrors.exchange_product}
+                                        icon={<Icons.ChevronDown size={16} />}
+                                    />
+                                    {exchangeProductDropdownOpen && (
+                                        <div className="search-dropdown-menu">
+                                            {activeProducts
+                                                .filter(p => p.id !== selectedProduct?.id)
+                                                .filter(p => p.stock_quantity > 0)
+                                                .filter(p => `${p.product_name} ${p.sku}`.toLowerCase().includes(exchangeProductSearch.toLowerCase()))
+                                                .map(p => (
+                                                    <div
+                                                        key={p.id}
+                                                        className="search-dropdown-item"
+                                                        onClick={() => {
+                                                            setSelectedExchangeProduct(p);
+                                                            setExchangeProductSearch(`${p.product_name} (SKU: ${p.sku})`);
+                                                            setExchangeProductDropdownOpen(false);
+                                                        }}
+                                                    >
+                                                        <span className="search-item-title">{p.product_name}</span>
+                                                        <div className="search-item-sub">SKU: {p.sku}</div>
+                                                    </div>
+                                                ))}
+                                        </div>
                                     )}
                                 </div>
                             )}
-                        </div>
 
-                        <div className="form-row">
-                            <Select
-                                label="Movement Type"
-                                required
-                                value={formData.movement_type}
-                                onChange={(e) => setFormData({ ...formData, movement_type: e.target.value })}
-                                options={getMovementOptions().map(opt => ({ value: opt, label: opt }))}
-                            />
-
-                            <Input
-                                label="Quantity"
-                                type="number"
-                                min="1"
-                                value={formData.quantity}
-                                onWheel={(e) => e.target.blur()}
-                                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                                error={formErrors.quantity}
-                                required
-                            />
-                        </div>
-
-                        <div className="form-row">
-                            <Input
-                                type="text"
-                                label="Reference / Invoice (Optional)"
-                                value={formData.reference_id || ''}
-                                onChange={(e) => setFormData({ ...formData, reference_id: e.target.value })}
-                                error={formErrors.reference_id}
-                                placeholder="e.g. INV-12345"
-                            />
-
-                            <Input
-                                type="text"
-                                label="Notes / Reason"
-                                value={formData.notes || ''}
-                                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                placeholder="Additional details..."
-                            />
-                        </div>
-
-                        {formData.movement_type === 'EXCHANGE' && (
-                            <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginTop: '1rem', marginBottom: '1rem' }}>
-                                <Input
-                                    label="Select New Product (for Exchange)"
-                                    required
-                                    type="text"
-                                    placeholder="Search new product..."
-                                    value={exchangeProductSearch}
-                                    onChange={(e) => {
-                                        setExchangeProductSearch(e.target.value);
-                                        setExchangeProductDropdownOpen(true);
-                                        setSelectedExchangeProduct(null);
-                                    }}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setExchangeProductDropdownOpen(!exchangeProductDropdownOpen);
-                                        setProductDropdownOpen(false);
-                                        setDestinationDropdownOpen(false);
-                                    }}
-                                    error={formErrors.exchange_product}
-                                    icon={<span>▼</span>}
-                                />
-                                {exchangeProductDropdownOpen && (
+                            {formData.movement_type === 'TRANSFER' && (
+                                <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginTop: '24px' }}>
+                                    <label className="input-label">Destination Location <span className="required">*</span></label>
                                     <div
+                                        className="input-field"
                                         style={{
-                                            position: 'absolute', top: '100%', left: 0, right: 0,
-                                            background: 'white', border: '1px solid #e5e7eb',
-                                            borderRadius: '6px', maxHeight: '200px', overflowY: 'auto',
-                                            zIndex: 520, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                                            marginTop: '4px'
+                                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                            cursor: 'pointer', background: 'var(--input-bg)', padding: '0 12px',
+                                            borderRadius: '8px', border: '1px solid var(--input-border)',
+                                            height: 'var(--input-height)', marginTop: '6px'
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setDestinationDropdownOpen(!destinationDropdownOpen);
                                         }}
                                     >
-                                        {activeProducts
-                                            .filter(p => p.id !== selectedProduct?.id) // Exclude old product
-                                            .filter(p => p.stock_quantity > 0) // Only available stock
-                                            .filter(p => `${p.product_name} ${p.sku}`.toLowerCase().includes(exchangeProductSearch.toLowerCase()))
-                                            .map(p => (
-                                                <div
-                                                    key={p.id}
-                                                    style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid #f3f4f6' }}
-                                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                                                    onClick={() => {
-                                                        setSelectedExchangeProduct(p);
-                                                        setExchangeProductSearch(`${p.product_name} (SKU: ${p.sku})`);
-                                                        setExchangeProductDropdownOpen(false);
-                                                    }}
-                                                >
-                                                    <div style={{ fontWeight: 500, color: '#1f2937' }}>{p.product_name}</div>
-                                                    <div style={{ fontSize: '12px', color: '#6b7280' }}>SKU: {p.sku}</div>
-                                                </div>
-                                            ))}
+                                        <div style={{ flex: 1, color: formData.destination_location_id ? 'var(--text-primary)' : 'var(--text-muted)' }}>
+                                            {formData.destination_location_id ?
+                                                activeLocations.find(l => l.id === formData.destination_location_id && l.type === formData.destination_location_type)?.name :
+                                                'Select Destination...'}
+                                        </div>
+                                        <Icons.ChevronDown size={14} style={{ color: 'var(--gray-400)' }} />
                                     </div>
-                                )}
-                            </div>
-                        )}
 
-                        {formData.movement_type === 'TRANSFER' && (
-                            <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginTop: '1rem', marginBottom: '1rem' }}>
-                                <label className="input-label">Destination Location <span className="required">*</span></label>
-                                <div
-                                    className="input-field"
-                                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', background: '#fff', padding: '0 12px' }}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setDestinationDropdownOpen(!destinationDropdownOpen);
-                                        setProductDropdownOpen(false);
-                                    }}
-                                >
-                                    <div style={{ flex: 1, padding: '8px 0' }}>
-                                        {formData.destination_location_id ?
-                                            activeLocations.find(l => l.id === formData.destination_location_id && l.type === formData.destination_location_type)?.name :
-                                            'Select Destination...'}
-                                    </div>
-                                    <span style={{ color: '#6b7280', fontSize: '10px' }}>▼</span>
-                                </div>
-
-                                {destinationDropdownOpen && (
-                                    <div
-                                        style={{
-                                            position: 'absolute', top: '100%', left: 0, right: 0,
-                                            background: 'white', border: '1px solid #e5e7eb',
-                                            borderRadius: '6px', maxHeight: '200px', overflowY: 'auto',
-                                            zIndex: 510, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                                            marginTop: '4px'
-                                        }}
-                                    >
-                                        {activeLocations
-                                            .filter(l => !(l.type === selectedStock?.location_type && l.id === selectedStock?.location_id)) // Exclude current location
-                                            .map(l => (
-                                                <div
-                                                    key={`${l.type}-${l.id}`}
-                                                    style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid #f3f4f6' }}
-                                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                                                    onClick={() => {
-                                                        setFormData({
-                                                            ...formData,
-                                                            destination_location_type: l.type,
-                                                            destination_location_id: l.id
-                                                        });
-                                                        setDestinationDropdownOpen(false);
-                                                    }}
-                                                >
-                                                    <div style={{ fontWeight: 500, color: '#1f2937' }}>{l.name}</div>
-                                                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
-                                                        {l.type} - {l.code || `#${l.id}`}
+                                    {destinationDropdownOpen && (
+                                        <div className="search-dropdown-menu" style={{ top: '100%', marginTop: '4px' }}>
+                                            {activeLocations
+                                                .filter(l => !(l.type === selectedStock?.location_type && l.id === selectedStock?.location_id))
+                                                .map(l => (
+                                                    <div
+                                                        key={`${l.type}-${l.id}`}
+                                                        className="search-dropdown-item"
+                                                        onClick={() => {
+                                                            setFormData({
+                                                                ...formData,
+                                                                destination_location_type: l.type,
+                                                                destination_location_id: l.id
+                                                            });
+                                                            setDestinationDropdownOpen(false);
+                                                        }}
+                                                    >
+                                                        <span className="search-item-title">{l.name}</span>
+                                                        <div className="search-item-sub">
+                                                            {l.type} • {l.code || `#${l.id}`}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))}
-                                    </div>
-                                )}
-                                {formErrors.destination && <p className="error-message" style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>{formErrors.destination}</p>}
+                                                ))}
+                                        </div>
+                                    )}
+                                    {formErrors.destination && <p className="error-message" style={{ color: 'var(--danger-color)', fontSize: '12px', marginTop: '4px' }}>{formErrors.destination}</p>}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="form-card">
+                            <div className="form-section-title" style={{ marginTop: 0 }}>
+                                <span className="icon"><Icons.FileText size={14} /></span>
+                                Additional Information
                             </div>
-                        )}
-                    </form>
+
+                            <div className="common-form-grid" style={{ gap: '20px' }}>
+                                <Input
+                                    type="text"
+                                    label="Reference / Invoice"
+                                    value={formData.reference_id || ''}
+                                    onChange={(e) => setFormData({ ...formData, reference_id: e.target.value })}
+                                    error={formErrors.reference_id}
+                                    placeholder="Ref No. (Optional)"
+                                />
+
+                                <Input
+                                    type="text"
+                                    label="Notes / Reason"
+                                    value={formData.notes || ''}
+                                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                                    placeholder="Reason for change..."
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </Modal>
             </div>
         </MainLayout>

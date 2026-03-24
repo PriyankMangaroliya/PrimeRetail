@@ -13,7 +13,6 @@ import { useAuth } from '../../context/AuthContext';
 import storeTaxApi from '../../api/storeTax.api';
 import taxApi from '../../api/tax.api';
 import Icons from '../../components/common/Icons';
-import './StoreTaxes.css';
 
 const StoreTaxes = () => {
     const { user } = useAuth();
@@ -151,9 +150,9 @@ const StoreTaxes = () => {
             title: 'Rate',
             key: 'tax_rate',
             render: (value) => (
-                <span className="dc-value">
+                <Badge variant="primary" className="badge-code">
                     {parseFloat(value).toFixed(2)} %
-                </span>
+                </Badge>
             )
         },
         {
@@ -203,36 +202,41 @@ const StoreTaxes = () => {
         }
     ];
 
-    const usageColumns = [
+    const availableTaxColumns = [
         {
-            title: 'Product Name',
-            key: 'product_name',
+            title: 'Tax Name',
+            key: 'tax_name',
             className: 'table-name-cell'
         },
         {
-            title: 'SKU',
-            key: 'sku',
+            title: 'Rate',
+            key: 'tax_rate',
+            render: (val) => <Badge variant="primary" className="badge-code">{parseFloat(val).toFixed(2)}%</Badge>
         },
         {
-            title: 'Category',
-            key: 'category_name',
-            render: (val) => val || 'N/A'
+            title: 'Description',
+            key: 'description',
+            render: (val) => <span className="sub-text" style={{ fontSize: '13px' }}>{val || 'No description'}</span>
         },
         {
-            title: 'Price',
-            key: 'price',
-            render: (val, record) => `₹${parseFloat(val).toFixed(2)} / ${record.unit}`
+            title: 'Action',
+            key: 'action',
+            render: (_, record) => (
+                <Button variant="primary" size="small" onClick={() => handleAddTax(record.id)}>
+                    <Icons.Plus size={14} /> Add
+                </Button>
+            )
         }
     ];
 
     if (!isStoreOwner) {
         return (
             <MainLayout>
-                <div className="taxes-container">
-                    <div className="taxes-header">
+                <div className="common-module-container">
+                    <div className="page-header">
                         <h1>Tax Management</h1>
                     </div>
-                    <Card className="taxes-table-card">
+                    <Card className="common-table-card">
                         <EmptyState
                             icon={<Icons.Lock size={48} />}
                             title="Access Restricted"
@@ -247,7 +251,7 @@ const StoreTaxes = () => {
     if (loading) {
         return (
             <MainLayout>
-                <div className="taxes-loading">
+                <div className="page-loading">
                     <Loader size="large" />
                 </div>
             </MainLayout>
@@ -256,8 +260,8 @@ const StoreTaxes = () => {
 
     return (
         <MainLayout>
-            <div className="taxes-container">
-                <div className="taxes-header">
+            <div className="common-module-container">
+                <div className="page-header">
                     <div>
                         <h1>Tax Management</h1>
                         <p>Manage taxes for your products</p>
@@ -275,12 +279,12 @@ const StoreTaxes = () => {
                     </Alert>
                 )}
 
-                <Card className="taxes-table-card">
+                <Card className="common-table-card">
                     {storeTaxes.length > 0 ? (
                         <Table
                             columns={columns}
                             data={storeTaxes}
-                            className="store-taxes-table"
+                            className="common-table"
                             columnSearchable={true}
                             searchable={false}
                             itemName="Store Taxes"
@@ -335,23 +339,16 @@ const StoreTaxes = () => {
                                     prefix={<Icons.Search size={18} />}
                                 />
                             </div>
-                            <div className="available-taxes-list" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                            <div className="available-taxes-list">
                                 {filteredAvailableTaxes.length > 0 ? (
-                                    <div className="tax-grid">
-                                        {filteredAvailableTaxes.map(tax => (
-                                            <Card key={tax.id} className="tax-select-card">
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                                                    <div>
-                                                        <h4>{tax.tax_name}</h4>
-                                                        <Badge variant="info">{tax.tax_rate}%</Badge>
-                                                    </div>
-                                                    <Button variant="outline" size="small" onClick={() => handleAddTax(tax.id)}>
-                                                        <Icons.Plus size={14} /> Add
-                                                    </Button>
-                                                </div>
-                                                <p>{tax.description || 'No description available'}</p>
-                                            </Card>
-                                        ))}
+                                    <div style={{ border: '1px solid var(--gray-100)', borderRadius: '8px', overflow: 'hidden' }}>
+                                        <Table
+                                            columns={availableTaxColumns}
+                                            data={filteredAvailableTaxes}
+                                            className="common-table"
+                                            searchable={false}
+                                            itemsPerPage={10}
+                                        />
                                     </div>
                                 ) : (
                                     <EmptyState
@@ -363,50 +360,40 @@ const StoreTaxes = () => {
                             </div>
                         </div>
                     ) : modalType === 'view' ? (
-                        <div className="tax-view">
-                            <div className="common-detail-header" style={{ paddingBottom: '15px', marginBottom: '15px' }}>
-                                <div className="detail-icon-large">
-                                    <Icons.Percent size={40} />
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
+                                    <Icons.Percent size={32} />
                                 </div>
-                                <div className="detail-info-text">
-                                    <h3>{selectedTax?.tax_name}</h3>
-                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                <div className="detail-title-group">
+                                    <h2>{selectedTax?.tax_name}</h2>
+                                    <div className="detail-meta">
                                         <Badge variant={selectedTax?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedTax?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                        <span className="dc-value-large">
-                                            {parseFloat(selectedTax?.tax_rate || 0).toFixed(2)}%
-                                        </span>
+                                        <Badge variant="primary" className="badge-code">Rate: {parseFloat(selectedTax?.tax_rate || 0).toFixed(2)}%</Badge>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="usage-section">
-                                <h4 style={{ marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <Icons.Package size={20} color="var(--primary-color)" />
-                                    Products Using This Tax
-                                </h4>
-                                {isUsageLoading ? (
-                                    <div style={{ textAlign: 'center', padding: '20px' }}>
-                                        <Loader size="small" />
-                                        <p style={{ marginTop: '10px', color: 'var(--gray-500)' }}>Fetching products...</p>
+                            <div className="view-section">
+                                <h4 className="view-section-header">Tax Information</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Tax Rate</label>
+                                        <p className="price-tag">{parseFloat(selectedTax?.tax_rate || 0).toFixed(2)}%</p>
                                     </div>
-                                ) : usageProducts.length > 0 ? (
-                                    <div style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid var(--gray-200)', borderRadius: '8px' }}>
-                                        <Table
-                                            columns={usageColumns}
-                                            data={usageProducts}
-                                            className="usage-table"
-                                            searchable={false}
-                                            itemsPerPage={5}
-                                        />
+                                    <div className="view-group">
+                                        <label>Store Status</label>
+                                        <p>{selectedTax?.is_active ? 'Active' : 'Inactive'}</p>
                                     </div>
-                                ) : (
-                                    <div style={{ textAlign: 'center', padding: '30px', background: 'var(--gray-50)', borderRadius: '8px' }}>
-                                        <p style={{ color: 'var(--gray-600)' }}>No products are currently using this tax rate.</p>
+                                    <div className="view-group full-width">
+                                        <label>Tax Description</label>
+                                        <p>{selectedTax?.description || 'No description provided for this tax rule.'}</p>
                                     </div>
-                                )}
+                                </div>
                             </div>
+
                         </div>
                     ) : (
                         <div className="delete-confirmation">
@@ -414,20 +401,20 @@ const StoreTaxes = () => {
                             {isUsageLoading ? (
                                 <Loader size="small" />
                             ) : usageProducts.length > 0 ? (
-                                <div className="usage-warning">
+                                <div className="warning-banner-flat mt-16">
                                     <p>Cannot remove <strong>{selectedTax?.tax_name}</strong> as it is being used by <strong>{usageProducts.length}</strong> products.</p>
-                                    <p className="delete-warning">Please deactivate this tax instead to prevent further use while keeping existing records consistent.</p>
-                                    <div style={{ marginTop: '15px', padding: '10px', background: 'var(--gray-100)', borderRadius: '8px', maxHeight: '150px', overflowY: 'auto' }}>
-                                        <ul style={{ paddingLeft: '20px', fontSize: '0.9em' }}>
+                                    <p style={{ marginTop: '8px', fontWeight: '500' }}>Please deactivate this tax instead or remove it from these products first:</p>
+                                    <div style={{ marginTop: '12px', maxHeight: '150px', overflowY: 'auto' }}>
+                                        <ul style={{ margin: '0', paddingLeft: '20px', fontSize: '13px' }}>
                                             {usageProducts.map(p => <li key={p.id}>{p.product_name} ({p.sku})</li>)}
                                         </ul>
                                     </div>
                                 </div>
                             ) : (
-                                <>
+                                <div className="mt-16 text-center">
                                     <p>Are you sure you want to remove <strong>{selectedTax?.tax_name}</strong> from your store?</p>
-                                    <p className="delete-warning">This action cannot be undone if no products are using this tax.</p>
-                                </>
+                                    <p className="sub-text mt-8">This action cannot be undone if no products are using this tax.</p>
+                                </div>
                             )}
                         </div>
                     )}

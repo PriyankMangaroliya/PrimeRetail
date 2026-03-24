@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button/Button';
 import Icons from '../../components/common/Icons';
-import './Error.css';
+import '../../styles/error.css';
 
 const NotFound = () => {
     const navigate = useNavigate();
@@ -12,7 +12,7 @@ const NotFound = () => {
     const handleGoHome = () => {
         if (user) {
             // Redirect based on role
-            switch(user.role_name) {
+            switch (user.role_name) {
                 case 'Super Admin':
                     navigate('/admin/dashboard');
                     break;

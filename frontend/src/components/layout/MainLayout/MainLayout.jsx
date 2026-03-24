@@ -1,7 +1,8 @@
 import React from 'react';
 import Sidebar from '../Sidebar/Sidebar';
 import Navbar from '../Navbar/Navbar';
-import './MainLayout.css';
+import './MainLayout.css'
+import '../../../styles/global.css'
 
 const MainLayout = ({ children }) => {
     return (

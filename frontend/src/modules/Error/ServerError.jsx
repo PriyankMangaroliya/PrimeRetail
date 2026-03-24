@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button/Button';
 import Alert from '../../components/common/Alert/Alert';
 import Icons from '../../components/common/Icons';
-import './Error.css';
+import '../../styles/error.css';
 
 const ServerError = () => {
     const navigate = useNavigate();

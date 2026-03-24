@@ -9,7 +9,7 @@ import Alert from '../../components/common/Alert/Alert';
 import Card from '../../components/common/Card/Card';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
-import './Inventory.css';
+
 
 const TransactionHistory = () => {
     const { user } = useAuth();
@@ -157,7 +157,6 @@ const TransactionHistory = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading transactions...</p>
                 </div>
             </MainLayout>
         );
@@ -184,7 +183,7 @@ const TransactionHistory = () => {
                         <Table
                             columns={columns}
                             data={transactions}
-                            className="transactions-table"
+                            className="common-table"
                             columnSearchable={true}
                             searchable={false}
                             itemName="Transactions"

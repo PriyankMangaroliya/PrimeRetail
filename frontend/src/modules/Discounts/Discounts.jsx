@@ -13,7 +13,7 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useAuth } from '../../context/AuthContext';
 import discountApi from '../../api/discount.api';
 import Icons from '../../components/common/Icons';
-import './Discounts.css';
+
 
 const Discounts = () => {
     const { user } = useAuth();
@@ -235,7 +235,7 @@ const Discounts = () => {
             key: 'discount_type',
             render: (value) => (
                 <Badge variant={value === 'Percentage' ? 'primary' : 'secondary'} className="badge-status">
-                    {value === 'Percentage' ? <Icons.Percent size={14} style={{ marginRight: '4px' }} /> : `₹ ` }
+                    {value === 'Percentage' ? <Icons.Percent size={14} style={{ marginRight: '4px' }} /> : `₹ `}
                     {value}
                 </Badge>
             )
@@ -318,7 +318,6 @@ const Discounts = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading discounts...</p>
                 </div>
             </MainLayout>
         );
@@ -361,7 +360,7 @@ const Discounts = () => {
                         <Table
                             columns={columns}
                             data={discounts}
-                            className="discounts-table"
+                            className="common-table"
                             columnSearchable={true}
                             searchable={false}
                             itemName="Discounts"
@@ -404,7 +403,7 @@ const Discounts = () => {
                                 <Button variant="danger" onClick={handleDelete}>Delete Discount</Button>
                             </>
                         ) : modalType === 'view' ? (
-                            <Button variant="primary" onClick={handleCloseModal}>Close</Button>
+                            <Button variant="outline" onClick={handleCloseModal}>Close</Button>
                         ) : (
                             <>
                                 <Button variant="outline" onClick={handleCloseModal}>Cancel</Button>
@@ -425,74 +424,74 @@ const Discounts = () => {
 
                         /* ── View Details ──────────────────────────────────────── */
                     ) : modalType === 'view' ? (
-                        <div className="discount-view">
-                            <div className="common-detail-header">
-                                <div className="detail-icon-large">
-                                    <Icons.Tag size={40} />
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
+                                    <Icons.Tag size={32} />
                                 </div>
-                                <div className="detail-info-text">
-                                    <h3>{selectedDiscount?.discount_name}</h3>
-                                    <p>
-                                        <Badge variant={selectedDiscount?.discount_type === 'Percentage' ? 'info' : 'warning'}>
+                                <div className="detail-title-group">
+                                    <h2>{selectedDiscount?.discount_name}</h2>
+                                    <div className="detail-meta">
+                                        <Badge variant={selectedDiscount?.is_active ? 'success' : 'danger'} className="badge-status">
+                                            {selectedDiscount?.is_active ? 'Active' : 'Inactive'}
+                                        </Badge>
+                                        <Badge variant={selectedDiscount?.discount_type === 'Percentage' ? 'primary' : 'secondary'} className="badge-code">
                                             {selectedDiscount?.discount_type}
                                         </Badge>
-                                    </p>
-                                    <p className="dc-value-large">
-                                        {selectedDiscount?.discount_type === 'Percentage'
-                                            ? `${parseFloat(selectedDiscount?.discount_value || 0).toFixed(2)}%`
-                                            : `₹${parseFloat(selectedDiscount?.discount_value || 0).toFixed(2)}`}
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="view-grid">
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>
-                                        <Badge variant={selectedDiscount?.is_active ? 'success' : 'danger'}>
-                                            {selectedDiscount?.is_active ? 'Active' : 'Inactive'}
-                                        </Badge>
-                                    </p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Scheduling</label>
-                                    <div className="table-info-group">
-                                        <p><small><strong>From:</strong> {selectedDiscount?.start_date ? new Date(selectedDiscount.start_date).toLocaleDateString() : 'N/A'}</small></p>
-                                        <p><small><strong>To:</strong> {selectedDiscount?.end_date ? new Date(selectedDiscount.end_date).toLocaleDateString() : 'N/A'}</small></p>
+                            <div className="view-section">
+                                <h4 className="view-section-header">Discount Information</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Discount Type</label>
+                                        <p>{selectedDiscount?.discount_type}</p>
                                     </div>
-                                </div>
-                                <div className="view-group full-width">
-                                    <label>Description</label>
-                                    <p>{selectedDiscount?.description || 'No description provided'}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Created</label>
-                                    <p>{selectedDiscount?.created_at ? new Date(selectedDiscount.created_at).toLocaleDateString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedDiscount?.created_by_name ? `By ${selectedDiscount.created_by_name}` : ''}</small>
-                                </div>
-                                <div className="view-group">
-                                    <label>Last Updated</label>
-                                    <p>{selectedDiscount?.updated_at ? new Date(selectedDiscount.updated_at).toLocaleDateString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedDiscount?.updated_by_name ? `By ${selectedDiscount.updated_by_name}` : ''}</small>
+                                    <div className="view-group">
+                                        <label>Discount Value</label>
+                                        <p className="price-tag">
+                                            {selectedDiscount?.discount_type === 'Percentage'
+                                                ? `${parseFloat(selectedDiscount?.discount_value || 0).toFixed(2)}%`
+                                                : `₹${parseFloat(selectedDiscount?.discount_value || 0).toFixed(2)}`}
+                                        </p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Status</label>
+                                        <p>{selectedDiscount?.is_active ? 'Active' : 'Inactive'}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Start Date</label>
+                                        <p>{selectedDiscount?.start_date ? new Date(selectedDiscount.start_date).toLocaleDateString() : 'N/A'}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>End Date</label>
+                                        <p>{selectedDiscount?.end_date ? new Date(selectedDiscount.end_date).toLocaleDateString() : 'N/A'}</p>
+                                    </div>
+                                    <div className="view-group full-width">
+                                        <label>Description</label>
+                                        <p>{selectedDiscount?.description || 'No description provided.'}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         /* ── Add / Edit Form ────────────────────────────────────── */
                     ) : (
-                        <div className="discount-form">
-                            <div className="form-row">
-                                <Input
-                                    label="Discount Name"
-                                    value={formData.discount_name}
-                                    onChange={(e) => setFormData({ ...formData, discount_name: e.target.value })}
-                                    error={formErrors.discount_name}
-                                    placeholder="e.g., Summer Sale"
-                                    required
-                                />
-                            </div>
+                        <div className="common-form">
+                            <div className="common-form-grid">
+                                <div className="full-width">
+                                    <Input
+                                        label="Discount Name"
+                                        value={formData.discount_name}
+                                        onChange={(e) => setFormData({ ...formData, discount_name: e.target.value })}
+                                        error={formErrors.discount_name}
+                                        placeholder="e.g., Summer Sale"
+                                        required
+                                    />
+                                </div>
 
-                            <div className="form-row">
                                 <Input
                                     label="Start Date"
                                     type="date"
@@ -509,9 +508,7 @@ const Discounts = () => {
                                     error={formErrors.end_date}
                                     required
                                 />
-                            </div>
 
-                            <div className="form-row">
                                 <Select
                                     label="Discount Type"
                                     required
@@ -536,15 +533,17 @@ const Discounts = () => {
                                     max={formData.discount_type === 'Percentage' ? '100' : undefined}
                                     step="0.01"
                                 />
-                            </div>
 
-                            <Input
-                                label="Description"
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                error={formErrors.description}
-                                placeholder="Enter a description for this discount (optional)"
-                            />
+                                <div className="full-width">
+                                    <Input
+                                        label="Description"
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        error={formErrors.description}
+                                        placeholder="Enter a description for this discount (optional)"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     )}
                 </Modal>

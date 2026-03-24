@@ -10,15 +10,19 @@ import Modal from '../../components/common/Modal/Modal';
 import Button from '../../components/common/Button/Button';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
-import './Payments.css';
+import {useAuth} from "../../context/AuthContext.jsx";
+
 
 const Payments = () => {
+    const {user} = useAuth();
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [alert, setAlert] = useState({ show: false, type: '', message: '' });
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedPayment, setSelectedPayment] = useState(null);
+
+    const isOwner = user?.role_name === 'Store Owner';
 
     // Close dropdown on outside click
     useEffect(() => {
@@ -75,10 +79,11 @@ const Payments = () => {
             key: 'invoice_no',
             render: (value) => <Badge variant="primary" className="badge-code">{value}</Badge>
         },
-        {
+        ...(isOwner ? [{
             title: 'Store Code',
-            key: 'store_code'
-        },
+            key: 'store_code',
+            render: (value) => <Badge variant="primary" className="badge-code">{value}</Badge>
+        }] : []),
         {
             title: 'Amount',
             key: 'amount',
@@ -86,13 +91,7 @@ const Payments = () => {
         },
         {
             title: 'Method',
-            key: 'method_name',
-            render: (val) => <Badge variant="info">{val || 'Cash'}</Badge>
-        },
-        {
-            title: 'Status',
-            key: 'payment_status',
-            render: (val) => getStatusBadge(val)
+            key: 'method_name'
         },
         {
             title: 'Date',
@@ -130,7 +129,6 @@ const Payments = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading payment records...</p>
                 </div>
             </MainLayout>
         );
@@ -157,7 +155,7 @@ const Payments = () => {
                         <Table
                             columns={columns}
                             data={payments}
-                            className="payments-table"
+                            className="common-table"
                             columnSearchable={true}
                             searchable={false}
                             itemName="Payments"
@@ -177,51 +175,54 @@ const Payments = () => {
                         title="Payment Details"
                         isOpen={showViewModal}
                         onClose={() => setShowViewModal(false)}
-                        footer={<Button onClick={() => setShowViewModal(false)}>Close</Button>}
+                        footer={<Button variant="outline" onClick={() => setShowViewModal(false)}>Close</Button>}
                     >
-                        <div className="payment-detail-view">
-                            <div className="detail-header-section">
-                                <div className="detail-icon-wrapper">
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
                                     <Icons.DollarSign size={32} />
                                 </div>
-                                <div className="detail-title-info">
-                                    <h3>Invoice: {selectedPayment.invoice_no}</h3>
+                                <div className="detail-title-group">
+                                    <h2>{selectedPayment.invoice_no}</h2>
                                     <div className="detail-meta">
-                                        Ref ID: #{selectedPayment.id} | {selectedPayment.store_code}
+                                        {getStatusBadge(selectedPayment.payment_status)}
                                     </div>
                                 </div>
                             </div>
 
                             <div className="view-grid">
                                 <div className="view-group">
-                                    <label>Payment Date</label>
-                                    <p>{new Date(selectedPayment.payment_date).toLocaleString()}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Payment Method</label>
-                                    <p><Badge variant="info">{selectedPayment.method_name || 'Cash'}</Badge></p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Transaction ID</label>
-                                    <p className="badge-code">{selectedPayment.transaction_id || 'N/A'}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>{getStatusBadge(selectedPayment.payment_status)}</p>
+                                    <label>Invoice Number</label>
+                                    <p className="badge-code">{selectedPayment.invoice_no}</p>
                                 </div>
                                 <div className="view-group">
                                     <label>Store Code</label>
                                     <p>{selectedPayment.store_code}</p>
                                 </div>
                                 <div className="view-group">
-                                    <label>Recorded By</label>
-                                    <p>System User</p>
+                                    <label>Payment Date</label>
+                                    <p>{new Date(selectedPayment.payment_date).toLocaleString()}</p>
                                 </div>
-                            </div>
-
-                            <div className="payment-amount-box">
-                                <label>Total Paid Amount</label>
-                                <div className="amount-val">₹{parseFloat(selectedPayment.amount).toFixed(2)}</div>
+                                <div className="view-group">
+                                    <label>Payment Method</label>
+                                    <p>{selectedPayment.method_name || 'Cash'}</p>
+                                </div>
+                                <div className="view-group">
+                                    <label>Transaction ID</label>
+                                    <p>{selectedPayment.transaction_id || 'N/A'}</p>
+                                </div>
+                                <div className="view-group">
+                                    <label>Payment Status</label>
+                                    <p>{selectedPayment.payment_status}</p>
+                                </div>
+                                <div className="view-group full-width">
+                                    <div className="info-banner-flat">
+                                        <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>Total Paid Amount</span>
+                                        <span className="price-tag" style={{ fontSize: '1.5rem' }}>
+                                            ₹{parseFloat(selectedPayment.amount).toFixed(2)}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </Modal>

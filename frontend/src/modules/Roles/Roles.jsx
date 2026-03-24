@@ -12,7 +12,6 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 import roleApi from '../../api/role.api';
 import employeeApi from '../../api/employee.api';
 import Icons from '../../components/common/Icons';
-import './Roles.css';
 
 const Roles = () => {
     const [roles, setRoles] = useState([]);
@@ -221,8 +220,8 @@ const Roles = () => {
             key: 'actions',
             render: (_, record) => (
                 <div className="common-action-menu" onClick={(e) => { e.stopPropagation(); }}>
-                    <button 
-                        className="action-trigger" 
+                    <button
+                        className="action-trigger"
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
@@ -241,8 +240,8 @@ const Roles = () => {
                             <button className="action-item" onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
-                            <button 
-                                onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }} 
+                            <button
+                                onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }}
                                 disabled={Number(record.user_count) > 0}
                                 className="action-item delete-item"
                             >
@@ -277,7 +276,6 @@ const Roles = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading roles...</p>
                 </div>
             </MainLayout>
         );
@@ -285,7 +283,7 @@ const Roles = () => {
 
     return (
         <MainLayout>
-            <div className="roles-container">
+            <div className="common-module-container">
                 {/* Header */}
                 <div className="page-header">
                     <div>
@@ -310,7 +308,7 @@ const Roles = () => {
                 )}
 
                 {/* Roles Table */}
-                <Card className="roles-table-card">
+                <Card className="common-table-card">
                     {roles.length > 0 ? (
                         <Table
                             columns={columns}
@@ -382,31 +380,40 @@ const Roles = () => {
                             )}
                         </div>
                     ) : modalType === 'view' ? (
-                        <div className="role-view">
-                            <div className="view-grid">
-                                <div className="view-group">
-                                    <label>Role Name</label>
-                                    <p>{selectedRole?.role_name}</p>
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
+                                    <Icons.Shield size={32} />
                                 </div>
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>
-                                        <Badge variant={selectedRole?.is_active ? 'success' : 'danger'}>
+                                <div className="detail-title-group">
+                                    <h2>{selectedRole?.role_name}</h2>
+                                    <div className="detail-meta">
+                                        <Badge variant={selectedRole?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedRole?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                    </p>
-                                </div>
-                                <div className="view-group full-width">
-                                    <label>Description</label>
-                                    <p>{selectedRole?.description || 'No description provided'}</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="role-users-section" style={{ marginTop: '20px' }}>
-                                <h4>Users with this role ({selectedRole?.user_count || 0})</h4>
+
+                            <div className="view-section">
+                                <h4 className="view-section-header">Role Details</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Role Name</label>
+                                        <p>{selectedRole?.role_name}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Description</label>
+                                        <p>{selectedRole?.description || 'No description provided for this role.'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="view-section">
+                                <h4 className="view-section-header">Users with this role ({selectedRole?.user_count || 0})</h4>
                                 {loadingUsers ? (
                                     <Loader size="small" />
                                 ) : roleUsers.length > 0 ? (
-                                    <div className="role-users-table-container" style={{ marginTop: '15px' }}>
+                                    <div className="view-section mt-16">
                                         <Table
                                             columns={userColumns}
                                             data={roleUsers}
@@ -415,16 +422,16 @@ const Roles = () => {
                                         />
                                     </div>
                                 ) : (
-                                    <p style={{ color: '#666', marginTop: '10px' }}>No users found for this role.</p>
+                                    <p className="sub-text mt-8">No users found for this role.</p>
                                 )}
                             </div>
                         </div>
                     ) : (
-                        <div className="role-form">
+                        <div className="common-form">
                             <Input
                                 label="Role Name"
                                 value={formData.role_name}
-                                onChange={(e) => setFormData({...formData, role_name: e.target.value})}
+                                onChange={(e) => setFormData({ ...formData, role_name: e.target.value })}
                                 error={formErrors.role_name}
                                 placeholder="Enter role name"
                                 required
@@ -432,13 +439,13 @@ const Roles = () => {
                             <Input
                                 label="Description"
                                 value={formData.description}
-                                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 error={formErrors.description}
                                 placeholder="Enter role description (optional)"
                             />
                             {modalType === 'edit' && (
                                 <div className="form-info">
-                                    <small>Status can be toggled using the button in the table</small>
+                                    <small>• Status can be toggled using the action menu in the table</small>
                                 </div>
                             )}
                         </div>

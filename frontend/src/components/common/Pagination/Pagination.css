@@ -2,9 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 20px;
     background: #ffffff;
-    border-top: 1px solid var(--gray-200);
     width: 100%;
     margin-top: 0;
 }
@@ -55,8 +53,8 @@
 }
 
 .pagination-btn.active {
-    background: #eef2ff;
-    color: #4f46e5;
+    background: var(--primary-light);
+    color: var(--primary-color);
     border-color: transparent;
     font-weight: 700;
 }

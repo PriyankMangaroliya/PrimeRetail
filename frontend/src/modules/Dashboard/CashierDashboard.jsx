@@ -4,7 +4,7 @@ import Card from '../../components/common/Card/Card';
 import Button from '../../components/common/Button/Button';
 import Input from '../../components/common/Input/Input';
 import Icons from '../../components/common/Icons';
-import './Dashboard.css';
+import '../../styles/dashboard.css';
 
 const CashierDashboard = () => {
     const [cart, setCart] = useState([]);
@@ -49,7 +49,7 @@ const CashierDashboard = () => {
                         <Card className="quick-products">
                             <h3>Quick Products</h3>
                             <div className="product-grid">
-                                {[1,2,3,4,5,6].map((item) => (
+                                {[1, 2, 3, 4, 5, 6].map((item) => (
                                     <Button key={item} variant="outline" onClick={addToCart}>
                                         Product {item}<br />
                                         <small>$25.99</small>
@@ -98,8 +98,8 @@ const CashierDashboard = () => {
                         </div>
 
                         <div className="payment-actions">
-                             <Button fullWidth size="large"><Icons.Zap size={18} style={{ marginRight: '8px' }} /> Process Payment</Button>
-                             <Button fullWidth variant="outline" size="large"><Icons.Clock size={18} style={{ marginRight: '8px' }} /> Hold Sale</Button>
+                            <Button fullWidth size="large"><Icons.Zap size={18} style={{ marginRight: '8px' }} /> Process Payment</Button>
+                            <Button fullWidth variant="outline" size="large"><Icons.Clock size={18} style={{ marginRight: '8px' }} /> Hold Sale</Button>
                         </div>
                     </Card>
                 </div>

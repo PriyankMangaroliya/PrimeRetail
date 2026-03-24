@@ -16,7 +16,7 @@ import storeApi from '../../api/store.api';
 import warehouseApi from '../../api/warehouse.api';
 import roleApi from '../../api/role.api';
 import Icons from '../../components/common/Icons';
-import './Employees.css';
+
 
 // Role constants
 const STORE_ROLES = ['Cashier', 'Inventory Staff'];
@@ -337,8 +337,8 @@ const Employees = () => {
             title: 'Employee',
             key: 'name',
             render: (value, record) => (
-                <div className="emp-info-cell">
-                    <div className="emp-avatar">{value?.charAt(0).toUpperCase()}</div>
+                <div className="table-profile-cell">
+                    <div className="table-profile-avatar">{value?.charAt(0).toUpperCase()}</div>
                     <div className="table-info-group">
                         <span className="table-name-cell">{value}</span>
                         <small className="table-secondary-text">{record.email}</small>
@@ -435,7 +435,6 @@ const Employees = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading employee data...</p>
                 </div>
             </MainLayout>
         );
@@ -461,102 +460,69 @@ const Employees = () => {
 
                 {alert.show && <Alert type={alert.type} dismissible>{alert.message}</Alert>}
 
-                <div className="emp-tabs">
+                <div className="common-tabs">
                     <button
-                        className={`emp-tab ${activeTab === 'store' ? 'active' : ''}`}
+                        className={`common-tab ${activeTab === 'store' ? 'active' : ''}`}
                         onClick={() => handleTabChange('store')}
                     >
                         <Icons.Store size={18} style={{ marginRight: '8px' }} /> Store Employees
                         {activeTab === 'store' && employees.length > 0 && (
-                            <span className="badge-count">{employees.length}</span>
+                            <span className="common-tab-count">{employees.length}</span>
                         )}
                     </button>
                     {isStoreOwner && (
                         <button
-                            className={`emp-tab ${activeTab === 'warehouse' ? 'active' : ''}`}
+                            className={`common-tab ${activeTab === 'warehouse' ? 'active' : ''}`}
                             onClick={() => handleTabChange('warehouse')}
                         >
                             <Icons.Warehouse size={18} style={{ marginRight: '8px' }} /> Warehouse Employees
                             {activeTab === 'warehouse' && employees.length > 0 && (
-                                <span className="badge-count">{employees.length}</span>
+                                <span className="common-tab-count">{employees.length}</span>
                             )}
                         </button>
                     )}
                 </div>
 
-                <Card className="emp-selector-card">
-                    {activeTab === 'store' ? (
-                        <div className="emp-selector-row">
-                            <div className="emp-selector-label">
-                                <Icons.Store size={20} />
-                                <span>{isStoreManager ? 'Your Store' : 'Select Store'}</span>
-                            </div>
-                            <div className="emp-selector-controls">
-                                {stores.length > 0 ? (
+                <div className="horizontal-selector-card" style={{ marginBottom: '24px' }}>
+                    <div className="selector-main">
+                        <div className="selector-label">
+                            {activeTab === 'store' ? <Icons.Store size={20} /> : <Icons.Warehouse size={20} />}
+                            <span>{activeTab === 'store' ? (isStoreManager ? 'Your Store' : 'Select Store') : 'Select Warehouse'}</span>
+                        </div>
+                        <div className="selector-controls">
+                            {activeTab === 'store' ? (
+                                stores.length > 0 ? (
                                     <Select
-                                        className="emp-native-select"
-                                        style={{ align : 'center' }}
                                         value={selectedStoreId}
                                         onChange={(e) => setSelectedStoreId(e.target.value)}
                                         disabled={isStoreManager}
                                         options={stores.map(s => ({ value: s.id, label: `${s.store_name} (${s.store_code})` }))}
                                     />
-                                ) : (
-                                    <span className="emp-no-context">No stores found. Create a store first.</span>
-                                )}
-                                {currentStore && (
-                                    <div className="emp-context-badges">
-                                        <Badge variant={currentStore.is_active ? 'success' : 'danger'} size="small">
-                                            {currentStore.is_active ? 'Active' : 'Inactive'}
-                                        </Badge>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="emp-role-info">
-                                <span>Manages:</span>
-                                {isStoreOwner ? (
-                                    ['Store Manager', 'Cashier', 'Inventory Staff'].map(r => <Badge key={r}
-                                        variant="info"
-                                        size="small">{r}</Badge>)
-                                ) : (
-                                    ['Cashier', 'Inventory Staff'].map(r => <Badge key={r} variant="info"
-                                        size="small">{r}</Badge>)
-                                )}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="emp-selector-row">
-                            <div className="emp-selector-label">
-                                <Icons.Warehouse size={20} />
-                                <span>Select Warehouse</span>
-                            </div>
-                            <div className="emp-selector-controls">
-                                {warehouses.length > 0 ? (
+                                ) : <p className="sub-text">No stores found.</p>
+                            ) : (
+                                warehouses.length > 0 ? (
                                     <Select
-                                        className="emp-native-select"
                                         value={selectedWarehouseId}
                                         onChange={(e) => setSelectedWarehouseId(e.target.value)}
                                         options={warehouses.map(w => ({ value: w.id, label: `${w.warehouse_name} (${w.warehouse_code})` }))}
                                     />
-                                ) : (
-                                    <span
-                                        className="emp-no-context">No warehouses found. Create a warehouse first.</span>
-                                )}
-                                {currentWarehouse && (
-                                    <div className="emp-context-badges">
-                                        <Badge variant={currentWarehouse.is_active ? 'success' : 'danger'} size="small">
-                                            {currentWarehouse.is_active ? 'Active' : 'Inactive'}
-                                        </Badge>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="emp-role-info">
-                                <span>Manages:</span>
-                                {WH_ROLES.map(r => <Badge key={r} variant="info" size="small">{r}</Badge>)}
-                            </div>
+                                ) : <p className="sub-text">No warehouses found.</p>
+                            )}
                         </div>
-                    )}
-                </Card>
+                    </div>
+                    <div className="selector-meta">
+                        <span>Manages:</span>
+                        <div className="emp-role-info">
+                            {activeTab === 'store' ? (
+                                (isStoreOwner ? ['Store Manager', 'Cashier', 'Inventory Staff'] : ['Cashier', 'Inventory Staff']).map(r => (
+                                    <Badge key={r} variant="info" size="small">{r}</Badge>
+                                ))
+                            ) : (
+                                WH_ROLES.map(r => <Badge key={r} variant="info" size="small">{r}</Badge>)
+                            )}
+                        </div>
+                    </div>
+                </div>
 
                 <Card className="employees-table-card">
                     {tableLoading ? (
@@ -568,7 +534,7 @@ const Employees = () => {
                         <Table
                             columns={columns}
                             data={employees}
-                            className="employees-table"
+                            className="common-table"
                             columnSearchable={true}
                             searchable={false}
                             itemName="Employees"
@@ -599,7 +565,7 @@ const Employees = () => {
                             <><Button variant="outline" onClick={handleCloseModal}>Cancel</Button>
                                 <Button variant="danger" onClick={handleDelete}>Remove Employee</Button></>
                         ) : modalType === 'view' ? (
-                            <Button variant="primary" onClick={handleCloseModal}>Close</Button>
+                            <Button variant="outline" onClick={handleCloseModal}>Close</Button>
                         ) : (
                             <><Button variant="outline" onClick={handleCloseModal}>Cancel</Button>
                                 <Button variant="primary" onClick={handleSubmit}>
@@ -610,78 +576,68 @@ const Employees = () => {
                 >
                     {modalType === 'delete' ? (
                         <div className="delete-confirmation">
-                            <div className="delete-icon"><Icons.Warning size={48} color="var(--warning-color)" /></div>
+                            <div className="delete-icon"><Icons.AlertTriangle size={48} color="var(--warning-color)" /></div>
                             <p>Are you sure you want to remove <strong>{selectedEmployee?.name}</strong> from the system?</p>
+                            <div className="delete-details">
+                                <span>Role: {selectedEmployee?.role_name}</span>
+                                <span>Email: {selectedEmployee?.email}</span>
+                            </div>
                             <p className="delete-warning">This action cannot be undone.</p>
-                            <p className="delete-info">
-                                Employee: <strong>{selectedEmployee?.name}</strong> ({selectedEmployee?.role_name})
-                            </p>
                         </div>
                     ) : modalType === 'view' ? (
-                        <div className="emp-view" style={{ textAlign: 'center', padding: '20px 0' }}>
-                            <div style={{ marginBottom: '16px' }}>
-                                <div className="emp-view-avatar" style={{ margin: '0 auto' }}>
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
                                     {selectedEmployee?.name?.charAt(0).toUpperCase()}
                                 </div>
-                            </div>
-                            <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--gray-800)', marginBottom: '8px' }}>{selectedEmployee?.name}</h3>
-                            <Badge variant="primary" style={{ marginBottom: '24px' }}>{selectedEmployee?.role_name}</Badge>
-
-                             <div className="view-grid">
-                                <div className="view-group">
-                                    <label>Employee ID</label>
-                                    <p>#{selectedEmployee?.id}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Email</label>
-                                    <p>{selectedEmployee?.email}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Phone</label>
-                                    <p>{selectedEmployee?.phone || '—'}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>
-                                        <Badge variant={selectedEmployee?.is_active ? 'success' : 'danger'}>
+                                <div className="detail-title-group">
+                                    <h2>{selectedEmployee?.name}</h2>
+                                    <div className="detail-meta">
+                                        <Badge variant="primary" className="badge-status">{selectedEmployee?.role_name}</Badge>
+                                        <Badge variant={selectedEmployee?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedEmployee?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                    </p>
+                                    </div>
                                 </div>
-                                <div className="view-group">
-                                    <label>Created</label>
-                                    <p>{selectedEmployee?.created_at ? new Date(selectedEmployee.created_at).toLocaleDateString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedEmployee?.created_by_name ? `By ${selectedEmployee.created_by_name}` : ''}</small>
-                                </div>
-                                <div className="view-group">
-                                    <label>Last Updated</label>
-                                    <p>{selectedEmployee?.updated_at ? new Date(selectedEmployee.updated_at).toLocaleDateString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedEmployee?.updated_by_name ? `By ${selectedEmployee.updated_by_name}` : ''}</small>
+                            </div>
+
+                            <div className="view-section">
+                                <h4 className="view-section-header">Employment Information</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Email Address</label>
+                                        <p style={{ textTransform: 'none' }}>{selectedEmployee?.email}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Phone Number</label>
+                                        <p>{selectedEmployee?.phone || 'Not Provided'}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        <div className="emp-form">
-                            <div className="emp-context-banner">
-                                {activeTab === 'store' ? (
-                                    <span><Icons.Store size={14}
-                                        style={{ marginRight: '4px' }} /> Adding to: <strong>{currentStore?.store_name || '—'}</strong></span>
-                                ) : (
-                                    <span><Icons.Warehouse size={14}
-                                        style={{ marginRight: '4px' }} /> Adding to: <strong>{currentWarehouse?.warehouse_name || '—'}</strong></span>
-                                )}
+                        <div className="common-form">
+                            <div className="info-banner-card">
+                                <div className="icon-box">
+                                    {activeTab === 'store' ? <Icons.Store size={24} /> : <Icons.Warehouse size={24} />}
+                                </div>
+                                <div className="content">
+                                    <span className="label">
+                                        {activeTab === 'store' ? 'Assigning to Store' : 'Assigning to Warehouse'}
+                                    </span>
+                                    <span className="value">
+                                        {activeTab === 'store' ? (currentStore?.store_name || '—') : (currentWarehouse?.warehouse_name || '—')}
+                                    </span>
+                                </div>
                             </div>
 
-                            <div className="form-row">
+                            <div className="common-form-grid">
                                 <Input label="Full Name" value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                                     error={formErrors.name} placeholder="Enter full name" required />
                                 <Input label="Email Address" value={formData.email}
                                     onChange={e => setFormData({ ...formData, email: e.target.value })}
                                     error={formErrors.email} placeholder="Enter email" type="email" required />
-                            </div>
-
-                            <div className="form-row">
                                 <Input label="Password" value={formData.password}
                                     onChange={e => setFormData({ ...formData, password: e.target.value })}
                                     error={formErrors.password} placeholder={modalType === 'add' ? 'Minimum 6 characters' : 'Leave blank to keep current'}
@@ -689,9 +645,6 @@ const Employees = () => {
                                 <Input label="Phone Number" value={formData.phone}
                                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
                                     error={formErrors.phone} placeholder="10 digits (optional)" />
-                            </div>
-
-                            <div className="form-row">
                                 <Select
                                     label="Role"
                                     required
@@ -706,9 +659,9 @@ const Employees = () => {
                             </div>
 
                             {modalType === 'edit' && (
-                                <div className="form-info">
-                                    <small>• Leave password blank if you don't want to change it</small>
-                                    <small>• Store/Warehouse assignment cannot be changed on edit</small>
+                                <div className="form-info mt-16">
+                                    <p>• Leave password blank if you don't want to change it</p>
+                                    <p>• Location assignment (Store/Warehouse) cannot be modified after creation</p>
                                 </div>
                             )}
                         </div>

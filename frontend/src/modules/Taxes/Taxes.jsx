@@ -12,7 +12,6 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useAuth } from '../../context/AuthContext'; // Import useAuth
 import taxApi from '../../api/tax.api';
 import Icons from '../../components/common/Icons';
-import './Taxes.css';
 
 const Taxes = () => {
     const { user } = useAuth(); // Get current user
@@ -208,7 +207,9 @@ const Taxes = () => {
                 <div className="table-info-group">
                     <span className="table-name-cell">{value}</span>
                     {record.description && (
-                        <small className="table-secondary-text">{record.description}</small>
+                        <small className="sub-text" style={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {record.description}
+                        </small>
                     )}
                 </div>
             )
@@ -235,9 +236,9 @@ const Taxes = () => {
             title: 'Created',
             key: 'created_at',
             render: (value, record) => (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="table-info-group">
                     <span>{new Date(value).toLocaleDateString()}</span>
-                    <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                    <small className="table-secondary-text">
                         {record.created_by_name ? `By ${record.created_by_name}` : (record.created_by ? `By User #${record.created_by}` : 'By System')}
                     </small>
                 </div>
@@ -247,9 +248,9 @@ const Taxes = () => {
             title: 'Updated',
             key: 'updated_at',
             render: (value, record) => (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="table-info-group">
                     <span>{new Date(value).toLocaleDateString()}</span>
-                    <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                    <small className="table-secondary-text">
                         {record.updated_by_name ? `By ${record.updated_by_name}` : (record.updated_by ? `By User #${record.updated_by}` : 'By System')}
                     </small>
                 </div>
@@ -260,8 +261,8 @@ const Taxes = () => {
             key: 'actions',
             render: (_, record) => (
                 <div className="common-action-menu" onClick={(e) => { e.stopPropagation(); }}>
-                    <button 
-                        className="action-trigger" 
+                    <button
+                        className="action-trigger"
                         onClick={(e) => {
                             e.stopPropagation();
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
@@ -280,8 +281,8 @@ const Taxes = () => {
                             <button className="action-item" onClick={() => { handleOpenModal('edit', record); setActiveDropdown(null); }}>
                                 <Icons.Edit size={16} /> Edit
                             </button>
-                            <button 
-                                onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }} 
+                            <button
+                                onClick={() => { handleOpenModal('delete', record); setActiveDropdown(null); }}
                                 disabled={Number(record.usage_count) > 0}
                                 className="action-item delete-item"
                             >
@@ -299,7 +300,6 @@ const Taxes = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading tax settings...</p>
                 </div>
             </MainLayout>
         );
@@ -307,7 +307,7 @@ const Taxes = () => {
 
     return (
         <MainLayout>
-            <div className="taxes-container">
+            <div className="common-module-container">
                 <div className="page-header">
                     <div>
                         <h1>Tax Management</h1>
@@ -329,12 +329,12 @@ const Taxes = () => {
                     </Alert>
                 )}
 
-                <Card className="taxes-table-card">
+                <Card className="common-table-card">
                     {taxes.length > 0 ? (
                         <Table
                             columns={columns}
                             data={taxes}
-                            className="taxes-table"
+                            className="common-table"
                             columnSearchable={true}
                             searchable={false}
                             itemName="Taxes"
@@ -373,7 +373,7 @@ const Taxes = () => {
                                 </Button>
                             </>
                         ) : modalType === 'view' ? (
-                            <Button variant="primary" onClick={handleCloseModal}>
+                            <Button variant="outline" onClick={handleCloseModal}>
                                 Close
                             </Button>
                         ) : (
@@ -403,81 +403,81 @@ const Taxes = () => {
                             )}
                         </div>
                     ) : modalType === 'view' ? (
-                        <div className="tax-view">
-                            <div className="view-grid">
-                                <div className="view-group">
-                                    <label>Tax Name</label>
-                                    <p>{selectedTax?.tax_name}</p>
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
+                                    <Icons.Tax size={32} />
                                 </div>
-                                <div className="view-group">
-                                    <label>Tax Rate</label>
-                                    <p>
-                                        <Badge variant="primary">{selectedTax?.tax_rate}%</Badge>
-                                    </p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>
-                                        <Badge variant={selectedTax?.is_active ? 'success' : 'danger'}>
+                                <div className="detail-title-group">
+                                    <h2>{selectedTax?.tax_name}</h2>
+                                    <div className="detail-meta">
+                                        <Badge variant={selectedTax?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedTax?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                    </p>
+                                        <Badge variant="primary" className="badge-code">Rate: {selectedTax?.tax_rate}%</Badge>
+                                    </div>
                                 </div>
-                                <div className="view-group">
-                                    <label>Usage Count</label>
-                                    <p>{selectedTax?.usage_count || 0} items</p>
-                                </div>
-                                <div className="view-group full-width">
-                                    <label>Description</label>
-                                    <p>{selectedTax?.description || 'No description provided'}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Created</label>
-                                    <p>{selectedTax?.created_at ? new Date(selectedTax.created_at).toLocaleDateString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedTax?.created_by_name ? `By ${selectedTax.created_by_name}` : ''}</small>
-                                </div>
-                                <div className="view-group">
-                                    <label>Last Updated</label>
-                                    <p>{selectedTax?.updated_at ? new Date(selectedTax.updated_at).toLocaleDateString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedTax?.updated_by_name ? `By ${selectedTax.updated_by_name}` : ''}</small>
+                            </div>
+
+                            <div className="view-section">
+                                <h4 className="view-section-header">Tax Details</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Tax Rate</label>
+                                        <p className="price-tag">{selectedTax?.tax_rate}%</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Status</label>
+                                        <p>{selectedTax?.is_active ? 'Active' : 'Inactive'}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>Currently Used By</label>
+                                        <p>{selectedTax?.usage_count || 0} Products</p>
+                                    </div>
+                                    <div className="view-group full-width">
+                                        <label>Tax Description</label>
+                                        <p>{selectedTax?.description || 'No description provided for this tax rule.'}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        <div className="tax-form">
-                            <Input
-                                label="Tax Name"
-                                value={formData.tax_name}
-                                onChange={(e) => setFormData({...formData, tax_name: e.target.value})}
-                                error={formErrors.tax_name}
-                                placeholder="e.g., GST, VAT, Service Tax"
-                                required
-                            />
-
-                            <Input
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                max="100"
-                                label="Tax Rate (%)"
-                                value={formData.tax_rate}
-                                onChange={(e) => setFormData({...formData, tax_rate: e.target.value})}
-                                error={formErrors.tax_rate}
-                                placeholder="e.g., 18, 5, 12.5"
-                                required
-                            />
-
-                            <Input
-                                label="Description"
-                                value={formData.description}
-                                onChange={(e) => setFormData({...formData, description: e.target.value})}
-                                error={formErrors.description}
-                                placeholder="Enter tax description (optional)"
-                            />
+                        <div className="common-form">
+                            <div className="common-form-grid">
+                                <Input
+                                    label="Tax Name"
+                                    value={formData.tax_name}
+                                    onChange={(e) => setFormData({ ...formData, tax_name: e.target.value })}
+                                    error={formErrors.tax_name}
+                                    placeholder="Enter tax name"
+                                    required
+                                />
+                                <Input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="100"
+                                    label="Tax Rate (%)"
+                                    value={formData.tax_rate}
+                                    onChange={(e) => setFormData({ ...formData, tax_rate: e.target.value })}
+                                    error={formErrors.tax_rate}
+                                    placeholder="Enter tax rate"
+                                    required
+                                />
+                                <div className="form-full-width">
+                                    <Input
+                                        label="Description"
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        error={formErrors.description}
+                                        placeholder="Enter tax description (optional)"
+                                    />
+                                </div>
+                            </div>
 
                             {modalType === 'edit' && (
                                 <div className="form-info">
-                                    <small>• Status can be toggled using the button in the table</small>
+                                    <small>• Status can be toggled using the action menu in the table</small>
                                     <small>• Tax rate must be between 0% and 100%</small>
                                 </div>
                             )}

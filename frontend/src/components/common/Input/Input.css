@@ -21,20 +21,22 @@
 .input-field {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #000000;
+    border: 1px solid var(--gray-300);
     border-radius: 6px;
     font-size: 14px;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    color: var(--gray-800);
+    background: white;
 }
 
 .input-field::placeholder {
-    color: #2d2727;
+    color: var(--gray-400);
 }
 
 .input-field:focus {
     outline: none;
-    border-color: #000000;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 .input-field.with-icon {

@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react';
-import Icons, {FiIcons} from '../../components/common/Icons';
+import React, { useState, useEffect } from 'react';
+import Icons, { FiIcons } from '../../components/common/Icons';
 import MainLayout from '../../components/layout/MainLayout/MainLayout';
-import {useAuth} from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import categoryApi from '../../api/category.api';
 import Table from '../../components/common/Table/Table';
 import Modal from '../../components/common/Modal/Modal';
@@ -12,10 +12,10 @@ import Alert from '../../components/common/Alert/Alert';
 import Card from '../../components/common/Card/Card';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
-import './Category.css';
+
 
 const Category = () => {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const isOwner = user?.role_name === 'Store Owner';
 
     const [categories, setCategories] = useState([]);
@@ -28,7 +28,7 @@ const Category = () => {
         description: ''
     });
     const [formErrors, setFormErrors] = useState({});
-    const [alert, setAlert] = useState({show: false, type: '', message: ''});
+    const [alert, setAlert] = useState({ show: false, type: '', message: '' });
     const [activeDropdown, setActiveDropdown] = useState(null);
 
     // Close dropdown on outside click
@@ -55,8 +55,8 @@ const Category = () => {
     };
 
     const showAlert = (type, message) => {
-        setAlert({show: true, type, message});
-        setTimeout(() => setAlert({show: false, type: '', message: ''}), 5000);
+        setAlert({ show: true, type, message });
+        setTimeout(() => setAlert({ show: false, type: '', message: '' }), 5000);
     };
 
     const resetForm = () => ({
@@ -176,7 +176,7 @@ const Category = () => {
                     {activeDropdown === record.id && (
                         <div className="action-dropdown">
                             <button className="action-item" onClick={() => { handleOpenModal('view', record); setActiveDropdown(null); }}>
-                                <Icons.View size={16}/> View
+                                <Icons.View size={16} /> View
                             </button>
                             {isOwner && (
                                 <>
@@ -187,7 +187,7 @@ const Category = () => {
                                         handleOpenModal('edit', record);
                                         setActiveDropdown(null);
                                     }}>
-                                        <Icons.Edit size={16}/> Edit
+                                        <Icons.Edit size={16} /> Edit
                                     </button>
                                     <button
                                         className="action-item delete-item"
@@ -198,7 +198,7 @@ const Category = () => {
                                         disabled={record.product_count > 0}
                                         title={record.product_count > 0 ? "Cannot delete category with products" : ""}
                                     >
-                                        <Icons.Delete size={16}/> Delete
+                                        <Icons.Delete size={16} /> Delete
                                     </button>
                                 </>
                             )}
@@ -240,8 +240,7 @@ const Category = () => {
         return (
             <MainLayout>
                 <div className="page-loading">
-                    <Loader size="large"/>
-                    <p>Loading categories...</p>
+                    <Loader size="large" />
                 </div>
             </MainLayout>
         );
@@ -261,7 +260,7 @@ const Category = () => {
                                 variant="primary"
                                 onClick={() => handleOpenModal('add')}
                             >
-                                <Icons.Plus size={20}/> Add Category
+                                <Icons.Plus size={20} /> Add Category
                             </Button>
                         </div>
                     )}
@@ -280,12 +279,12 @@ const Category = () => {
                             data={categories}
                             columnSearchable={true}
                             searchable={false}
-                            className="category-table"
+                            className="common-table"
                             itemName="Categories"
                         />
                     ) : (
                         <EmptyState
-                            icon={<Icons.Archive size={48}/>}
+                            icon={<Icons.Archive size={48} />}
                             title="No Categories Found"
                             description="You haven't created any categories yet. Create your first category to organize your products."
                             action={
@@ -316,7 +315,7 @@ const Category = () => {
                                 <Button variant="danger" onClick={handleDelete}>Delete Category</Button>
                             </>
                         ) : modalType === 'view' ? (
-                            <Button variant="primary" onClick={() => setShowModal(false)}>Close</Button>
+                            <Button variant="outline" onClick={() => setShowModal(false)}>Close</Button>
                         ) : (
                             <>
                                 <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
@@ -329,45 +328,51 @@ const Category = () => {
                 >
                     {modalType === 'delete' ? (
                         <div className="delete-confirmation">
-                            <div className="delete-icon"><Icons.Warning size={48} color="var(--warning-color)"/></div>
-                            <p>Are you sure you want to delete
-                                category <strong>{selectedCategory?.category_name}</strong>?</p>
-                            <p className="delete-warning">This action cannot be undone.</p>
+                            <div className="delete-icon"><Icons.AlertTriangle size={48} color="var(--danger-color)" /></div>
+                            <p>Are you sure you want to delete category <strong>{selectedCategory?.category_name}</strong>?</p>
+                            <p className="sub-text mt-8">This action cannot be undone.</p>
                         </div>
                     ) : modalType === 'view' ? (
-                        <div className="category-view">
-                            <div className="view-grid">
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>
-                                        <Badge variant={selectedCategory?.is_active ? 'success' : 'danger'}>
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
+                                    <Icons.Archive size={32} />
+                                </div>
+                                <div className="detail-title-group">
+                                    <h2>{selectedCategory?.category_name}</h2>
+                                    <div className="detail-meta">
+                                        <Badge variant={selectedCategory?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedCategory?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                    </p>
+                                    </div>
                                 </div>
-                                <div className="view-group full-width">
-                                    <label>Description</label>
-                                    <p>{selectedCategory?.description || 'No description provided'}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Created</label>
-                                    <p>{selectedCategory?.created_at ? new Date(selectedCategory.created_at).toLocaleString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedCategory?.created_by_name ? `By ${selectedCategory.created_by_name}` : ''}</small>
-                                </div>
-                                <div className="view-group">
-                                    <label>Last Updated</label>
-                                    <p>{selectedCategory?.updated_at ? new Date(selectedCategory.updated_at).toLocaleString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedCategory?.updated_by_name ? `By ${selectedCategory.updated_by_name}` : ''}</small>
+                            </div>
+
+                            <div className="view-section">
+                                <h4 className="view-section-header">Category Information</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Product Count</label>
+                                        <p>{selectedCategory?.product_count || 0} Items linked</p>
+                                    </div>
+                                    <div className="view-group full-width">
+                                        <label>Category Description</label>
+                                        <p>{selectedCategory?.description || 'No description provided for this category.'}</p>
+                                    </div>
                                 </div>
                             </div>
 
                             {selectedCategory?.products?.length > 0 && (
-                                <div className="view-products-list" style={{ marginTop: '20px' }}>
-                                    <h4>Linked Products</h4>
-                                    <div className="products-scroll">
+                                <div className="view-section" style={{ marginTop: '24px' }}>
+                                    <h4 className="view-section-header">
+                                        <Icons.Product size={18} />
+                                        Linked Products ({selectedCategory.products.length})
+                                    </h4>
+                                    <div className="mt-16" style={{ border: '1px solid var(--gray-100)', borderRadius: '8px', overflow: 'hidden' }}>
                                         <Table
                                             columns={linkColumns}
                                             data={selectedCategory?.products || []}
+                                            className="common-table"
                                             searchable={false}
                                             itemsPerPage={5}
                                         />
@@ -376,14 +381,11 @@ const Category = () => {
                             )}
                         </div>
                     ) : (
-                        <form onSubmit={(e) => {
-                            e.preventDefault();
-                            handleSubmit(e);
-                        }} className="category-form">
+                        <div className="common-form">
                             <Input
                                 label="Category Name"
                                 value={formData.category_name}
-                                onChange={(e) => setFormData({...formData, category_name: e.target.value})}
+                                onChange={(e) => setFormData({ ...formData, category_name: e.target.value })}
                                 error={formErrors.category_name}
                                 required
                                 placeholder="e.g., Electronics, Beverages"
@@ -392,11 +394,11 @@ const Category = () => {
                             <Input
                                 label="Description"
                                 value={formData.description}
-                                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 error={formErrors.description}
                                 placeholder="Describe the category..."
                             />
-                        </form>
+                        </div>
                     )}
                 </Modal>
             </div>

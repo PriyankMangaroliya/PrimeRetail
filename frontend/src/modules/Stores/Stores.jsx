@@ -12,7 +12,7 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useAuth } from '../../context/AuthContext';
 import storeApi from '../../api/store.api';
 import Icons from '../../components/common/Icons';
-import './Stores.css';
+
 
 const Stores = () => {
     const { user } = useAuth();
@@ -338,11 +338,11 @@ const Stores = () => {
                 title: 'Created',
                 key: 'created_at',
                 render: (value, record) => (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className="table-info-group">
                         <span>{new Date(value).toLocaleDateString()}</span>
-                        <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                        <span className="sub-text">
                             {record.created_by_name ? `By ${record.created_by_name}` : 'By System'}
-                        </small>
+                        </span>
                     </div>
                 )
             });
@@ -351,11 +351,11 @@ const Stores = () => {
                 title: 'Updated',
                 key: 'updated_at',
                 render: (value, record) => (
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className="table-info-group">
                         <span>{new Date(value).toLocaleDateString()}</span>
-                        <small style={{ color: 'var(--gray-600)', fontSize: '12px' }}>
+                        <span className="sub-text">
                             {record.updated_by_name ? `By ${record.updated_by_name}` : 'By System'}
-                        </small>
+                        </span>
                     </div>
                 )
             });
@@ -468,7 +468,6 @@ const Stores = () => {
             <MainLayout>
                 <div className="page-loading">
                     <Loader size="large" />
-                    <p>Loading stores...</p>
                 </div>
             </MainLayout>
         );
@@ -511,7 +510,7 @@ const Stores = () => {
                         <Table
                             columns={getColumns()}
                             data={stores}
-                            className="stores-table"
+                            className="common-table"
                             columnSearchable={true}
                             searchable={false}
                             itemName="Stores"
@@ -558,7 +557,7 @@ const Stores = () => {
                                 </Button>
                             </>
                         ) : modalType === 'view' ? (
-                            <Button variant="primary" onClick={handleCloseModal}>
+                            <Button variant="outline" onClick={handleCloseModal}>
                                 Close
                             </Button>
                         ) : (
@@ -579,9 +578,9 @@ const Stores = () => {
                 >
                     {modalType === 'delete' ? (
                         <div className="delete-confirmation">
-                            <div className="delete-icon"><Icons.Warning size={48} color="var(--warning-color)" /></div>
+                            <div className="delete-icon"><Icons.AlertTriangle size={48} color="var(--danger-color)" /></div>
                             <p>Are you sure you want to delete store <strong>{selectedStore?.store_name}</strong>?</p>
-                            <p className="delete-warning">This action cannot be undone.</p>
+                            <p className="sub-text mt-8">This action cannot be undone.</p>
                             {selectedStore?.employee_count > 0 && (
                                 <p className="delete-error">
                                     Cannot delete store with {selectedStore.employee_count} employee(s).
@@ -590,69 +589,72 @@ const Stores = () => {
                             )}
                         </div>
                     ) : modalType === 'view' ? (
-                        <div className="store-view">
-                            <div className="store-details-view">
-                                <div className="store-brand-icon">
-                                    <span className="store-icon-large"><Icons.Store size={40} /></span>
+                        <div className="detail-view-container">
+                            <div className="detail-main-info">
+                                <div className="detail-avatar-large">
+                                    <Icons.Store size={32} />
                                 </div>
-                                <div className="store-info-text">
-                                    <h3>{selectedStore?.store_name}</h3>
-                                    <p><Badge variant="primary">{selectedStore?.store_code}</Badge></p>
-                                    <p><Icons.Phone size={14} style={{ marginRight: '4px' }} /> {selectedStore?.contact_number}</p>
-                                    {selectedStore?.gstin && <p><Icons.Invoice size={14} style={{ marginRight: '4px' }} /> GST: {selectedStore.gstin}</p>}
-                                </div>
-                            </div>
-
-                            <div className="view-grid">
-                                <div className="view-group">
-                                    <label>Location</label>
-                                    <p>{selectedStore?.address || 'N/A'}</p>
-                                    <p>{[selectedStore?.city, selectedStore?.state, selectedStore?.pincode].filter(Boolean).join(', ')}</p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Status</label>
-                                    <p>
-                                        <Badge variant={selectedStore?.is_active ? 'success' : 'danger'}>
+                                <div className="detail-title-group">
+                                    <h2>{selectedStore?.store_name}</h2>
+                                    <div className="detail-meta">
+                                        <Badge variant="primary" className="badge-code">#{selectedStore?.store_code}</Badge>
+                                        <Badge variant={selectedStore?.is_active ? 'success' : 'danger'} className="badge-status">
                                             {selectedStore?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
-                                    </p>
-                                </div>
-                                <div className="view-group">
-                                    <label>Created</label>
-                                    <p>{selectedStore?.created_at ? new Date(selectedStore.created_at).toLocaleString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedStore?.created_by_name ? `By ${selectedStore.created_by_name}` : ''}</small>
-                                </div>
-                                <div className="view-group">
-                                    <label>Last Updated</label>
-                                    <p>{selectedStore?.updated_at ? new Date(selectedStore.updated_at).toLocaleString() : 'N/A'}</p>
-                                    <small className="table-secondary-text">{selectedStore?.updated_by_name ? `By ${selectedStore.updated_by_name}` : ''}</small>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="store-employees-section" style={{ marginTop: '20px' }}>
-                                <h4>Employees ({selectedStore?.employees?.length || selectedStore?.employee_count || 0})</h4>
+                            <div className="view-section">
+                                <h4 className="view-section-header">Location & Business Details</h4>
+                                <div className="view-grid">
+                                    <div className="view-group">
+                                        <label>Contact Number</label>
+                                        <p>{selectedStore?.contact_number}</p>
+                                    </div>
+                                    <div className="view-group">
+                                        <label>GST Number</label>
+                                        <p>{selectedStore?.gstin || 'N/A'}</p>
+                                    </div>
+                                </div>
+                                <br />
+                                <div className="view-group">
+                                    <label>Address</label>
+                                    <p>{[selectedStore?.address, selectedStore?.city, selectedStore?.state, selectedStore?.pincode].filter(Boolean).join(', ') || 'N/A'}</p>
+                                </div>
+
+                            </div>
+
+                            <div className="view-section" style={{ marginTop: '24px' }}>
+                                <h4 className="view-section-header">
+                                    <Icons.Users size={18} />
+                                    Employees ({selectedStore?.employees?.length || selectedStore?.employee_count || 0})
+                                </h4>
                                 {fetchingDetails ? (
-                                    <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
-                                        <Loader size="medium" />
+                                    <div style={{ textAlign: 'center', padding: '24px' }}>
+                                        <Loader size="small" />
                                     </div>
                                 ) : selectedStore?.employees && selectedStore.employees.length > 0 ? (
-                                    <div className="owner-stores-table-container" style={{ marginTop: '15px' }}>
+                                    <div className="mt-16" style={{ border: '1px solid var(--gray-100)', borderRadius: '8px', overflow: 'hidden' }}>
                                         <Table
                                             columns={empColumns}
                                             data={selectedStore.employees}
+                                            className="common-table"
                                             searchable={false}
                                             itemsPerPage={5}
                                             itemName="Employee"
                                         />
                                     </div>
                                 ) : (
-                                    <p style={{ color: '#666', marginTop: '10px' }}>No employees found for this store.</p>
+                                    <div className="info-banner-flat mt-8">
+                                        <p>No employees are currently assigned to this store.</p>
+                                    </div>
                                 )}
                             </div>
                         </div>
                     ) : (
-                        <div className="store-form">
-                            <div className="form-row">
+                        <div className="common-form">
+                            <div className="common-form-grid">
                                 <Input
                                     label="Store Code"
                                     value={formData.store_code}
@@ -660,7 +662,7 @@ const Stores = () => {
                                     error={formErrors.store_code}
                                     placeholder="e.g., STORE001"
                                     required
-                                    disabled={modalType === 'edit'} // Store code cannot be edited
+                                    disabled={modalType === 'edit'}
                                     icon={
                                         modalType === 'add' ? (
                                             checkingCode ? <Icons.Reset className="spin" size={16} /> :
@@ -677,18 +679,14 @@ const Stores = () => {
                                     placeholder="Enter store name"
                                     required
                                 />
-                            </div>
-
-                            <div className="form-row">
                                 <Input
                                     label="Contact Number"
                                     value={formData.contact_number}
                                     onChange={(e) => setFormData({ ...formData, contact_number: e.target.value })}
                                     error={formErrors.contact_number}
-                                    placeholder="10 digits"
+                                    placeholder="Enter 10 digit number"
                                     required
                                 />
-
                                 <Input
                                     label="GSTIN"
                                     value={formData.gstin}
@@ -696,17 +694,15 @@ const Stores = () => {
                                     error={formErrors.gstin}
                                     placeholder="Enter GSTIN (optional)"
                                 />
-                            </div>
-
-                            <Input
-                                label="Address"
-                                value={formData.address}
-                                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                error={formErrors.address}
-                                placeholder="Enter complete address (optional)"
-                            />
-
-                            <div className="form-row">
+                                <div className="form-full-width">
+                                    <Input
+                                        label="Address"
+                                        value={formData.address}
+                                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                        error={formErrors.address}
+                                        placeholder="Enter complete address (optional)"
+                                    />
+                                </div>
                                 <Input
                                     label="City"
                                     value={formData.city}
@@ -714,7 +710,6 @@ const Stores = () => {
                                     error={formErrors.city}
                                     placeholder="Enter city (optional)"
                                 />
-
                                 <Input
                                     label="State"
                                     value={formData.state}
@@ -722,22 +717,18 @@ const Stores = () => {
                                     error={formErrors.state}
                                     placeholder="Enter state (optional)"
                                 />
-
                                 <Input
                                     label="Pincode"
                                     value={formData.pincode}
                                     onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
                                     error={formErrors.pincode}
-                                    placeholder="6 digits (optional)"
+                                    placeholder="6 digit pincode"
                                 />
                             </div>
-
-                            {modalType === 'edit' && (
-                                <div className="form-info">
-                                    <small>• Status can be toggled using the button in the table</small>
-                                    <small>• Store code cannot be changed once created</small>
-                                </div>
-                            )}
+                            <div className="form-info">
+                                <small>• Status can be toggled using the action menu in the table</small>
+                                <small>• Store code cannot be changed once created</small>
+                            </div>
                         </div>
                     )}
                 </Modal>

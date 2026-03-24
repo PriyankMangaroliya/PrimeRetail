@@ -1,13 +1,31 @@
-/* ─── Global Layout Standardization ────────────────────────────────────────── */
+/* ==========================================================================
+   1. COMMON (Base, Layout, Utilities, Responsive)
+   ========================================================================== */
 
-/* Page Header System */
+/* --- Core Reset & Base Typography --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    font-size: var(--standard-font-size);
+    color: var(--gray-800);
+    background-color: var(--bg-light);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- Global Layout Shell --- */
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: var(--gap-md);
 }
 
 .page-header h1 {
@@ -18,67 +36,128 @@
 }
 
 .page-header p {
-    color: var(--gray-600);
+    color: var(--gray-500);
     font-size: 14px;
 }
 
 .header-actions {
     display: flex;
-    gap: 12px;
+    gap: var(--gap-sm);
 }
 
-/* Page Loading System */
 .page-loading {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 400px;
-    gap: 16px;
+    gap: var(--gap-md);
 }
 
-.page-loading p {
-    color: var(--gray-600);
-    font-size: 14px;
+/* --- Utility System (Atomic Helpers) --- */
+.mt-4 {
+    margin-top: 4px;
 }
 
-/* Common Table Cell Components */
-.table-no-cell {
-    color: var(--gray-500);
-    font-weight: 500;
+.mt-8 {
+    margin-top: 8px;
 }
 
-.table-name-cell {
-    font-weight: 600;
-    color: var(--gray-800);
+.mt-12 {
+    margin-top: 12px;
 }
 
-.table-secondary-text {
-    color: var(--gray-500);
-    font-size: 12px;
+.mt-16 {
+    margin-top: 16px;
 }
 
-.table-info-group {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+.mt-20 {
+    margin-top: 20px;
 }
 
-.table-contact-phone {
-    font-weight: 500;
-    color: var(--gray-700);
+.mt-24 {
+    margin-top: 24px;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+.mt-32 {
+    margin-top: 32px;
+}
 
-/* ─── Common Table Components ─────────────────────────────────────────────── */
+.mb-4 {
+    margin-bottom: 4px;
+}
 
-/* 1. Common Badges */
+.mb-8 {
+    margin-bottom: 8px;
+}
+
+.mb-12 {
+    margin-bottom: 12px;
+}
+
+.mb-16 {
+    margin-bottom: 16px;
+}
+
+.mb-24 {
+    margin-bottom: 24px;
+}
+
+.mb-32 {
+    margin-bottom: 32px;
+}
+
+.text-red {
+    color: var(--danger-color);
+}
+
+.text-indigo-600 {
+    color: var(--primary-color);
+}
+
+/* --- Responsive Overrides --- */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+        gap: 8px;
+        flex-direction: column;
+    }
+
+    .header-actions button,
+    .header-actions .btn {
+        width: 100%;
+    }
+
+    .view-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .emp-info-cell {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+/* ==========================================================================
+   2. COMPONENTS (UI Modules & Patterns)
+   ========================================================================== */
+
+/* --- Badges --- */
 .badge-code {
     padding: 4px 8px !important;
     font-weight: 600 !important;
     letter-spacing: 0.5px !important;
-    border-radius: 4px !important;
+    border-radius: var(--border-radius-sm) !important;
 }
 
 .badge-status {
@@ -87,18 +166,10 @@
     text-align: center !important;
     display: inline-block !important;
     font-weight: 500 !important;
-    border-radius: 4px !important;
+    border-radius: var(--border-radius-sm) !important;
 }
 
-.badge-count {
-    padding: 4px 8px !important;
-    min-width: 40px !important;
-    text-align: center !important;
-    font-weight: 600 !important;
-    border-radius: 4px !important;
-}
-
-/* 2. Common Action Menu System */
+/* --- Action Menus & Buttons --- */
 .common-action-menu {
     position: relative;
     display: inline-block;
@@ -109,16 +180,16 @@
     border: none;
     cursor: pointer;
     padding: 4px 8px;
-    color: var(--gray-600);
-    border-radius: 4px;
-    transition: all 0.2s;
+    color: var(--gray-500);
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .action-trigger:hover {
-    background-color: var(--gray-200);
+    background-color: var(--gray-100);
     color: var(--gray-800);
 }
 
@@ -128,11 +199,11 @@
     top: 100%;
     margin-top: 4px;
     background: white;
-    border: 1px solid var(--gray-300);
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 1000;
-    min-width: 150px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--box-shadow-lg);
+    z-index: var(--z-depth-dropdown);
+    min-width: 160px;
     display: flex;
     flex-direction: column;
     padding: 4px 0;
@@ -150,26 +221,26 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    transition: background-color 0.2s;
+    transition: var(--transition-fast);
     width: 100%;
 }
 
-.action-item:hover {
-    background-color: var(--gray-100);
+.action-item:hover:not(:disabled) {
+    background-color: var(--gray-50);
     color: var(--gray-900);
 }
 
 .action-item:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
+    color: var(--gray-400);
+    opacity: 0.6;
 }
 
 .action-item.delete-item:hover:not(:disabled) {
     background-color: #fee2e2;
-    color: #ef4444;
+    color: var(--danger-color);
 }
 
-/* 3. Action Buttons (Inline) */
 .action-buttons {
     display: flex;
     gap: 8px;
@@ -183,18 +254,73 @@
     justify-content: center;
 }
 
-/* 4. Modal Layouts */
+/* --- Forms & Inputs --- */
+.common-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.common-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-full-width {
+    grid-column: span 2;
+}
+
+.common-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 0 16px;
+    border-radius: 12px;
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--gray-200);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.common-search-box:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.common-search-box input {
+    flex: 1;
+    border: none !important;
+    padding: 12px 10px !important;
+    font-size: 14px !important;
+    outline: none !important;
+    background: transparent !important;
+}
+
+.form-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--gray-500);
+    border-left: 3px solid var(--primary-color);
+}
+
+/* --- Modals & Detail Layouts --- */
 .view-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .view-group label {
     font-size: 12px;
     font-weight: 600;
-    color: var(--gray-500);
+    color: var(--gray-400);
     text-transform: uppercase;
     display: block;
     margin-bottom: 4px;
@@ -204,6 +330,68 @@
     font-size: 15px;
     color: var(--gray-800);
     margin: 0;
+}
+
+.view-section {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--gray-100);
+}
+
+.view-section-header {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-view-container {
+    padding: 8px;
+}
+
+.detail-main-info {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.detail-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: var(--primary-light);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.detail-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.detail-title-group h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+}
+
+.detail-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .delete-confirmation {
@@ -228,7 +416,35 @@
     font-weight: 500;
 }
 
-/* 5. Summary Lists (Right-aligned details/totals) */
+/* --- Tables & Lists --- */
+.table-profile-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.table-profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--primary-light);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    overflow: hidden;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.table-profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .common-summary-list {
     display: flex;
     flex-direction: column;
@@ -252,112 +468,383 @@
 .summary-row.total {
     margin-top: 8px;
     padding-top: 12px;
-    border-top: 2px solid var(--gray-300);
+    border-top: 2px solid var(--gray-200);
     font-size: 18px;
     font-weight: 700;
     color: var(--primary-color);
 }
 
-/* 6. Dashboard Stat Grids */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-bottom: 24px;
-}
-
-/* 7. Common Form Info (Tips/Alerts in forms) */
-.form-info {
+/* --- Tabs & Toggles --- */
+.common-tabs {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    background: var(--gray-50);
-    border-radius: 6px;
-    font-size: 13px;
-    color: var(--gray-600);
-    border-left: 3px solid var(--primary-color);
+    gap: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gray-200);
 }
 
-.form-info small {
-    color: var(--gray-600);
-}
-
-/* 8. Common View Profile/Detail Headers (Modal headers) */
-.common-detail-header {
+.common-tab {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 20px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--gray-200);
+    gap: 8px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-500);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: -2px;
 }
 
-.detail-icon-large {
-    font-size: 40px;
-    background: var(--primary-light);
-    width: 80px;
-    height: 80px;
-    display: flex;
+.common-tab:hover {
+    color: var(--primary-color);
+    background: var(--gray-50);
+}
+
+.common-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    font-weight: 600;
+}
+
+.common-tab-count {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    color: var(--primary-color);
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 10px;
 }
 
-.detail-info-text h3 {
-    margin: 0 0 8px 0;
-    font-size: 24px;
+.common-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.toggle-switch {
+    width: 44px;
+    height: 22px;
+    background: var(--gray-300);
+    border-radius: 11px;
+    position: relative;
+    transition: background 0.3s;
+}
+
+.toggle-switch.active {
+    background: var(--warning-color);
+}
+
+.toggle-thumb {
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.active .toggle-thumb {
+    transform: translateX(22px);
+}
+
+/* --- Common Banners --- */
+.common-info-banner {
+    padding: 12px 16px;
+    background: var(--gray-50);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.common-info-banner.warning {
+    border-left-color: var(--warning-color);
+    background: #fffbeb;
+}
+
+.common-info-banner.danger {
+    border-left-color: var(--danger-color);
+    background: #fef2f2;
+}
+
+.common-info-banner.success {
+    border-left-color: var(--success-color);
+    background: #f0fdf4;
+}
+
+/* --- Selection Cards (Used for assigning global items to stores) --- */
+.selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    padding: 4px;
+}
+
+.selection-card {
+    padding: 16px !important;
+    border: 1px solid var(--gray-200) !important;
+    transition: all 0.2s ease !important;
+    cursor: default !important;
+    background: var(--white) !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.selection-card:hover {
+    border-color: var(--primary-color) !important;
+    box-shadow: var(--shadow-md) !important;
+    transform: translateY(-2px);
+}
+
+.selection-card h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--gray-800);
 }
 
-.detail-info-text p {
-    margin: 4px 0;
+.card-description {
+    margin: 12px 0;
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    line-height: 1.5;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.selection-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.selection-card-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-50);
+}
+
+/* --- Horizontal Selector Card (Used in Employee module) --- */
+.horizontal-selector-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px 24px;
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+    border-radius: var(--border-radius-md);
+}
+
+.selector-main {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+.selector-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: var(--gray-700);
+    white-space: nowrap;
+    font-size: 15px;
+}
+
+.selector-controls {
+    flex: 1;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.selector-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--gray-500);
+    font-size: 13px;
+}
+
+/* --- Info Banner Card (Prominent display for modals) --- */
+.info-banner-card {
+    background: var(--primary-light);
+    border: 1px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.info-banner-card .icon-box {
+    width: 44px;
+    height: 44px;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.info-banner-card .content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-banner-card .label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-banner-card .value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gray-900);
+}
+
+/* --- Invoice/Bill Specific View --- */
+.invoice-view .detail-main-info {
+    border-bottom: 2px dashed var(--gray-200);
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+}
+
+.invoice-view .view-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    color: var(--gray-800);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.common-mini-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.common-mini-table th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--gray-50);
     color: var(--gray-600);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.common-mini-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--gray-50);
+    color: var(--gray-800);
     font-size: 14px;
 }
 
-
-.input-label, .input-field,
-.textarea-label, .textarea-field,
-.select-label, .select-field,
-.form-label, .form-input, .form-select, .form-textarea,
-input[type="text"], input[type="email"], input[type="password"], input[type="number"],
-select, textarea {
-    color: var(--black-color) !important;
-    font-size: var(--standard-font-size) !important;
+.common-mini-table tr:last-child td {
+    border-bottom: none;
 }
 
-.input-field::placeholder,
-.textarea-field::placeholder,
-.select-field::placeholder {
+.detail-summary-section {
+    background: var(--gray-50);
+    padding: 24px;
+    border-radius: 16px;
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.summary-row span:first-child {
     color: var(--gray-500);
-    opacity: 0.8;
+    font-weight: 500;
 }
 
-@media (max-width: 768px) {
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .header-actions {
-        width: 100%;
-        gap: 8px;
-        flex-direction: column;
-    }
-    
-    .header-actions .btn,
-    .header-actions button {
-        width: 100%;
-        flex: 1;
-    }
+.summary-row span:last-child {
+    color: var(--gray-900);
+    font-weight: 600;
+}
 
-    .action-buttons {
-        width: 100%;
-        flex-wrap: wrap;
-    }
+.summary-row.highlight-danger span:last-child {
+    color: var(--danger-color);
+}
 
-    .view-grid {
-        grid-template-columns: 1fr;
-    }
-}
+.summary-row.total-row {
+    margin-top: 12px;
+    padding-top: 16px;
+    border-top: 2px solid var(--gray-200);
+}
+
+.summary-row.total-row span:first-child {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.summary-row.total-row .total-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+/* --- Info Banner Flat (Horizontal alternative to info-banner-card) --- */
+.info-banner-flat {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.price-tag {
+    /*font-weight: 800;*/
+    color: var(--primary-color);
+    letter-spacing: -0.5px;
+}

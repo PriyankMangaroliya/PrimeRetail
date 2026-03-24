@@ -4,7 +4,7 @@ import Card from '../../components/common/Card/Card';
 import Button from '../../components/common/Button/Button';
 import Badge from '../../components/common/Badge/Badge';
 import Icons from '../../components/common/Icons';
-import './Dashboard.css';
+import '../../styles/dashboard.css';
 
 const StoreOwnerDashboard = () => {
     return (
@@ -20,8 +20,8 @@ const StoreOwnerDashboard = () => {
                 {/* Store Stats */}
                 <div className="stats-grid">
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.Store size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon primary"><Icons.Store size={24} /></div>
+                        <div className="stat-content">
                             <h3>My Stores</h3>
                             <p className="stat-value">3</p>
                             <Badge variant="success">All Active</Badge>
@@ -29,8 +29,8 @@ const StoreOwnerDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.Users size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon primary"><Icons.Users size={24} /></div>
+                        <div className="stat-content">
                             <h3>Total Staff</h3>
                             <p className="stat-value">45</p>
                             <Badge variant="success">+5 this month</Badge>
@@ -38,8 +38,8 @@ const StoreOwnerDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.DollarSign size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon primary"><Icons.DollarSign size={24} /></div>
+                        <div className="stat-content">
                             <h3>Today's Revenue</h3>
                             <p className="stat-value">$12,450</p>
                             <Badge variant="success">+12%</Badge>
@@ -47,8 +47,8 @@ const StoreOwnerDashboard = () => {
                     </Card>
 
                     <Card className="stat-card">
-                        <div className="stat-icon"><Icons.BarChart size={24} /></div>
-                        <div className="stat-info">
+                        <div className="stat-icon primary"><Icons.BarChart size={24} /></div>
+                        <div className="stat-content">
                             <h3>Monthly Revenue</h3>
                             <p className="stat-value">$248,697</p>
                             <Badge variant="success">+8.5%</Badge>
