@@ -49,6 +49,7 @@ const InventoryStaffDashboard = () => {
     const [formErrors, setFormErrors] = useState({});
     const [alert, setAlert] = useState({ show: false, type: '', message: '' });
     const [destinationDropdownOpen, setDestinationDropdownOpen] = useState(false);
+    const [destinationSearch, setDestinationSearch] = useState('');
     const [exchangeProductSearch, setExchangeProductSearch] = useState('');
     const [exchangeProductDropdownOpen, setExchangeProductDropdownOpen] = useState(false);
     const [selectedExchangeProduct, setSelectedExchangeProduct] = useState(null);
@@ -100,6 +101,7 @@ const InventoryStaffDashboard = () => {
             reference_id: ''
         });
         setExchangeProductSearch('');
+        setDestinationSearch('');
         setSelectedExchangeProduct(null);
         setFormErrors({});
         setShowModal(true);
@@ -118,8 +120,12 @@ const InventoryStaffDashboard = () => {
         if (formData.movement_type === 'EXCHANGE' && !selectedExchangeProduct) {
             errors.exchange_product = 'Required';
         }
-        if (formData.movement_type === 'TRANSFER' && !formData.destination_location_id) {
-            errors.destination = 'Required';
+        if (formData.movement_type === 'TRANSFER') {
+            if (!formData.destination_location_id) {
+                errors.destination = 'Required';
+            } else if (formData.destination_location_id === user.store_id && formData.destination_location_type === 'Store') {
+                errors.destination = 'Cannot transfer to the same store';
+            }
         }
         return errors;
     };
@@ -351,23 +357,27 @@ const InventoryStaffDashboard = () => {
                 >
                     <div className="common-form">
                         {selectedProduct && (
-                            <div className="selection-result-card" style={{ marginBottom: '16px' }}>
+                            <div className="selection-result-card">
                                 <div className="entity-info">
                                     <div className="entity-icon">
-                                        <Icons.Package size={20} />
+                                        <Icons.Package size={24} />
                                     </div>
                                     <div className="entity-details">
                                         <span className="entity-name">{selectedProduct.product_name}</span>
-                                        <span className="entity-sub">
-                                            SKU: {selectedProduct.sku} • {selectedStock?.quantity || 0} Units Available
-                                        </span>
+                                        <div className="entity-sub">
+                                            <Badge variant="primary" className="badge-code" style={{ fontSize: '10px' }}>{selectedProduct.sku}</Badge>
+                                            <span style={{ color: 'var(--gray-400)' }}>•</span>
+                                            <span style={{ fontWeight: 600, color: (selectedStock?.quantity > 0) ? 'var(--success-color)' : 'var(--danger-color)' }}>
+                                                {selectedStock?.quantity || 0} Units Available
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        <div className="form-card" style={{ padding: '20px', marginBottom: '16px' }}>
-                            <div className="form-section-title" style={{ marginTop: 0, marginBottom: '16px' }}>
+                        <div className="form-card">
+                            <div className="form-section-title" style={{ marginTop: 0 }}>
                                 <span className="icon"><Icons.Settings size={14} /></span>
                                 Transaction Details
                             </div>
@@ -386,6 +396,7 @@ const InventoryStaffDashboard = () => {
                                     type="number"
                                     min="1"
                                     value={formData.quantity}
+                                    onWheel={(e) => e.target.blur()}
                                     onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                                     error={formErrors.quantity}
                                     required
@@ -393,19 +404,22 @@ const InventoryStaffDashboard = () => {
                             </div>
 
                             {formData.movement_type === 'EXCHANGE' && (
-                                <div className="form-group custom-search-dropdown" style={{ position: 'relative' }}>
+                                <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginTop: '16px' }}>
                                     {selectedExchangeProduct ? (
-                                        <div className="selection-result-card" style={{ marginTop: '4px' }}>
+                                        <div className="selection-result-card" style={{ borderStyle: 'dashed', borderColor: 'var(--warning-color)', background: 'var(--warning-light)' }}>
                                             <div className="entity-info">
-                                                <div className="entity-icon" style={{ background: 'var(--warning-light)', color: 'var(--warning-color)' }}>
-                                                    <Icons.Package size={18} />
+                                                <div className="entity-icon" style={{ background: 'var(--white)', color: 'var(--warning-color)' }}>
+                                                    <Icons.Package size={20} />
                                                 </div>
                                                 <div className="entity-details">
                                                     <span className="entity-name">{selectedExchangeProduct.product_name}</span>
-                                                    <span className="entity-sub">SKU: {selectedExchangeProduct.sku}</span>
+                                                    <span className="entity-sub">
+                                                        <Badge variant="warning" className="badge-code" style={{ fontSize: '10px' }}>{selectedExchangeProduct.sku}</Badge>
+                                                        <span>• Target Exchange Product</span>
+                                                    </span>
                                                 </div>
                                             </div>
-                                            <div className="entity-action" onClick={() => { setSelectedExchangeProduct(null); setExchangeProductSearch(''); }} title="Change Product">
+                                            <div className="entity-action" onClick={() => { setSelectedExchangeProduct(null); setExchangeProductSearch(''); setExchangeProductDropdownOpen(true); }} title="Change Product">
                                                 <Icons.RefreshCw size={14} />
                                             </div>
                                         </div>
@@ -422,12 +436,11 @@ const InventoryStaffDashboard = () => {
                                                     setExchangeProductDropdownOpen(true);
                                                     setSelectedExchangeProduct(null);
                                                 }}
+                                                icon={<Icons.Search size={16} />}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    setExchangeProductDropdownOpen(!exchangeProductDropdownOpen);
+                                                    setExchangeProductDropdownOpen(true);
                                                 }}
-                                                error={formErrors.exchange_product}
-                                                icon={<Icons.ChevronDown size={16} />}
                                             />
                                             {exchangeProductDropdownOpen && (
                                                 <div className="search-dropdown-menu">
@@ -444,8 +457,13 @@ const InventoryStaffDashboard = () => {
                                                                     setExchangeProductDropdownOpen(false);
                                                                 }}
                                                             >
-                                                                <span className="search-item-title">{p.product_name}</span>
-                                                                <div className="search-item-sub">SKU: {p.sku}</div>
+                                                                <div className="search-item-icon">
+                                                                    <Icons.Package size={20} />
+                                                                </div>
+                                                                <div className="search-item-content">
+                                                                    <span className="search-item-title">{p.product_name}</span>
+                                                                    <div className="search-item-sub">SKU: {p.sku}</div>
+                                                                </div>
                                                             </div>
                                                         ))}
                                                 </div>
@@ -456,50 +474,55 @@ const InventoryStaffDashboard = () => {
                             )}
 
                             {formData.movement_type === 'TRANSFER' && (
-                                <div className="form-group custom-search-dropdown" style={{ position: 'relative' }}>
+                                <div className="form-group custom-search-dropdown" style={{ position: 'relative', marginTop: '16px' }}>
                                     {formData.destination_location_id ? (
-                                        <div className="selection-result-card" style={{ marginTop: '4px' }}>
+                                        <div className="selection-result-card" style={{ borderStyle: 'dashed', borderColor: 'var(--primary-color)' }}>
                                             <div className="entity-info">
-                                                <div className="entity-icon" style={{ background: 'var(--primary-light)', color: 'var(--primary-color)' }}>
-                                                    {formData.destination_location_type === 'Store' ? <Icons.Store size={18} /> : <Icons.Warehouse size={18} />}
+                                                <div className="entity-icon" style={{ background: 'var(--white)' }}>
+                                                    {formData.destination_location_type === 'Store' ? <Icons.Store size={24} /> : <Icons.Warehouse size={24} />}
                                                 </div>
                                                 <div className="entity-details">
                                                     <span className="entity-name">
                                                         {activeLocations.find(l => l.id === formData.destination_location_id && l.type === formData.destination_location_type)?.name}
                                                     </span>
-                                                    <span className="entity-sub">
-                                                        {formData.destination_location_type} • {activeLocations.find(l => l.id === formData.destination_location_id && l.type === formData.destination_location_type)?.code}
-                                                    </span>
+                                                    <div className="entity-sub">
+                                                        <Badge variant="primary" className="badge-code" style={{ fontSize: '10px' }}>
+                                                            {activeLocations.find(l => l.id === formData.destination_location_id && l.type === formData.destination_location_type)?.code}
+                                                        </Badge>
+                                                        <span style={{ color: 'var(--gray-400)' }}>•</span>
+                                                        <span style={{ fontWeight: 600, color: 'var(--primary-color)' }}>{formData.destination_location_type} Destination</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="entity-action" onClick={() => setFormData({ ...formData, destination_location_id: null, destination_location_type: '' })} title="Change Location">
+                                            <div className="entity-action" onClick={() => { setFormData({ ...formData, destination_location_id: null, destination_location_type: '' }); setDestinationSearch(''); setDestinationDropdownOpen(true); }} title="Change Location">
                                                 <Icons.RefreshCw size={14} />
                                             </div>
                                         </div>
                                     ) : (
-                                        <div style={{ position: 'relative' }}>
-                                            <label className="input-label">Destination Location <span className="required">*</span></label>
-                                            <div
-                                                className="input-field"
-                                                style={{
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                                    cursor: 'pointer', background: 'var(--input-bg)', padding: '0 12px',
-                                                    borderRadius: '8px', border: '1px solid var(--input-border)',
-                                                    height: 'var(--input-height)', marginTop: '6px'
+                                        <div className="custom-search-dropdown" style={{ position: 'relative' }}>
+                                            <Input
+                                                label="Destination Location"
+                                                required
+                                                type="text"
+                                                placeholder="Search destination..."
+                                                value={destinationSearch}
+                                                onChange={(e) => {
+                                                    setDestinationSearch(e.target.value);
+                                                    setDestinationDropdownOpen(true);
+                                                    setFormData({ ...formData, destination_location_id: null, destination_location_type: '' });
                                                 }}
+                                                icon={<Icons.Search size={16} />}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    setDestinationDropdownOpen(!destinationDropdownOpen);
+                                                    setDestinationDropdownOpen(true);
                                                 }}
-                                            >
-                                                <div style={{ flex: 1, color: 'var(--text-muted)' }}>Select Destination...</div>
-                                                <Icons.ChevronDown size={14} style={{ color: 'var(--gray-400)' }} />
-                                            </div>
+                                            />
 
                                             {destinationDropdownOpen && (
                                                 <div className="search-dropdown-menu" style={{ top: '100%', marginTop: '4px' }}>
                                                     {activeLocations
                                                         .filter(l => !(l.type === 'Store' && l.id === user.store_id))
+                                                        .filter(l => `${l.name} ${l.type} ${l.code}`.toLowerCase().includes(destinationSearch.toLowerCase()))
                                                         .map(l => (
                                                             <div
                                                                 key={`${l.type}-${l.id}`}
@@ -510,12 +533,23 @@ const InventoryStaffDashboard = () => {
                                                                         destination_location_type: l.type,
                                                                         destination_location_id: l.id
                                                                     });
+                                                                    setDestinationSearch(`${l.name} (${l.type})`);
                                                                     setDestinationDropdownOpen(false);
                                                                 }}
                                                             >
-                                                                <span className="search-item-title">{l.name}</span>
-                                                                <div className="search-item-sub">
-                                                                    {l.type} • {l.code || `#${l.id}`}
+                                                                <div className="search-item-icon">
+                                                                    {l.type === 'Store' ? <Icons.Store size={20} /> : <Icons.Warehouse size={20} />}
+                                                                </div>
+                                                                <div className="search-item-content">
+                                                                    <span className="search-item-title">{l.name}</span>
+                                                                    <div className="search-item-sub">
+                                                                        <span>{l.type}</span>
+                                                                        <span>•</span>
+                                                                        <span>{l.code || `#${l.id}`}</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="search-item-stock" style={{ background: 'var(--primary-light)', color: 'var(--primary-color)' }}>
+                                                                    Select
                                                                 </div>
                                                             </div>
                                                         ))}
@@ -526,10 +560,8 @@ const InventoryStaffDashboard = () => {
                                     {formErrors.destination && <p className="error-message" style={{ color: 'var(--danger-color)', fontSize: '12px', marginTop: '4px' }}>{formErrors.destination}</p>}
                                 </div>
                             )}
-                        </div>
 
-                        <div className="form-card" style={{ padding: '20px', marginBottom: 0 }}>
-                            <div className="form-section-title" style={{ marginTop: 0, marginBottom: '16px' }}>
+                            <div className="form-section-title">
                                 <span className="icon"><Icons.FileText size={14} /></span>
                                 Additional Information
                             </div>

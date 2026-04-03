@@ -127,7 +127,7 @@
 
 .dropdown-header {
     padding: 16px 20px;
-    background: var(--success-color);
+    background: var(--primary-color);
     border-bottom: 1px solid var(--gray-200);
 }
 
@@ -140,12 +140,12 @@
 .dropdown-user-name {
     font-weight: 600;
     font-size: 15px;
-    color: var(--gray-800);
+    color: var(--white-color);
 }
 
 .dropdown-user-role {
     font-size: 13px;
-    color: var(--gray-900);
+    color: var(--white-color);
     text-transform: capitalize;
 }
 

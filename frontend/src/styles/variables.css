@@ -12,6 +12,7 @@
     --danger-dark: #ed2424;
     --warning-color: #f59e0b;
     --info-color: #3b82f6;
+    --dark-color: #4361ee;
     
     /* Neutral Colors (Gray Ladder) */
     --gray-50: #f9fafb;
@@ -24,7 +25,7 @@
     --gray-700: #374151;
     --gray-800: #1f2937;
     --gray-900: #111827;
-    --text-main: #1f2937;
+    --text-main: #0d0f12;
     --text-muted: #6b7280;
     --border: 1px solid #e5e7eb;
     

@@ -19,51 +19,7 @@
 
 /* Common search box is now global */
 
-.product-dropdown {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    width: 100%;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--gray-200);
-    z-index: 100;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.dropdown-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.dropdown-item:hover {
-    background: var(--gray-50);
-}
-
-.product-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.product-name {
-    font-weight: 600;
-    color: var(--gray-800);
-}
-
-.product-sku {
-    font-size: 12px;
-    color: var(--gray-500);
-}
-
-.product-price {
-    font-weight: 700;
-    color: var(--primary-color);
-}
+/* Product dropdown removed as it is now global */
 
 .billing-sidebar {
     width: 350px;
@@ -205,58 +161,7 @@
 
 /* Customer search box is now global */
 
-.customer-badge {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--gray-50);
-    padding: 16px;
-    border-radius: 12px;
-    border: 1px solid var(--gray-200);
-}
-
-.customer-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.customer-details {
-    display: flex;
-    flex-direction: column;
-}
-
-.cust-name {
-    font-weight: 700;
-    color: var(--gray-800);
-    font-size: 15px;
-}
-
-.cust-phone-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.cust-phone {
-    font-size: 13px;
-    color: var(--gray-500);
-}
-
-.cust-points {
-    font-size: 11px;
-    background: var(--primary-light);
-    color: var(--primary-color);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 600;
-}
-
-.cust-email {
-    font-size: 12px;
-    color: var(--gray-400);
-    margin-top: 2px;
-}
+/* Customer badge removed as it is now global selection-result-card */
 
 .summary-table {
     display: flex;

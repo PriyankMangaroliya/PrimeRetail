@@ -793,6 +793,185 @@ body {
     gap: 12px;
 }
 
+/* ==========================================================================
+   3. STANDARDIZED SELECTION COMPONENTS
+   ========================================================================== */
+
+/* Custom Search Dropdown Enhancements */
+.custom-search-dropdown {
+    position: relative;
+}
+
+.search-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    max-height: 320px;
+    overflow-y: auto;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+    z-index: 1000;
+    padding: 8px;
+}
+
+.search-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.search-dropdown-item:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-light-border, rgba(59, 130, 246, 0.1));
+}
+
+.search-item-icon {
+    width: 42px;
+    height: 42px;
+    background: var(--gray-100);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-500);
+    flex-shrink: 0;
+}
+
+.search-dropdown-item:hover .search-item-icon {
+    background: var(--white);
+    color: var(--primary-color);
+}
+
+.search-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.search-item-title {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--gray-800);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-item-sub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--gray-500);
+    margin-top: 2px;
+}
+
+.search-item-stock {
+    margin-left: auto;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--gray-50);
+}
+
+.search-dropdown-item:hover .search-item-stock {
+    background: var(--white);
+}
+
+/* Result Card - Selected Item */
+.selection-result-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%);
+    border: 1px solid var(--primary-light);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.selection-result-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--primary-color);
+}
+
+.selection-result-card .entity-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.selection-result-card .entity-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--white);
+    border: 1px solid var(--primary-light);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+}
+
+.selection-result-card .entity-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.selection-result-card .entity-name {
+    font-weight: 700;
+    color: var(--gray-900);
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.selection-result-card .entity-sub {
+    font-size: 12px;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.selection-result-card .entity-action {
+    background: var(--white);
+    color: var(--gray-400);
+    border: 1px solid var(--gray-200);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.selection-result-card .entity-action:hover {
+    background: var(--danger-light);
+    color: var(--danger-color);
+    border-color: var(--danger-light-border, rgba(239, 68, 68, 0.2));
+    transform: scale(1.05);
+}
+
 .summary-row {
     display: flex;
     justify-content: space-between;

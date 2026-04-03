@@ -46,6 +46,10 @@ const Billing = () => {
     const [appliedDiscount, setAppliedDiscount] = useState(null);
     const [roundOff, setRoundOff] = useState(0);
 
+    const [productDropdownOpen, setProductDropdownOpen] = useState(false);
+    const [customerDropdownOpen, setCustomerDropdownOpen] = useState(false);
+    const [customerSearchResults, setCustomerSearchResults] = useState([]);
+
     const productInputRef = useRef(null);
 
     // Derived Calculations
@@ -76,10 +80,24 @@ const Billing = () => {
     }, []);
 
     useEffect(() => {
-        if (searchPhone.length === 10) {
+        if (searchPhone.length >= 3) {
             handleCustomerSearch();
+        } else {
+            setCustomerSearchResults([]);
         }
     }, [searchPhone]);
+
+    // Close dropdowns on outside click
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (!e.target.closest('.common-search-box')) {
+                setProductDropdownOpen(false);
+                setCustomerDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     useEffect(() => {
         calculateRounding();
@@ -121,21 +139,24 @@ const Billing = () => {
     };
 
     const handleCustomerSearch = async () => {
-        if (!searchPhone || searchPhone.length < 10) return;
+        if (!searchPhone || searchPhone.length < 3) {
+            setCustomerSearchResults([]);
+            return;
+        }
         try {
             const response = await customerApi.getCustomerByPhone(searchPhone);
+            // If direct match, but we want a dropdown, let's treat it as results
             if (response && response.data) {
-                setCustomer(response.data);
+                setCustomerSearchResults([response.data]);
+                setCustomerDropdownOpen(true);
             } else {
-                setNewCustomer({ ...newCustomer, phone: searchPhone });
-                setShowCustomerModal(true);
+                setCustomerSearchResults([]);
             }
         } catch (error) {
-            if (error.status === 404) {
+            setCustomerSearchResults([]);
+            if (error.status === 404 && searchPhone.length === 10) {
                 setNewCustomer({ ...newCustomer, phone: searchPhone });
                 setShowCustomerModal(true);
-            } else {
-                console.error('Error searching customer:', error);
             }
         }
     };
@@ -144,14 +165,17 @@ const Billing = () => {
         setProductSearch(query);
         if (query.length === 0) {
             setSearchResults(allProducts.slice(0, 10));
+            setProductDropdownOpen(true);
             return;
         }
         if (query.length < 2) {
+            setSearchResults([]);
             return;
         }
         try {
             const response = await productApi.getProductsForSale({ search: query });
             setSearchResults(response.data || []);
+            setProductDropdownOpen(true);
         } catch (error) {
             console.error('Error searching products:', error);
         }
@@ -182,6 +206,7 @@ const Billing = () => {
         }
         setProductSearch('');
         setSearchResults([]);
+        setProductDropdownOpen(false);
         if (productInputRef.current) productInputRef.current.focus();
     };
 
@@ -359,16 +384,29 @@ const Billing = () => {
                             placeholder="Scan Barcode or Search Product (Min 2 chars)..."
                             value={productSearch}
                             onChange={(e) => handleProductSearch(e.target.value)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (!productSearch) {
+                                    setSearchResults(allProducts.slice(0, 10));
+                                }
+                                setProductDropdownOpen(true);
+                            }}
                         />
-                        {searchResults.length > 0 && (
-                            <div className="product-dropdown">
+                        {productDropdownOpen && searchResults.length > 0 && (
+                            <div className="search-dropdown-menu">
                                 {searchResults.map(product => (
-                                    <div key={product.id} className="dropdown-item" onClick={() => addToCart(product)}>
-                                        <div className="product-info">
-                                            <span className="product-name">{product.product_name}</span>
-                                            <span className="product-sku">{product.sku}</span>
+                                    <div key={product.id} className="search-dropdown-item" onClick={() => addToCart(product)}>
+                                        <div className="search-item-icon">
+                                            <Icons.Package size={20} />
                                         </div>
-                                        <span className="product-price">₹{product.price}</span>
+                                        <div className="search-item-content">
+                                            <span className="search-item-title">{product.product_name}</span>
+                                            <div className="search-item-sub">
+                                                <span>SKU: {product.sku}</span>
+                                                <span>•</span>
+                                                <span style={{ fontWeight: 600, color: 'var(--primary-color)' }}>₹{product.price}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -430,48 +468,72 @@ const Billing = () => {
                         {!customer && <span className="walkin-tag">Walk-in</span>}
                     </div>
                     {!customer ? (
-                        <div className="common-search-box">
+                        <div className="common-search-box" style={{ position: 'relative' }}>
                             <Search size={18} color="var(--gray-400)" />
                             <input
                                 type="text"
                                 placeholder="Phone Number"
                                 value={searchPhone}
                                 onChange={(e) => setSearchPhone(e.target.value)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCustomerDropdownOpen(true);
+                                }}
                                 onKeyDown={(e) => e.key === 'Enter' && handleCustomerSearch()}
                             />
+                            {customerDropdownOpen && customerSearchResults.length > 0 && (
+                                <div className="search-dropdown-menu">
+                                    {customerSearchResults.map(res => (
+                                        <div
+                                            key={res.id}
+                                            className="search-dropdown-item"
+                                            onClick={() => {
+                                                setCustomer(res);
+                                                setCustomerDropdownOpen(false);
+                                                setSearchPhone(res.phone);
+                                            }}
+                                        >
+                                            <div className="search-item-icon">
+                                                <User size={20} />
+                                            </div>
+                                            <div className="search-item-content">
+                                                <span className="search-item-title">{res.name}</span>
+                                                <div className="search-item-sub">{res.phone}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     ) : (
-                        <div className="customer-badge">
-                            <div className="customer-info">
-                                <User size={20} className="text-indigo-600" />
-                                <div className="customer-details">
-                                    <div className="cust-name">{customer.name}</div>
-                                    <div className="cust-phone-row">
-                                        <span className="cust-phone">{customer.phone}</span>
+                        <div className="selection-result-card" style={{ marginBottom: 0 }}>
+                            <div className="entity-info">
+                                <div className="entity-icon" style={{ cursor: 'pointer' }} onClick={() => { setEditCustomer(customer); setShowEditCustomerModal(true); }} title="Edit Customer">
+                                    <User size={24} />
+                                </div>
+                                <div className="entity-details">
+                                    <span className="entity-name">{customer.name}</span>
+                                    <div className="entity-sub">
+                                        <span>{customer.phone}</span>
                                         {customer.loyalty_points !== undefined && (
-                                            <span className="cust-points">Points: {customer.loyalty_points}</span>
+                                            <>
+                                                <span style={{ color: 'var(--gray-400)' }}>•</span>
+                                                <span style={{ fontWeight: 600, color: 'var(--success-color)' }}>Points: {customer.loyalty_points}</span>
+                                            </>
                                         )}
                                     </div>
-                                    {customer.email && <div className="cust-email">{customer.email}</div>}
                                 </div>
                             </div>
-                            <div className="action-buttons">
-                                <Button
-                                    variant="ghost"
-                                    size="small"
-                                    onClick={() => { setEditCustomer(customer); setShowEditCustomerModal(true); }}
-                                    title="Edit"
-                                >
-                                    <Edit2 size={16} />
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="small"
-                                    onClick={() => { setCustomer(null); setSearchPhone(''); }}
-                                    title="Remove"
-                                >
-                                    <Icons.X size={16} />
-                                </Button>
+                            <div
+                                className="entity-action"
+                                onClick={() => {
+                                    setCustomer(null);
+                                    setSearchPhone('');
+                                    setCustomerDropdownOpen(true);
+                                }}
+                                title="Change Customer"
+                            >
+                                <Icons.RefreshCw size={14} />
                             </div>
                         </div>
                     )}
