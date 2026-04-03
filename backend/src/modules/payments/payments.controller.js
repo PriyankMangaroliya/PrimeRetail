@@ -1,6 +1,8 @@
 const paymentService = require('./payments.service');
 const paymentValidation = require('./payments.validation');
 const responseUtils = require('../../utils/response.utils');
+const razorpayService = require('./razorpay.service');
+const invoiceService = require('../billing/invoices.service');
 
 const paymentController = {
     // Create new payment
@@ -124,6 +126,63 @@ const paymentController = {
         } catch (error) {
             console.error('Get Invoices By Store Error:', error);
             return responseUtils.error(res, 500, error.message || 'Failed to retrieve store paymentMethods');
+        }
+    },
+
+    // Razorpay: Create Order
+    createRazorpayOrder: async (req, res) => {
+        try {
+            const { amount, receipt } = req.body;
+            if (!amount) return responseUtils.badRequest(res, 'Amount is required');
+
+            const order = await razorpayService.createOrder(amount, receipt || `order_rcptid_${Date.now()}`);
+            return responseUtils.success(res, 200, 'Razorpay order created', order);
+        } catch (error) {
+            console.error('Razorpay Order Error:', error);
+            return responseUtils.error(res, 500, error.message || 'Failed to create Razorpay order');
+        }
+    },
+
+    // Razorpay: Verify Payment
+    verifyRazorpayPayment: async (req, res) => {
+        try {
+            const { 
+                razorpay_order_id, 
+                razorpay_payment_id, 
+                razorpay_signature,
+                invoice_data,
+                payment_method_id
+            } = req.body;
+
+            // 1. Verify signature
+            const isValid = razorpayService.verifySignature(razorpay_order_id, razorpay_payment_id, razorpay_signature);
+            if (!isValid) {
+                return responseUtils.error(res, 400, 'Invalid payment signature');
+            }
+
+            // 2. Finalize Invoice and Payment in database
+            // Note: invoice_data should contain everything needed for createInvoice
+            const invoice = await invoiceService.createInvoice({
+                ...invoice_data,
+                created_by: req.user.id
+            });
+
+            const payment = await paymentService.createPayment({
+                invoice_id: invoice.id,
+                payment_method_id: payment_method_id,
+                payment_type: 'FULL',
+                amount: invoice_data.grand_total,
+                received_amount: invoice_data.grand_total,
+                change_amount: 0,
+                transaction_reference: razorpay_payment_id,
+                payment_status: 'COMPLETED',
+                created_by: req.user.id
+            });
+
+            return responseUtils.success(res, 200, 'Payment verified and invoice created', { invoice, payment });
+        } catch (error) {
+            console.error('Razorpay Verification Error:', error);
+            return responseUtils.error(res, 500, error.message || 'Payment verification failed');
         }
     }
 };

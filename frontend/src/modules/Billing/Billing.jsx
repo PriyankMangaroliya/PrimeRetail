@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, User, Plus, Minus, Trash2, ShoppingCart, UserPlus, CreditCard, Banknote, Receipt, CheckCircle, X, Edit2, Pencil } from 'lucide-react';
+import { Search, User, Plus, Minus, Trash2, ShoppingCart, UserPlus, CreditCard, Banknote, Receipt, CheckCircle, X, Edit2, Pencil, Zap } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import customerApi from '../../api/customer.api';
 import productApi from '../../api/product.api';
@@ -32,6 +32,8 @@ const Billing = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [invoiceResult, setInvoiceResult] = useState(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [successData, setSuccessData] = useState(null);
 
     // Redesign States
     const [showCouponModal, setShowCouponModal] = useState(false);
@@ -139,7 +141,11 @@ const Billing = () => {
     };
 
     const handleCustomerSearch = async () => {
-        if (!searchPhone || searchPhone.length < 3) {
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (!searchPhone || !phoneRegex.test(searchPhone)) {
+            if (searchPhone.length >= 10) {
+                // Do nothing or show error if it's 10 digits but invalid format
+            }
             setCustomerSearchResults([]);
             return;
         }
@@ -154,7 +160,8 @@ const Billing = () => {
             }
         } catch (error) {
             setCustomerSearchResults([]);
-            if (error.status === 404 && searchPhone.length === 10) {
+            const phoneRegex = /^[6-9]\d{9}$/;
+            if (error.status === 404 && phoneRegex.test(searchPhone)) {
                 setNewCustomer({ ...newCustomer, phone: searchPhone });
                 setShowCustomerModal(true);
             }
@@ -312,8 +319,15 @@ const Billing = () => {
 
             await paymentApi.createPayment(paymentData);
 
-            // Payment successful, show alert and reset page for next bill
-            alert('Payment completed successfully!');
+            // Payment successful, show success modal
+            setSuccessData({
+                invoice_no: invoiceData.invoice_no,
+                amount: totalPayable,
+                method: selectedPaymentMethod.method_name,
+                customer: customer?.name || 'Walk-in Customer',
+                change: parseFloat(receivedAmount) - totalPayable
+            });
+            setShowSuccessModal(true);
             handleDone();
         } catch (error) {
             const errorMsg = error.response?.data?.message || error.message || 'Checkout failed';
@@ -323,34 +337,150 @@ const Billing = () => {
             setIsProcessing(false);
         }
     };
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
+    const handleAutoCheckout = async () => {
+        if (cart.length === 0) return;
+
+        setIsProcessing(true);
+        try {
+            // 1. Load Razorpay script
+            const res = await loadRazorpayScript();
+            if (!res) {
+                alert('Razorpay SDK failed to load. Are you online?');
+                return;
+            }
+
+            // 2. Create Razorpay order in backend
+            const orderRes = await paymentApi.createRazorpayOrder({
+                amount: totalPayable,
+                receipt: `inv_${Date.now()}`
+            });
+
+            const order = orderRes.data.data;
+
+            // 3. Configure Razorpay options
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_ID_KEY,
+                amount: order.amount,
+                currency: order.currency,
+                name: 'Prime Retail',
+                description: 'Payment for Invoice',
+                order_id: order.id,
+                handler: async function (response) {
+                    try {
+                        // 4. Verify payment in backend
+                        const verifyData = {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            payment_method_id: paymentMethods.find(m => m.method_name.toLowerCase().includes('razorpay') || m.method_name.toLowerCase().includes('online'))?.id || selectedPaymentMethod?.id,
+                            invoice_data: {
+                                store_id: user.store_id,
+                                invoice_no: `INV-${Date.now()}`,
+                                cashier_id: user.id,
+                                customer_id: customer ? customer.id : null,
+                                total_amount: subtotal,
+                                tax_amount: taxAmount,
+                                discount_amount: couponAmount + (parseFloat(manualDiscount) || 0),
+                                discount_id: appliedCoupon ? appliedCoupon.id : null,
+                                round_off: roundoff,
+                                grand_total: totalPayable,
+                                invoice_type: 'SALE',
+                                items: cart.map(item => ({
+                                    product_id: item.product_id,
+                                    quantity: item.quantity,
+                                    unit_price: item.unit_price,
+                                    tax_percentage: item.tax_percentage,
+                                    tax_amount: item.tax_amount * item.quantity,
+                                    discount_amount: 0,
+                                    final_price: item.final_price,
+                                    total_price: item.total_price
+                                }))
+                            }
+                        };
+
+                        const verifyRes = await paymentApi.verifyRazorpayPayment(verifyData);
+                        if (verifyRes.data.success) {
+                            setSuccessData({
+                                invoice_no: verifyData.invoice_data.invoice_no,
+                                amount: totalPayable,
+                                method: 'Razorpay / Online',
+                                customer: customer?.name || 'Walk-in Customer',
+                                change: 0
+                            });
+                            setShowSuccessModal(true);
+                            handleDone();
+                        } else {
+                            alert('Payment verification failed');
+                        }
+                    } catch (error) {
+                        console.error('Verification error:', error);
+                        alert('Error verifying payment');
+                    } finally {
+                        setIsProcessing(false);
+                    }
+                },
+                prefill: {
+                    name: customer?.name || '',
+                    email: customer?.email || '',
+                    contact: customer?.phone || ''
+                },
+                theme: {
+                    color: '#6366f1'
+                }
+            };
+
+            const paymentObject = new window.Razorpay(options);
+            paymentObject.open();
+
+        } catch (error) {
+            console.error('Auto Checkout Error:', error);
+            alert('Failed to initialize auto checkout');
+            setIsProcessing(false);
+        }
+    };
 
     const handleDone = () => {
         setCart([]);
         setCustomer(null);
         setSearchPhone('');
         setAppliedCoupon(null);
-        setManualDiscount('');
+        setManualDiscount(0);
         setCouponCode('');
         setInvoiceResult(null);
+        setReceivedAmount(0);
     };
 
     const getPaymentIcon = (methodName) => {
         const name = methodName.toLowerCase();
-        if (name.includes('cash')) return '💵';
-        if (name.includes('card')) return '💳';
-        if (name.includes('point')) return '⭐';
-        if (name.includes('deposit')) return '💰';
-        if (name.includes('cheque')) return '📝';
-        if (name.includes('gift')) return '🎁';
-        if (name.includes('scan') || name.includes('qr')) return '🤳';
-        if (name.includes('later')) return '⏳';
-        if (name.includes('external')) return '🏧';
-        if (name.includes('split')) return '✂️';
+        if (name.includes('cash')) return '💵';                          // Cash Payment
+        if (name.includes('card') || name.includes('nfc')) return '💳';  // Credit / Debit Card / NFC
+        if (name.includes('wallet')) return '👛';                        // Mobile Wallet
+        if (name.includes('net') || name.includes('bank')) return '💰';  // Bank / Deposit
+        if (name.includes('upi') || name.includes('qr')) return '📲';    // UPI and QR Scan Payment
+        if (name.includes('gift') || name.includes('voucherr')) return '🎁'; // Gift Card / Voucher
+        if (name.includes('cheque') || name.includes('emi')) return '📝'; // Cheque / EMI
+        if (name.includes('razorpay')) return '💠';      // Razorpay Payment Gateway
+        if (name.includes('point')) return '⭐';         // Reward Points
         return '💳';
     };
 
     const handleCreateCustomer = async (e) => {
         e.preventDefault();
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (!phoneRegex.test(newCustomer.phone)) {
+            alert('Please enter a valid 10-digit Indian phone number starting with 6-9');
+            return;
+        }
         try {
             const response = await customerApi.createCustomer({ ...newCustomer, created_by: user.id });
             setCustomer(response.data);
@@ -363,6 +493,11 @@ const Billing = () => {
 
     const handleUpdateCustomer = async (e) => {
         e.preventDefault();
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (!phoneRegex.test(editCustomer.phone)) {
+            alert('Please enter a valid 10-digit Indian phone number starting with 6-9');
+            return;
+        }
         try {
             const response = await customerApi.updateCustomer(customer.id, { ...editCustomer, updated_by: user.id });
             setCustomer(response.data);
@@ -472,9 +607,13 @@ const Billing = () => {
                             <Search size={18} color="var(--gray-400)" />
                             <input
                                 type="text"
-                                placeholder="Phone Number"
+                                placeholder="Phone Number (10 digits)"
                                 value={searchPhone}
-                                onChange={(e) => setSearchPhone(e.target.value)}
+                                maxLength={10}
+                                onChange={(e) => {
+                                    const val = e.target.value.replace(/\D/g, '');
+                                    setSearchPhone(val);
+                                }}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setCustomerDropdownOpen(true);
@@ -607,64 +746,102 @@ const Billing = () => {
                     </div>
                 </div>
 
-                <div className="payment-selection-sidebar">
-                    <div className="section-header">
-                        <h3>Select Payment</h3>
-                    </div>
-                    <div className="payment-methods-grid">
-                        {paymentMethods.map(pm => (
-                            <div
-                                key={pm.id}
-                                className={`pm-card ${selectedPaymentMethod?.id === pm.id ? 'active' : ''}`}
-                                onClick={() => setSelectedPaymentMethod(pm)}
-                            >
-                                <span className="pm-icon">{getPaymentIcon(pm.method_name)}</span>
-                                <span className="pm-name">{pm.method_name}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
 
-                <button
-                    className="checkout-btn"
-                    disabled={cart.length === 0 || !selectedPaymentMethod}
-                    onClick={handleCheckout}
-                >
-                    <CreditCard size={20} />
-                    Checkout
-                </button>
+                <div className="checkout-actions-container">
+                    <button
+                        className="checkout-btn manual-checkout"
+                        disabled={cart.length === 0 || isProcessing}
+                        onClick={handleCheckout}
+                    >
+                        <CreditCard size={20} />
+                        Manual Checkout
+                    </button>
+
+                    <button
+                        className="checkout-btn auto-checkout"
+                        disabled={cart.length === 0 || isProcessing}
+                        onClick={handleAutoCheckout}
+                    >
+                        <Zap size={20} />
+                        Auto Checkout
+                    </button>
+                </div>
             </aside>
 
-
-            {/* Confirmation Modal */}
             <Modal
-                title="Payment Confirmation"
+                title="Checkout - Manual Payment"
                 isOpen={showConfirmModal}
                 onClose={() => setShowConfirmModal(false)}
-                maxWidth="400px"
+                maxWidth="600px"
             >
-                <div className="confirm-payment-content">
-                    <div className="help-icon-container">?</div>
-                    <h3>Confirm Payment</h3>
-                    <p>Total Amount: <strong>₹{totalPayable.toFixed(2)}</strong></p>
-                    <p>Method: <strong>{selectedPaymentMethod?.method_name}</strong></p>
-                    <p className="sub-msg">Was the payment successful?</p>
+                <div className="manual-checkout-modal-content">
+                    <div className="modal-section-title">Select Payment Method</div>
 
-                    <div className="confirm-actions">
-                        <button className="confirm-no-btn" onClick={() => setShowConfirmModal(false)}>No, Cancel</button>
+                    <div className="modal-amount-summary">
+                        <span className="label">Total Amount Payable</span>
+                        <span className="value">₹{totalPayable.toFixed(2)}</span>
+                    </div>
+
+                    <div className="modal-payment-grid">
+                        {paymentMethods
+                            .filter(pm => !pm.method_name.toLowerCase().includes('razorpay'))
+                            .map(pm => (
+                                <div
+                                    key={pm.id}
+                                    className={`modal-pm-card ${selectedPaymentMethod?.id === pm.id ? 'active' : ''}`}
+                                    onClick={() => setSelectedPaymentMethod(pm)}
+                                >
+                                    <span className="pm-icon">{getPaymentIcon(pm.method_name)}</span>
+                                    <span className="pm-name">{pm.method_name}</span>
+                                    {selectedPaymentMethod?.id === pm.id && (
+                                        <div className="pm-check">
+                                            <CheckCircle size={14} />
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                    </div>
+
+                    {selectedPaymentMethod && (
+                        <div className="modal-payment-details animate-fade-in">
+                            <div className="modal-input-row">
+                                <div className="input-group">
+                                    <label>Amount Received (₹)</label>
+                                    <input
+                                        type="number"
+                                        className="modal-received-input"
+                                        value={receivedAmount}
+                                        onChange={(e) => setReceivedAmount(e.target.value)}
+                                        autoFocus
+                                        onFocus={(e) => e.target.select()}
+                                    />
+                                </div>
+
+                                <div className="modal-change-display">
+                                    <span className="label">Change to Return</span>
+                                    <span className={`change-value ${parseFloat(receivedAmount) - totalPayable < 0 ? 'text-danger' : 'text-success'}`}>
+                                        ₹{Math.max(0, (parseFloat(receivedAmount) || 0) - totalPayable).toFixed(2)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="modal-confirm-footer">
+                        <button className="modal-cancel-btn" onClick={() => setShowConfirmModal(false)}>Cancel</button>
                         <button
-                            className="confirm-yes-btn"
+                            className="modal-complete-btn"
+                            disabled={!selectedPaymentMethod || isProcessing || (parseFloat(receivedAmount) < totalPayable)}
                             onClick={() => {
                                 setShowConfirmModal(false);
                                 processPayment();
                             }}
-                            disabled={isProcessing}
                         >
                             {isProcessing ? (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <Loader size="small" /> Processing...
-                                </div>
-                            ) : 'Yes, Complete'}
+                                <><Loader size="small" /> Processing...</>
+                            ) : (
+                                <><Icons.Check size={20} /> Complete Transaction</>
+                            )}
                         </button>
                     </div>
                 </div>
@@ -696,7 +873,11 @@ const Billing = () => {
                         type="text"
                         required
                         value={newCustomer.phone}
-                        readOnly
+                        maxLength={10}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            setNewCustomer({ ...newCustomer, phone: val });
+                        }}
                     />
                     <Input
                         label="Email (Optional)"
@@ -739,7 +920,11 @@ const Billing = () => {
                         type="text"
                         required
                         value={editCustomer.phone}
-                        readOnly
+                        maxLength={10}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            setEditCustomer({ ...editCustomer, phone: val });
+                        }}
                     />
                     <Input
                         label="Email (Optional)"
@@ -804,6 +989,76 @@ const Billing = () => {
                         onChange={(e) => setManualDiscount(e.target.value)}
                     />
                 </form>
+            </Modal>
+
+            {/* Success Modal */}
+            <Modal
+                title="Payment Success"
+                isOpen={showSuccessModal}
+                onClose={() => setShowSuccessModal(false)}
+                maxWidth="480px"
+            >
+                <div className="payment-success-modal">
+                    <div className="success-lottie-container">
+                        <div className="success-circle">
+                            <CheckCircle size={48} />
+                        </div>
+                    </div>
+
+                    <div className="success-header">
+                        <h2>Invoice Completed</h2>
+                        <p>Transaction processed and inventory updated.</p>
+                    </div>
+
+                    <div className="success-info-card">
+                        <div className="success-row">
+                            <div className="row-item">
+                                <Receipt size={16} />
+                                <span>Invoice No</span>
+                            </div>
+                            <strong>{successData?.invoice_no}</strong>
+                        </div>
+
+                        <div className="success-row">
+                            <div className="row-item">
+                                <User size={16} />
+                                <span>Customer</span>
+                            </div>
+                            <strong>{successData?.customer}</strong>
+                        </div>
+
+                        <div className="success-row">
+                            <div className="row-item">
+                                <Banknote size={16} />
+                                <span>Payment Method</span>
+                            </div>
+                            <strong>{successData?.method}</strong>
+                        </div>
+
+                        <div className="success-total-section">
+                            <div className="total-main">
+                                <div className="label">Total Paid</div>
+                                <div className="amount">₹{successData?.amount.toFixed(2)}</div>
+                            </div>
+                            {successData?.change > 0 && (
+                                <div className="total-change">
+                                    <div className="label">Change Returned</div>
+                                    <div className="amount">₹{successData?.change.toFixed(2)}</div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="success-actions">
+                        <button className="success-print-btn">
+                            <Icons.Printer size={20} />
+                            Print Receipt
+                        </button>
+                        <button className="success-done-btn" onClick={() => setShowSuccessModal(false)}>
+                            New Transaction
+                        </button>
+                    </div>
+                </div>
             </Modal>
         </div>
     );

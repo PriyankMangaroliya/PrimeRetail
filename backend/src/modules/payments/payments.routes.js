@@ -41,4 +41,8 @@ router.get('/:id',
 // Update status
 router.patch('/:id/status', hasRole(['Store Owner', 'Store Manager']), paymentController.updatePaymentStatus);
 
+// Razorpay Integration
+router.post('/razorpay/create-order', paymentController.createRazorpayOrder);
+router.post('/razorpay/verify-payment', paymentController.verifyRazorpayPayment);
+
 module.exports = router;

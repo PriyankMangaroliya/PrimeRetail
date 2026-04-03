@@ -75,6 +75,7 @@ import {
     Truck,
     TrendingDown,
     TrendingUp,
+    Printer,
     X as CloseIcon
 } from 'lucide-react';
 
@@ -216,7 +217,8 @@ export const Icons = {
     Banknote: Banknote,
     Smartphone: Smartphone,
     ShoppingCart: ShoppingCart,
-    UserRoundCog: UserRoundCog
+    UserRoundCog: UserRoundCog,
+    Printer: Printer
 };
 
 

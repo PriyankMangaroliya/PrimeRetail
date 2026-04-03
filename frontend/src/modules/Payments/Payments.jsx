@@ -10,11 +10,11 @@ import Modal from '../../components/common/Modal/Modal';
 import Button from '../../components/common/Button/Button';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
-import {useAuth} from "../../context/AuthContext.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 
 const Payments = () => {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [alert, setAlert] = useState({ show: false, type: '', message: '' });
@@ -64,7 +64,7 @@ const Payments = () => {
             case 'PENDING': return <Badge variant="warning">PENDING</Badge>;
             case 'FAILED': return <Badge variant="danger">FAILED</Badge>;
             case 'REFUNDED': return <Badge variant="info">REFUNDED</Badge>;
-            default: return <Badge variant="secondary">{status}</Badge>;
+            default: return <Badge variant="success">{status}</Badge>;
         }
     };
 
@@ -185,7 +185,7 @@ const Payments = () => {
                                 <div className="detail-title-group">
                                     <h2>{selectedPayment.invoice_no}</h2>
                                     <div className="detail-meta">
-                                        {getStatusBadge(selectedPayment.payment_status)}
+                                        {getStatusBadge(selectedPayment.method_name)}
                                     </div>
                                 </div>
                             </div>
@@ -205,11 +205,11 @@ const Payments = () => {
                                 </div>
                                 <div className="view-group">
                                     <label>Payment Method</label>
-                                    <p>{selectedPayment.method_name || 'Cash'}</p>
+                                    <p>{selectedPayment.method_name || 'NA'}</p>
                                 </div>
                                 <div className="view-group">
                                     <label>Transaction ID</label>
-                                    <p>{selectedPayment.transaction_id || 'N/A'}</p>
+                                    <p>{selectedPayment.transaction_reference || 'N/A'}</p>
                                 </div>
                                 <div className="view-group">
                                     <label>Payment Status</label>
