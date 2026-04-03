@@ -385,7 +385,7 @@ const StockList = () => {
                     </div>
                 </header>
 
-                <div className="stats-grid">
+                {/* <div className="stats-grid">
                     <div className="stat-card">
                         <div className="stat-icon primary">
                             <Icons.Package size={24} />
@@ -404,7 +404,7 @@ const StockList = () => {
                             <p>{lowStockItems}</p>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 {alert.show && (
                     <Alert type={alert.type} dismissible>

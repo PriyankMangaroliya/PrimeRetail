@@ -73,8 +73,11 @@ import {
     ChevronsRight,
     Activity,
     Truck,
+    TrendingDown,
+    TrendingUp,
     X as CloseIcon
 } from 'lucide-react';
+
 
 import { 
     FiPlus, 
@@ -207,11 +210,15 @@ export const Icons = {
     ChevronsRight: ChevronsRight,
     Activity: Activity,
     Truck: Truck,
+    TrendingDown: TrendingDown,
+    TrendingUp: TrendingUp,
+    AlertCircle: AlertCircle,
     Banknote: Banknote,
     Smartphone: Smartphone,
     ShoppingCart: ShoppingCart,
     UserRoundCog: UserRoundCog
 };
+
 
 // React Icons (Fi)
 export const FiIcons = {

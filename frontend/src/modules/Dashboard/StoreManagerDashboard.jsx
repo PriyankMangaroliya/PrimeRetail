@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '../../components/layout/MainLayout/MainLayout';
 import Card from '../../components/common/Card/Card';
 import Button from '../../components/common/Button/Button';
 import Badge from '../../components/common/Badge/Badge';
 import Table from '../../components/common/Table/Table';
 import Icons from '../../components/common/Icons';
+import dashboardApi from '../../api/dashboard.api';
 import '../../styles/dashboard.css';
 
 const StoreManagerDashboard = () => {
+    const [stats, setStats] = useState({
+        totalProducts: 0,
+        totalStock: 0,
+        totalInvoices: 0,
+        totalPayments: 0
+    });
+    const [loading, setLoading] = useState(true);
+
     const orderColumns = [
         {
             title: 'Order ID',
@@ -49,6 +58,22 @@ const StoreManagerDashboard = () => {
         status: 'Processing'
     }));
 
+    useEffect(() => {
+        fetchStats();
+    }, []);
+
+    const fetchStats = async () => {
+        try {
+            setLoading(true);
+            const response = await dashboardApi.getStats();
+            setStats(response.data);
+        } catch (error) {
+            console.error('Error fetching dashboard stats:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <MainLayout>
             <div className="dashboard-container">
@@ -57,43 +82,46 @@ const StoreManagerDashboard = () => {
                         <h1>Store Manager Dashboard</h1>
                         <p>Manage your store operations efficiently.</p>
                     </div>
+                    <Button onClick={fetchStats} variant="outline" size="small">
+                        <Icons.Refresh size={16} style={{ marginRight: '8px' }} /> Refresh
+                    </Button>
                 </div>
 
                 {/* Quick Stats */}
                 <div className="stats-grid">
                     <Card className="stat-card">
+                        <div className="stat-icon primary"><Icons.Package size={24} /></div>
+                        <div className="stat-content">
+                            <h3>Total Products</h3>
+                            <p className="stat-value">{loading ? '...' : stats.totalProducts}</p>
+                            <Badge variant="success">Catalog</Badge>
+                        </div>
+                    </Card>
+
+                    <Card className="stat-card">
+                        <div className="stat-icon success"><Icons.BarChart size={24} /></div>
+                        <div className="stat-content">
+                            <h3>Total Stock</h3>
+                            <p className="stat-value">{loading ? '...' : stats.totalStock.toLocaleString()}</p>
+                            <Badge variant="success">Available</Badge>
+                        </div>
+                    </Card>
+
+                    <Card className="stat-card">
+                        <div className="stat-icon primary"><Icons.FileText size={24} /></div>
+                        <div className="stat-content">
+                            <h3>Total Invoices</h3>
+                            <p className="stat-value">{loading ? '...' : stats.totalInvoices}</p>
+                            <Badge variant="info">Count</Badge>
+                        </div>
+                    </Card>
+
+                    <Card className="stat-card">
                         <div className="stat-icon success"><Icons.DollarSign size={24} /></div>
                         <div className="stat-content">
-                            <h3>Today's Sales</h3>
-                            <p className="stat-value">$5,230</p>
-                            <Badge variant="success">+15%</Badge>
-                        </div>
-                    </Card>
-
-                    <Card className="stat-card">
-                        <div className="stat-icon warning"><Icons.Package size={24} /></div>
-                        <div className="stat-content">
-                            <h3>Orders</h3>
-                            <p className="stat-value">78</p>
-                            <Badge variant="warning">12 Pending</Badge>
-                        </div>
-                    </Card>
-
-                    <Card className="stat-card">
-                        <div className="stat-icon primary"><Icons.Users size={24} /></div>
-                        <div className="stat-content">
-                            <h3>Staff on Duty</h3>
-                            <p className="stat-value">8/15</p>
-                            <Badge variant="info">+2 in 1hr</Badge>
-                        </div>
-                    </Card>
-
-                    <Card className="stat-card">
-                        <div className="stat-icon danger"><Icons.AlertTriangle size={24} /></div>
-                        <div className="stat-content">
-                            <h3>Low Stock Items</h3>
-                            <p className="stat-value">23</p>
-                            <Badge variant="danger">Need reorder</Badge>
+                            <h3>Total Payments</h3>
+                            <p className="stat-value">{loading ? '...' : `$${stats.totalPayments.toLocaleString()}`}</p>
+                            <Badge variant="success">Revenue</Badge>
                         </div>
                     </Card>
                 </div>
@@ -120,4 +148,4 @@ const StoreManagerDashboard = () => {
     );
 };
 
-export default StoreManagerDashboard;
+export default StoreManagerDashboard;

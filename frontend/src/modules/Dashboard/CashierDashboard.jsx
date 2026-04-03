@@ -1,14 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '../../components/layout/MainLayout/MainLayout';
 import Card from '../../components/common/Card/Card';
 import Button from '../../components/common/Button/Button';
 import Input from '../../components/common/Input/Input';
 import Icons from '../../components/common/Icons';
+import Badge from '../../components/common/Badge/Badge';
+import dashboardApi from '../../api/dashboard.api';
 import '../../styles/dashboard.css';
 
 const CashierDashboard = () => {
+    const [stats, setStats] = useState({
+        totalProducts: 0,
+        totalStock: 0,
+        totalInvoices: 0,
+        totalPayments: 0
+    });
+    const [loading, setLoading] = useState(true);
     const [cart, setCart] = useState([]);
     const [barcode, setBarcode] = useState('');
+
+    useEffect(() => {
+        fetchStats();
+    }, []);
+
+    const fetchStats = async () => {
+        try {
+            setLoading(true);
+            const response = await dashboardApi.getStats();
+            setStats(response.data);
+        } catch (error) {
+            console.error('Error fetching dashboard stats:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const addToCart = () => {
         // Mock function to add item
@@ -28,6 +53,48 @@ const CashierDashboard = () => {
                         <h1>Point of Sale</h1>
                         <p>Welcome back, Cashier! Ready to process sales?</p>
                     </div>
+                    <Button onClick={fetchStats} variant="outline" size="small">
+                        <Icons.Refresh size={16} style={{ marginRight: '8px' }} /> Refresh
+                    </Button>
+                </div>
+
+                {/* Stats Grid */}
+                <div className="stats-grid">
+                    <Card className="stat-card">
+                        <div className="stat-icon primary"><Icons.Package size={24} /></div>
+                        <div className="stat-content">
+                            <h3>Total Products</h3>
+                            <p className="stat-value">{loading ? '...' : stats.totalProducts}</p>
+                            <Badge variant="success">Catalog</Badge>
+                        </div>
+                    </Card>
+
+                    <Card className="stat-card">
+                        <div className="stat-icon success"><Icons.BarChart size={24} /></div>
+                        <div className="stat-content">
+                            <h3>Total Stock</h3>
+                            <p className="stat-value">{loading ? '...' : stats.totalStock.toLocaleString()}</p>
+                            <Badge variant="success">Available</Badge>
+                        </div>
+                    </Card>
+
+                    <Card className="stat-card">
+                        <div className="stat-icon primary"><Icons.FileText size={24} /></div>
+                        <div className="stat-content">
+                            <h3>Total Invoices</h3>
+                            <p className="stat-value">{loading ? '...' : stats.totalInvoices}</p>
+                            <Badge variant="info">Count</Badge>
+                        </div>
+                    </Card>
+
+                    <Card className="stat-card">
+                        <div className="stat-icon success"><Icons.DollarSign size={24} /></div>
+                        <div className="stat-content">
+                            <h3>Total Payments</h3>
+                            <p className="stat-value">{loading ? '...' : `$${stats.totalPayments.toLocaleString()}`}</p>
+                            <Badge variant="success">Revenue</Badge>
+                        </div>
+                    </Card>
                 </div>
 
                 <div className="pos-layout">
@@ -108,4 +175,4 @@ const CashierDashboard = () => {
     );
 };
 
-export default CashierDashboard;
+export default CashierDashboard;

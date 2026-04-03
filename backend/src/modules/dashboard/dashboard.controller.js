@@ -1,107 +1,102 @@
 const dashboardService = require('./dashboard.service');
 const responseUtils = require('../../utils/response.utils');
+const db = require('../../config/database.config');
 
 const dashboardController = {
-    // Get Dashboard data based on user role
-    getDashboard: async (req, res) => {
+    getStats: async (req, res) => {
         try {
-            const userId = req.user.id;
             const userRole = req.user.role_name;
-            const userStoreId = req.user.store_id;
-            const userWarehouseId = req.user.warehouse_id;
-
-            console.log('Dashboard Access - User Role:', userRole);
-
-            let dashboardData;
-
-            // Route to appropriate service based on role
-            switch (userRole) {
-                case 'Super Admin':
-                    dashboardData = await dashboardService.getAdminDashboard(userId);
-                    break;
-                case 'Store Owner':
-                    dashboardData = await dashboardService.getStoreOwnerDashboard(userId, userStoreId);
-                    break;
-                case 'Store Manager':
-                    dashboardData = await dashboardService.getStoreManagerDashboard(userId, userStoreId);
-                    break;
-                case 'Cashier':
-                    dashboardData = await dashboardService.getCashierDashboard(userId, userStoreId);
-                    break;
-                case 'Inventory Staff':
-                    dashboardData = await dashboardService.getInventoryStaffDashboard(userId, userStoreId);
-                    break;
-                case 'Warehouse Staff':
-                    dashboardData = await dashboardService.getWarehouseStaffDashboard(userId, userWarehouseId);
-                    break;
-                default:
-                    console.log('Invalid role:', userRole);
-                    return responseUtils.forbidden(res, `Invalid user role: ${userRole}`);
-            }
-
-            return responseUtils.success(res, 200, 'Dashboard data retrieved successfully', dashboardData);
-        } catch (error) {
-            console.error('Dashboard Error:', error);
-            return responseUtils.error(res, 500, error.message || 'Failed to retrieve dashboard data');
-        }
-    },
-
-    // Get summary stats only (for quick view)
-    getSummary: async (req, res) => {
-        try {
             const userId = req.user.id;
-            const userRole = req.user.role_name;
-            const userStoreId = req.user.store_id;
-            const userWarehouseId = req.user.warehouse_id;
+            const storeId = req.user.store_id;
+            const warehouseId = req.user.warehouse_id;
 
-            let summaryData;
+            console.log(`Fetching dashboard stats for user: ${userId}, role: ${userRole}, store: ${storeId}, warehouse: ${warehouseId}`);
+
+            let stats = {};
 
             switch (userRole) {
                 case 'Super Admin':
-                    summaryData = await dashboardService.getAdminSummary(userId);
+                    stats = await dashboardService.getSuperAdminStats();
                     break;
+
                 case 'Store Owner':
-                    summaryData = await dashboardService.getStoreOwnerSummary(userId, userStoreId);
+                    stats = await dashboardService.getStoreOwnerStats(userId);
                     break;
+
                 case 'Store Manager':
-                    summaryData = await dashboardService.getStoreManagerSummary(userId, userStoreId);
+                case 'Cashier': {
+                    if (!storeId) {
+                        return responseUtils.badRequest(res, 'Store ID not found in user profile');
+                    }
+                    const ownerResult = await db.query('SELECT owner_id FROM store_master WHERE id = $1', [storeId]);
+                    if (!ownerResult.rows.length) {
+                        return responseUtils.notFound(res, 'Assigned store not found');
+                    }
+                    const ownerId = ownerResult.rows[0].owner_id;
+                    stats = await dashboardService.getStoreSpecificStats(storeId, ownerId);
                     break;
-                case 'Cashier':
-                    summaryData = await dashboardService.getCashierSummary(userId, userStoreId);
+                }
+
+                case 'Inventory Staff': {
+                    if (!storeId) {
+                        return responseUtils.badRequest(res, 'Store ID not found in user profile');
+                    }
+                    const ownerResult = await db.query('SELECT owner_id FROM store_master WHERE id = $1', [storeId]);
+                    if (!ownerResult.rows.length) {
+                        return responseUtils.notFound(res, 'Assigned store not found');
+                    }
+                    const ownerId = ownerResult.rows[0].owner_id;
+                    stats = await dashboardService.getInventoryStats(storeId, ownerId);
                     break;
-                case 'Inventory Staff':
-                    summaryData = await dashboardService.getInventoryStaffSummary(userId, userStoreId);
+                }
+
+                case 'Warehouse Staff': {
+                    if (!warehouseId) {
+                        return responseUtils.badRequest(res, 'Warehouse ID not found in user profile');
+                    }
+                    const ownerResult = await db.query('SELECT owner_id FROM warehouse_master WHERE id = $1', [warehouseId]);
+                    if (!ownerResult.rows.length) {
+                        return responseUtils.notFound(res, 'Assigned warehouse not found');
+                    }
+                    const ownerId = ownerResult.rows[0].owner_id;
+                    stats = await dashboardService.getWarehouseStats(warehouseId, ownerId);
                     break;
-                case 'Warehouse Staff':
-                    summaryData = await dashboardService.getWarehouseStaffSummary(userId, userWarehouseId);
-                    break;
+                }
+
                 default:
-                    return responseUtils.forbidden(res, `Invalid user role: ${userRole}`);
+                    return responseUtils.forbidden(res, 'You do not have permission to access dashboard stats');
             }
 
-            return responseUtils.success(res, 200, 'Summary data retrieved successfully', summaryData);
+            return responseUtils.success(res, 200, 'Dashboard statistics retrieved successfully', stats);
+
+
         } catch (error) {
-            console.error('Summary Error:', error);
-            return responseUtils.error(res, 500, error.message || 'Failed to retrieve summary data');
+            console.error('Dashboard Stats Error:', error);
+            return responseUtils.error(res, 500, error.message || 'Failed to retrieve dashboard statistics');
         }
     },
 
-    // Get recent activities
-    getRecentActivities: async (req, res) => {
+    getTrends: async (req, res) => {
         try {
-            const userId = req.user.id;
             const userRole = req.user.role_name;
-            const userStoreId = req.user.store_id;
-            const userWarehouseId = req.user.warehouse_id;
+            const { period = 'monthly' } = req.query;
 
-            const activities = await dashboardService.getRecentActivities(userRole, userStoreId, userWarehouseId);
+            let trends = {};
+            if (userRole === 'Super Admin') {
+                trends = await dashboardService.getSuperAdminTrends(period);
+            } else if (userRole === 'Store Owner') {
+                trends = await dashboardService.getStoreOwnerTrends(req.user.id, period);
+            } else {
+                return responseUtils.forbidden(res, 'You do not have permission to access trend data');
+            }
 
-            return responseUtils.success(res, 200, 'Recent activities retrieved successfully', { activities });
+            return responseUtils.success(res, 200, 'Dashboard trends retrieved successfully', trends);
         } catch (error) {
-            console.error('Recent Activities Error:', error);
-            return responseUtils.error(res, 500, error.message || 'Failed to retrieve activities');
+            console.error('Dashboard Trends Error:', error);
+            return responseUtils.error(res, 500, error.message || 'Failed to retrieve dashboard trends');
         }
     }
 };
 
 module.exports = dashboardController;
+
