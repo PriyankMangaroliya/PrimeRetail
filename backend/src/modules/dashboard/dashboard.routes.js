@@ -10,6 +10,6 @@ router.use(authMiddleware.verifyToken);
 const allRoles = ['Super Admin', 'Store Owner', 'Store Manager', 'Cashier', 'Inventory Staff', 'Warehouse Staff'];
 
 router.get('/stats', roleMiddleware.hasRole(allRoles), dashboardController.getStats);
-router.get('/trends', roleMiddleware.hasRole(['Super Admin']), dashboardController.getTrends);
+router.get('/trends', roleMiddleware.hasRole(['Super Admin', 'Store Owner', 'Store Manager', 'Cashier']), dashboardController.getTrends);
 
 module.exports = router;

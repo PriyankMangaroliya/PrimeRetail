@@ -86,6 +86,11 @@ const dashboardController = {
                 trends = await dashboardService.getSuperAdminTrends(period);
             } else if (userRole === 'Store Owner') {
                 trends = await dashboardService.getStoreOwnerTrends(req.user.id, period);
+            } else if (userRole === 'Store Manager' || userRole === 'Cashier') {
+                if (!req.user.store_id) {
+                    return responseUtils.badRequest(res, 'Store ID not found in user profile');
+                }
+                trends = await dashboardService.getStoreTrends(req.user.store_id, period);
             } else {
                 return responseUtils.forbidden(res, 'You do not have permission to access trend data');
             }

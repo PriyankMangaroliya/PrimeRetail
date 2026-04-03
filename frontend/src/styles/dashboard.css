@@ -8,12 +8,19 @@
 
 .stat-card {
     background: white;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     display: flex;
     align-items: center;
     gap: var(--gap-md);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--gray-100);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    /* box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); */
 }
 
 .stat-icon {
@@ -47,42 +54,13 @@
     color: var(--danger-color);
 }
 
-.activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-sm);
-}
-
-.activity-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: var(--gray-50);
-    border-radius: 8px;
-    transition: background 0.2s ease;
-}
-
-.activity-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-}
-
-.activity-icon.primary {
-    background: var(--primary-light);
-    color: var(--primary-color);
-}
-
 /* Base Dashboard Component Styles */
 
 .revenue-chart {
-    margin-bottom: 24px;
+    border-radius: 20px;
+    padding: 24px;
+    border: 1px solid var(--gray-100);
+    background: white;
 }
 
 .chart-header {
@@ -92,165 +70,15 @@
 }
 
 .chart-header h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--gray-800);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    letter-spacing: -0.01em;
 }
 
 .chart-actions {
     display: flex;
     gap: 8px;
-}
-
-.chart-bars {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    height: 250px;
-    padding-top: 20px;
-}
-
-.chart-bar-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-}
-
-.bar-container {
-    width: 40px;
-    height: 200px;
-    background: var(--gray-100);
-    border-radius: 20px;
-    position: relative;
-    overflow: hidden;
-}
-
-.bar {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    border-radius: 20px;
-    transition: height 0.3s ease;
-}
-
-.month-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--gray-700);
-}
-
-.amount-label {
-    font-size: 12px;
-    color: var(--gray-500);
-}
-
-.recent-activity {
-    margin-bottom: 24px;
-}
-
-.recent-activity h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 0;
-}
-
-.stores-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.store-card {
-    text-align: center;
-}
-
-.store-card h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    color: var(--primary-color);
-}
-
-.store-metrics {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-}
-
-.metric {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-}
-
-.metric span {
-    font-size: 12px;
-    color: var(--gray-500);
-}
-
-.metric strong {
-    font-size: 16px;
-    color: var(--gray-800);
-}
-
-/* POS/Cashier Specific Dashboard Layout */
-.pos-layout {
-    display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 20px;
-}
-
-.pos-products {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-}
-
-.pos-cart {
-    height: fit-content;
-    position: sticky;
-    top: 90px;
-}
-
-.cart-items {
-    max-height: 400px;
-    overflow-y: auto;
-    margin: 20px 0;
-}
-
-.cart-item {
-    display: grid;
-    grid-template-columns: 2fr 1fr 0.5fr 1fr 0.5fr;
-    align-items: center;
-    gap: 8px;
-    padding: 10px;
-    border-bottom: 1px solid var(--gray-100);
-    font-size: 14px;
-}
-
-.remove-item {
-    background: none;
-    border: none;
-    color: var(--danger-color);
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.cart-totals {
-    background: var(--gray-50);
-    padding: 16px;
-    border-radius: 8px;
-    margin: 20px 0;
 }
 
 .tasks-grid {
@@ -266,50 +94,8 @@
     margin-bottom: 16px;
 }
 
-.task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.task-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    background: var(--gray-50);
-    border-radius: 12px;
-    border: 1px solid var(--gray-100);
-}
-
-.task-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.task-info strong {
-    font-size: 14px;
-    color: var(--gray-800);
-}
-
-.task-info span {
-    font-size: 12px;
-    color: var(--gray-500);
-}
-
 @media (max-width: 1024px) {
-    .pos-layout {
-        grid-template-columns: 1fr;
-    }
-
     .tasks-grid {
         grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr);
     }
 }

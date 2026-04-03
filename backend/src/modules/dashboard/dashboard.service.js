@@ -30,71 +30,6 @@ const dashboardService = {
         };
     },
 
-    getSuperAdminTrends: async (period) => {
-        let dateSeriesQuery = '';
-        let selectFormat = '';
-        let truncLabel = '';
-
-        switch (period) {
-            case 'monthly':
-                // All days of current month
-                dateSeriesQuery = `SELECT generate_series(DATE_TRUNC('month', CURRENT_DATE), (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month - 1 day'), '1 day'::interval)::date AS d`;
-                selectFormat = "TO_CHAR(ds.d, 'DD Mon')";
-                truncLabel = 'day';
-                break;
-            case 'yearly':
-                // All 12 months of current year
-                dateSeriesQuery = `SELECT generate_series(DATE_TRUNC('year', CURRENT_DATE), (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '11 months'), '1 month'::interval)::date AS d`;
-                selectFormat = "TO_CHAR(ds.d, 'Mon YYYY')";
-                truncLabel = 'month';
-                break;
-            case 'all':
-            default:
-                // Years from earliest record - 1 year to now + 1 year
-                const earliestSubQuery = `COALESCE((SELECT MIN(created_at) FROM user_master WHERE is_active = true AND is_deleted = false), '2024-01-01'::timestamp)`;
-                dateSeriesQuery = `SELECT generate_series(DATE_TRUNC('year', ${earliestSubQuery}) - INTERVAL '1 year', DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '1 year', '1 year'::interval)::date AS d`;
-                selectFormat = "TO_CHAR(ds.d, 'YYYY')";
-                truncLabel = 'year';
-                break;
-        }
-
-        const query = `
-            WITH date_series AS (${dateSeriesQuery}),
-            owner_counts AS (
-                SELECT DATE_TRUNC('${truncLabel}', u.created_at)::date as d, COUNT(*) as count 
-                FROM user_master u
-                JOIN role_master r ON u.role_id = r.id
-                WHERE r.role_name = 'Store Owner'
-                AND u.is_active = true AND u.is_deleted = false
-                GROUP BY 1
-            ),
-            store_counts AS (
-                SELECT DATE_TRUNC('${truncLabel}', created_at)::date as d, COUNT(*) as count 
-                FROM store_master 
-                WHERE is_active = true AND is_deleted = false
-                GROUP BY 1
-            ),
-            warehouse_counts AS (
-                SELECT DATE_TRUNC('${truncLabel}', created_at)::date as d, COUNT(*) as count 
-                FROM warehouse_master 
-                WHERE is_active = true AND is_deleted = false
-                GROUP BY 1
-            )
-            SELECT 
-                ${selectFormat} as name,
-                COALESCE(oc.count, 0)::int as "storeOwners",
-                COALESCE(sc.count, 0)::int as stores,
-                COALESCE(wc.count, 0)::int as warehouses
-            FROM date_series ds
-            LEFT JOIN owner_counts oc ON ds.d = oc.d
-            LEFT JOIN store_counts sc ON ds.d = sc.d
-            LEFT JOIN warehouse_counts wc ON ds.d = wc.d
-            ORDER BY ds.d ASC
-        `;
-
-        const result = await db.query(query);
-        return result.rows;
-    },
 
     getStoreOwnerStats: async (ownerId) => {
         const queries = {
@@ -274,68 +209,206 @@ const dashboardService = {
         };
     },
 
+    getSuperAdminTrends: async (period) => {
+        let dateSeriesQuery = '';
+        let selectFormat = '';
+        let truncLabel = '';
+
+        switch (period) {
+            case 'monthly':
+                // Last 30 days including today
+                dateSeriesQuery = `SELECT generate_series(CURRENT_DATE - INTERVAL '29 days', CURRENT_DATE, '1 day'::interval)::date AS d`;
+                selectFormat = "TO_CHAR(ds.d, 'DD Mon')";
+                truncLabel = 'day';
+                break;
+            case 'yearly':
+                // Last 12 months including current month
+                dateSeriesQuery = `SELECT generate_series(DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '11 months', DATE_TRUNC('month', CURRENT_DATE), '1 month'::interval)::date AS d`;
+                selectFormat = "TO_CHAR(ds.d, 'Mon YYYY')";
+                truncLabel = 'month';
+                break;
+            case 'all':
+            default:
+                // Last 5 years
+                dateSeriesQuery = `SELECT generate_series(DATE_TRUNC('year', CURRENT_DATE) - INTERVAL '4 years', DATE_TRUNC('year', CURRENT_DATE), '1 year'::interval)::date AS d`;
+                selectFormat = "TO_CHAR(ds.d, 'YYYY')";
+                truncLabel = 'year';
+                break;
+        }
+
+        const query = `
+            WITH date_series AS (${dateSeriesQuery}),
+            owner_counts AS (
+                SELECT DATE_TRUNC('${truncLabel}', u.created_at)::date as d, COUNT(*) as count 
+                FROM user_master u
+                JOIN role_master r ON u.role_id = r.id
+                WHERE r.role_name = 'Store Owner'
+                AND u.is_active = true AND u.is_deleted = false
+                GROUP BY 1
+            ),
+            store_counts AS (
+                SELECT DATE_TRUNC('${truncLabel}', created_at)::date as d, COUNT(*) as count 
+                FROM store_master 
+                WHERE is_active = true AND is_deleted = false
+                GROUP BY 1
+            ),
+            warehouse_counts AS (
+                SELECT DATE_TRUNC('${truncLabel}', created_at)::date as d, COUNT(*) as count 
+                FROM warehouse_master 
+                WHERE is_active = true AND is_deleted = false
+                GROUP BY 1
+            )
+            SELECT 
+                ${selectFormat} as name,
+                COALESCE(oc.count, 0)::int as "storeOwners",
+                COALESCE(sc.count, 0)::int as stores,
+                COALESCE(wc.count, 0)::int as warehouses
+            FROM date_series ds
+            LEFT JOIN owner_counts oc ON ds.d = oc.d
+            LEFT JOIN store_counts sc ON ds.d = sc.d
+            LEFT JOIN warehouse_counts wc ON ds.d = wc.d
+            ORDER BY ds.d ASC
+        `;
+
+        const result = await db.query(query);
+        return result.rows;
+    },
+
+
+    // Single-store revenue + invoice trend (for Store Manager & Cashier)
+    getStoreTrends: async (storeId, period) => {
+        let dateSeriesQuery = '';
+        let selectFormat = '';
+        let truncLabel = '';
+
+        switch (period) {
+            case 'yearly':
+                dateSeriesQuery = `SELECT generate_series(
+                    DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '11 months',
+                    DATE_TRUNC('month', CURRENT_DATE),
+                    '1 month'::interval
+                )::date AS d`;
+                selectFormat = "TO_CHAR(ds.d, 'Mon YYYY')";
+                truncLabel = 'month';
+                break;
+            case 'monthly':
+            default:
+                dateSeriesQuery = `SELECT generate_series(
+                    CURRENT_DATE - INTERVAL '29 days',
+                    CURRENT_DATE,
+                    '1 day'::interval
+                )::date AS d`;
+                selectFormat = "TO_CHAR(ds.d, 'DD Mon')";
+                truncLabel = 'day';
+                break;
+        }
+
+        const query = `
+            WITH date_series AS (${dateSeriesQuery}),
+            store_data AS (
+                SELECT
+                    DATE_TRUNC('${truncLabel}', i.created_at)::date AS d,
+                    COALESCE(COUNT(i.id), 0)::int               AS invoice_count,
+                    COALESCE(SUM(p.amount), 0)::numeric          AS revenue
+                FROM invoice_master i
+                LEFT JOIN payment_master p
+                    ON p.invoice_id = i.id AND p.payment_status = 'COMPLETED'
+                WHERE i.store_id = $1
+                GROUP BY DATE_TRUNC('${truncLabel}', i.created_at)::date
+            )
+            SELECT
+                ${selectFormat}                             AS name,
+                COALESCE(sd.invoice_count, 0)              AS invoices,
+                COALESCE(sd.revenue, 0)                    AS revenue
+            FROM date_series ds
+            LEFT JOIN store_data sd ON sd.d = ds.d
+            ORDER BY ds.d ASC
+        `;
+
+        const result = await db.query(query, [storeId]);
+        return result.rows;
+    },
+
+
     getStoreOwnerTrends: async (ownerId, period) => {
         let dateSeriesQuery = '';
         let selectFormat = '';
         let truncLabel = '';
 
-        if (period === 'monthly') {
-            dateSeriesQuery = `SELECT generate_series(DATE_TRUNC('month', CURRENT_DATE), (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month - 1 day'), '1 day'::interval)::date AS d`;
-            selectFormat = "TO_CHAR(ds.d, 'DD Mon')";
-            truncLabel = 'day';
-        } else if (period === 'yearly') {
-            dateSeriesQuery = `SELECT generate_series(DATE_TRUNC('year', CURRENT_DATE), (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '11 months'), '1 month'::interval)::date AS d`;
-            selectFormat = "TO_CHAR(ds.d, 'Mon YYYY')";
-            truncLabel = 'month';
-        } else {
-            dateSeriesQuery = `SELECT generate_series(DATE_TRUNC('month', CURRENT_DATE), (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month - 1 day'), '1 day'::interval)::date AS d`;
-            selectFormat = "TO_CHAR(ds.d, 'DD Mon')";
-            truncLabel = 'day';
+        switch (period) {
+            case 'yearly':
+                // Last 12 months including current month
+                dateSeriesQuery = `SELECT generate_series(
+                    DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '11 months',
+                    DATE_TRUNC('month', CURRENT_DATE),
+                    '1 month'::interval
+                )::date AS d`;
+                selectFormat = "TO_CHAR(ds.d, 'Mon YYYY')";
+                truncLabel = 'month';
+                break;
+            case 'monthly':
+            default:
+                // Last 30 days including today
+                dateSeriesQuery = `SELECT generate_series(
+                    CURRENT_DATE - INTERVAL '29 days',
+                    CURRENT_DATE,
+                    '1 day'::interval
+                )::date AS d`;
+                selectFormat = "TO_CHAR(ds.d, 'DD Mon')";
+                truncLabel = 'day';
+                break;
         }
 
+        // Step 1: Get all stores for this owner
+        const storesResult = await db.query(
+            `SELECT id, store_name FROM store_master WHERE owner_id = $1 AND is_deleted = false AND is_active = true ORDER BY store_name`,
+            [ownerId]
+        );
+        const ownerStores = storesResult.rows;
+
+        if (ownerStores.length === 0) {
+            return [];
+        }
+
+        const storeIds = ownerStores.map(s => s.id);
+        // Placeholders $1, $2, ... mapped directly to storeIds
+        const storePlaceholders = storeIds.map((_, i) => `$${i + 1}`).join(', ');
+
+        // Step 2: Aggregate revenue and invoices per store, per period
+        // CROSS JOIN date_series x store ensures every (date, store) row exists.
+        // COALESCE guarantees NULL → 0 for any date a store had no activity.
         const query = `
             WITH date_series AS (${dateSeriesQuery}),
-            owner_stores AS (
-                SELECT id, store_name 
-                FROM store_master 
-                WHERE owner_id = $1 AND is_deleted = false AND is_active = true
-            ),
-            revenue_stats AS (
-                SELECT 
+            invoice_data AS (
+                SELECT
                     i.store_id,
-                    DATE_TRUNC('${truncLabel}', p.created_at)::date as d,
-                    SUM(p.amount) as revenue
-                FROM payment_master p
-                JOIN invoice_master i ON p.invoice_id = i.id
-                JOIN store_master s ON i.store_id = s.id
-                WHERE p.payment_status = 'COMPLETED' AND s.owner_id = $1
-                GROUP BY 1, 2
-            ),
-            invoice_stats AS (
-                SELECT 
-                    i.store_id,
-                    DATE_TRUNC('${truncLabel}', i.created_at)::date as d,
-                    COUNT(i.id) as count
+                    DATE_TRUNC('${truncLabel}', i.created_at)::date AS d,
+                    COALESCE(COUNT(i.id), 0)::int     AS invoice_count,
+                    COALESCE(SUM(p.amount), 0)::numeric AS revenue
                 FROM invoice_master i
-                JOIN store_master s ON i.store_id = s.id
-                WHERE s.owner_id = $1
-                GROUP BY 1, 2
+                LEFT JOIN payment_master p
+                    ON p.invoice_id = i.id AND p.payment_status = 'COMPLETED'
+                WHERE i.store_id IN (${storePlaceholders})
+                GROUP BY i.store_id, DATE_TRUNC('${truncLabel}', i.created_at)::date
             )
-            SELECT 
-                ${selectFormat} as name,
-                os.store_name as "storeName",
-                COALESCE(rs.revenue, 0)::float as revenue,
-                COALESCE(ins.count, 0)::int as invoices
+            SELECT
+                ${selectFormat} AS name,
+                sm.store_name AS "storeName",
+                sm.id         AS "storeId",
+                COALESCE(id_agg.invoice_count, 0) AS invoices,
+                COALESCE(id_agg.revenue, 0)       AS revenue
             FROM date_series ds
-            CROSS JOIN owner_stores os
-            LEFT JOIN revenue_stats rs ON ds.d = rs.d AND os.id = rs.store_id
-            LEFT JOIN invoice_stats ins ON ds.d = ins.d AND os.id = ins.store_id
-            ORDER BY ds.d ASC, os.store_name ASC
+            CROSS JOIN store_master sm
+            LEFT JOIN invoice_data id_agg
+                ON id_agg.d = ds.d AND id_agg.store_id = sm.id
+            WHERE sm.id IN (${storePlaceholders})
+            ORDER BY ds.d ASC, sm.store_name ASC
         `;
 
-        const result = await db.query(query, [ownerId]);
+        const result = await db.query(query, [...storeIds]);
         return result.rows;
-    }
+    },
+
 };
 
 module.exports = dashboardService;
