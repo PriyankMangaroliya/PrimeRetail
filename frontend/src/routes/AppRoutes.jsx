@@ -28,6 +28,8 @@ import TransactionHistory from '../modules/Inventory/TransactionHistory';
 import Billing from '../modules/Billing/Billing';
 import Invoices from '../modules/Billing/Invoices.jsx';
 import Payments from '../modules/Payments/Payments';
+import Reports from '../modules/Reports/Reports';
+import ReportDetail from '../modules/Reports/ReportDetail';
 
 
 const AppRoutes = () => {
@@ -114,6 +116,20 @@ const AppRoutes = () => {
             </PrivateRoute>}
         />
 
+        <Route
+            path="/admin/reports"
+            element={<PrivateRoute allowedRoles={['Super Admin']}>
+                <Reports />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/admin/reports/:reportId"
+            element={<PrivateRoute allowedRoles={['Super Admin']}>
+                <ReportDetail />
+            </PrivateRoute>}
+        />
+
         {/* Store Owner Routes */}
         <Route
             path="/owner/dashboard"
@@ -197,6 +213,18 @@ const AppRoutes = () => {
                 <Payments />
             </PrivateRoute>}
         />
+        <Route
+            path="/owner/reports"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <Reports />
+            </PrivateRoute>}
+        />
+        <Route
+            path="/owner/reports/:reportId"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <ReportDetail />
+            </PrivateRoute>}
+        />
 
         {/* Store Manager Routes */}
         <Route
@@ -244,6 +272,18 @@ const AppRoutes = () => {
             path="/manager/payments"
             element={<PrivateRoute allowedRoles={['Store Manager']}>
                 <Payments />
+            </PrivateRoute>}
+        />
+        <Route
+            path="/manager/reports"
+            element={<PrivateRoute allowedRoles={['Store Manager']}>
+                <Reports />
+            </PrivateRoute>}
+        />
+        <Route
+            path="/manager/reports/:reportId"
+            element={<PrivateRoute allowedRoles={['Store Manager']}>
+                <ReportDetail />
             </PrivateRoute>}
         />
 
@@ -296,6 +336,20 @@ const AppRoutes = () => {
             </PrivateRoute>}
         />
 
+        <Route
+            path="/cashier/reports"
+            element={<PrivateRoute allowedRoles={['Cashier']}>
+                <Reports />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/cashier/reports/:reportId"
+            element={<PrivateRoute allowedRoles={['Cashier']}>
+                <ReportDetail />
+            </PrivateRoute>}
+        />
+
         {/* Inventory Staff Routes */}
         <Route
             path="/inventory/dashboard"
@@ -325,6 +379,20 @@ const AppRoutes = () => {
             </PrivateRoute>}
         />
 
+        <Route
+            path="/inventory/reports"
+            element={<PrivateRoute allowedRoles={['Inventory Staff']}>
+                <Reports />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/inventory/reports/:reportId"
+            element={<PrivateRoute allowedRoles={['Inventory Staff']}>
+                <ReportDetail />
+            </PrivateRoute>}
+        />
+
         {/* Warehouse Staff Routes */}
         <Route
             path="/warehouse/dashboard"
@@ -351,6 +419,20 @@ const AppRoutes = () => {
             path="/warehouse/transactions"
             element={<PrivateRoute allowedRoles={['Warehouse Staff']}>
                 <TransactionHistory />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/warehouse/reports"
+            element={<PrivateRoute allowedRoles={['Warehouse Staff']}>
+                <Reports />
+            </PrivateRoute>}
+        />
+
+        <Route
+            path="/warehouse/reports/:reportId"
+            element={<PrivateRoute allowedRoles={['Warehouse Staff']}>
+                <ReportDetail />
             </PrivateRoute>}
         />
 

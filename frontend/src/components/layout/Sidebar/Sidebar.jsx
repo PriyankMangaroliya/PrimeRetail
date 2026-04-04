@@ -40,7 +40,7 @@ const Sidebar = () => {
             { name: 'Stock', icon: Icons.Stock, url: '/manager/stock' },
             { name: 'Invoices', icon: Icons.Invoice, url: '/manager/invoices' },
             { name: 'Payments', icon: Icons.Currency, url: '/manager/payments' },
-            { name: 'Reports', icon: Icons.Report, url: '/manager/reports' }
+            { name: 'Reports', icon: Icons.BarChart, url: '/manager/reports' }
         ],
         'Cashier': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/cashier/dashboard' },
@@ -48,19 +48,20 @@ const Sidebar = () => {
             { name: 'Products', icon: Icons.Product, url: '/cashier/products' },
             { name: 'Stock', icon: Icons.Stock, url: '/cashier/stock' },
             { name: 'Invoices', icon: Icons.Invoice, url: '/cashier/invoices' },
-            { name: 'Payments', icon: Icons.Currency, url: '/cashier/payments' }
+            { name: 'Payments', icon: Icons.Currency, url: '/cashier/payments' },
+            { name: 'Reports', icon: Icons.BarChart, url: '/cashier/reports' }
         ],
         'Inventory Staff': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/inventory/dashboard' },
             { name: 'Products', icon: Icons.Product, url: '/inventory/products' },
             { name: 'Stock', icon: Icons.Stock, url: '/inventory/stock' },
-            { name: 'Reports', icon: Icons.Report, url: '/inventory/reports' }
+            { name: 'Reports', icon: Icons.BarChart, url: '/inventory/reports' }
         ],
         'Warehouse Staff': [
             { name: 'Dashboard', icon: Icons.Dashboard, url: '/warehouse/dashboard' },
             { name: 'Products', icon: Icons.Product, url: '/warehouse/products' },
             { name: 'Stock', icon: Icons.Stock, url: '/warehouse/stock' },
-            { name: 'Reports', icon: Icons.Report, url: '/warehouse/reports' }
+            { name: 'Reports', icon: Icons.BarChart, url: '/warehouse/reports' }
         ]
     };
 

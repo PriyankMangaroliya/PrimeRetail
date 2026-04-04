@@ -1066,3 +1066,302 @@ body {
     color: var(--primary-color);
     letter-spacing: -0.5px;
 }
+
+/* ==========================================================================
+   5. REPORTS MODULE (Premium Role-based Reporting)
+   ========================================================================== */
+
+.reports-container {
+    padding: 8px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.report-card {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--gray-200);
+    background: white;
+}
+
+.report-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.report-card-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.report-card-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-light) 0%, #e0e7ff 100%);
+    color: var(--primary-color);
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.report-card-info h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 6px;
+}
+
+.report-card-info p {
+    font-size: 13px;
+    color: var(--gray-500);
+    line-height: 1.4;
+}
+
+/* Report Detail Layout (Premium) */
+.report-header-premium {
+    margin-bottom: 32px;
+}
+
+.report-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-bottom: 20px;
+}
+
+.report-breadcrumb span {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.report-breadcrumb span:hover {
+    color: var(--primary-color);
+}
+
+.report-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.report-title-group h1 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+}
+
+/* Stats Grid (Summary Layer) */
+.report-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.report-stat-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--gray-100);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.report-stat-card .stat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.report-stat-card .stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--gray-900);
+}
+
+.report-stat-card .stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Control Bar (Filters & Actions) */
+.report-control-bar {
+    background: white;
+    padding: 16px 24px;
+    border-radius: 20px;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 24px;
+}
+
+.control-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.filter-main-select {
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-800);
+    outline: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    min-width: 180px;
+}
+
+.filter-main-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--primary-light);
+    background: white;
+}
+
+.filter-supplementary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideInLeft 0.3s ease-out;
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.filter-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gray-50);
+    padding: 4px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--gray-100);
+}
+
+.filter-input-wrapper input,
+.filter-input-wrapper select {
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-700);
+    outline: none;
+    padding: 6px 0;
+}
+
+.filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+/* Premium Table Container */
+.premium-table-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid var(--gray-100);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+
+.status-pill {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.status-pill.active {
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.status-pill.active::before { background: #22c55e; }
+
+.status-pill.inactive {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.status-pill.inactive::before { background: #ef4444; }
+
+@media (max-width: 1024px) {
+    .report-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .report-control-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .report-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .report-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .export-group {
+        width: 100%;
+        justify-content: space-between;
+        padding: 2px;
+    }
+    
+    .export-group button {
+        flex: 1;
+    }
+}
