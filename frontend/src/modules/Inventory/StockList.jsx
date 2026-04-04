@@ -13,8 +13,9 @@ import Card from '../../components/common/Card/Card';
 import Select from '../../components/common/Select/Select';
 import Loader from '../../components/common/Loader/Loader';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+
 import { useNavigate } from 'react-router-dom';
-import './InventoryStock.css';
+
 
 const movementsDecreasingStock = ['SELL', 'DAMAGED', 'MANUAL_REMOVE', 'TRANSFER'];
 const movementsIncreasingStock = ['ADD', 'RETURN', 'EXCHANGE', 'MANUAL_ADD'];

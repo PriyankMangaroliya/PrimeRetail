@@ -493,18 +493,20 @@ const Employees = () => {
                             {activeTab === 'store' ? (
                                 stores.length > 0 ? (
                                     <Select
+                                        style={{ width: 400 }}
                                         value={selectedStoreId}
                                         onChange={(e) => setSelectedStoreId(e.target.value)}
                                         disabled={isStoreManager}
-                                        options={stores.map(s => ({ value: s.id, label: `${s.store_name} (${s.store_code})` }))}
+                                        options={stores.map(s => ({ value: s.id, label: `${s.store_code} (${s.store_name})` }))}
                                     />
                                 ) : <p className="sub-text">No stores found.</p>
                             ) : (
                                 warehouses.length > 0 ? (
                                     <Select
+                                        style={{ width: 400 }}
                                         value={selectedWarehouseId}
                                         onChange={(e) => setSelectedWarehouseId(e.target.value)}
-                                        options={warehouses.map(w => ({ value: w.id, label: `${w.warehouse_name} (${w.warehouse_code})` }))}
+                                        options={warehouses.map(w => ({ value: w.id, label: `${w.warehouse_code} (${w.warehouse_name})` }))}
                                     />
                                 ) : <p className="sub-text">No warehouses found.</p>
                             )}

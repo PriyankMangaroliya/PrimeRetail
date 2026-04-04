@@ -1,6 +1,8 @@
 const stockTransactionModel = require('./stockTransactions.model');
 const stockModel = require('./stock.model');
 const db = require('../../config/database.config');
+const inventoryNotificationsService = require('./inventoryNotifications.service');
+
 
 const stockTransactionService = {
     // Create new stock transaction
@@ -159,6 +161,12 @@ const stockTransactionService = {
             }, client);
 
             await client.query('COMMIT');
+            
+            // Asynchronously check for low stock levels to avoid blocking the user
+            if (transactionRecord.rows[0]?.stock_id) {
+                inventoryNotificationsService.checkAndNotifyLowStock(transactionRecord.rows[0].stock_id);
+            }
+
             return transactionRecord.rows[0];
         } catch (error) {
             await client.query('ROLLBACK');
