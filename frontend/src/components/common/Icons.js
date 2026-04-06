@@ -78,6 +78,7 @@ import {
     TrendingDown,
     TrendingUp,
     Printer,
+    UploadCloud,
     X as CloseIcon
 } from 'lucide-react';
 
@@ -158,9 +159,11 @@ export const Icons = {
     LogOut: LogOut,
     User: User,
     Back: ArrowLeft,
+    ArrowLeft: ArrowLeft,
     Forward: ArrowRight,
     Download: Download,
     Upload: Upload,
+    CloudUpload: UploadCloud,
     Filter: Filter,
     Excel: FileSpreadsheet,
     FileSpreadsheet: FileSpreadsheet,

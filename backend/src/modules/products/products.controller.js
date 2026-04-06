@@ -314,7 +314,30 @@ const productController = {
 
             return responseUtils.error(res, 500, error.message || 'Failed to toggle product status');
         }
+    },
+
+    // Bulk create products (Store Owner only)
+    bulkCreateProducts: async (req, res) => {
+        try {
+            // Check if user is Store Owner
+            if (req.user.role_name !== 'Store Owner') {
+                return responseUtils.forbidden(res, 'Only Store Owners can bulk create products');
+            }
+
+            if (!Array.isArray(req.body.products)) {
+                return responseUtils.badRequest(res, 'Invalid request format. "products" must be an array.');
+            }
+
+            const ownerId = req.user.id;
+            const userId = req.user.id;
+            const results = await productService.bulkCreateProducts(req.body.products, ownerId, userId);
+
+            return responseUtils.success(res, 200, 'Bulk processing completed', results);
+        } catch (error) {
+            console.error('Bulk Create Product Error:', error);
+            return responseUtils.error(res, 500, error.message || 'Failed to process bulk products');
+        }
     }
 };
 
-module.exports = productController;
+module.exports = productController;

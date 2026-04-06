@@ -28,10 +28,16 @@ router.get('/', roleMiddleware.hasRole(VIEW_ROLES), productController.getAllProd
 router.get('/:id', roleMiddleware.hasRole(VIEW_ROLES), productController.getProductById);
 
 // Store Owner ONLY routes (management)
+router.post('/bulk',
+    roleMiddleware.isStoreOwner(),
+    productController.bulkCreateProducts
+);
+
 router.post('/',
     roleMiddleware.isStoreOwner(),
     productController.createProduct
 );
+
 
 router.put('/:id',
     roleMiddleware.isStoreOwner(),

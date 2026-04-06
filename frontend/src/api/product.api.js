@@ -103,7 +103,18 @@ const productApi = {
         } catch (error) {
             throw error.response?.data || error;
         }
+    },
+
+    // Bulk create products (Store Owner only)
+    bulkCreateProducts: async (products) => {
+        try {
+            const response = await axios.post('/products/bulk', { products });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
     }
 };
 
 export default productApi;
+

@@ -30,6 +30,8 @@ import Invoices from '../modules/Billing/Invoices.jsx';
 import Payments from '../modules/Payments/Payments';
 import Reports from '../modules/Reports/Reports';
 import ReportDetail from '../modules/Reports/ReportDetail';
+import BulkProductEntry from '../modules/Products/BulkProductEntry';
+
 
 
 const AppRoutes = () => {
@@ -186,6 +188,14 @@ const AppRoutes = () => {
                 <Products />
             </PrivateRoute>}
         />
+
+        <Route
+            path="/owner/products/bulk"
+            element={<PrivateRoute allowedRoles={['Store Owner']}>
+                <BulkProductEntry />
+            </PrivateRoute>}
+        />
+
 
         <Route
             path="/owner/stock"

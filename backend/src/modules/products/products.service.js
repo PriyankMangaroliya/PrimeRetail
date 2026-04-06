@@ -403,7 +403,30 @@ const productService = {
         } catch (error) {
             throw error;
         }
+    },
+
+    // Bulk create products (Store Owner only)
+    bulkCreateProducts: async (productsData, ownerId, userId) => {
+        const results = [];
+        for (const productData of productsData) {
+            try {
+                const product = await productService.createProduct(productData, ownerId, userId);
+                results.push({
+                    status: 'success',
+                    message: 'Product created successfully',
+                    product_name: productData.product_name,
+                    sku: product.sku
+                });
+            } catch (error) {
+                results.push({
+                    status: 'error',
+                    message: error.message,
+                    product_name: productData.product_name
+                });
+            }
+        }
+        return results;
     }
 };
 
-module.exports = productService;
+module.exports = productService;

@@ -1077,8 +1077,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .report-grid {
@@ -1234,8 +1241,15 @@ body {
 }
 
 @keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(-10px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .filter-input-wrapper {
@@ -1301,14 +1315,18 @@ body {
     color: #166534;
 }
 
-.status-pill.active::before { background: #22c55e; }
+.status-pill.active::before {
+    background: #22c55e;
+}
 
 .status-pill.inactive {
     background: #fef2f2;
     color: #991b1b;
 }
 
-.status-pill.inactive::before { background: #ef4444; }
+.status-pill.inactive::before {
+    background: #ef4444;
+}
 
 @media (max-width: 1024px) {
     .report-stats-grid {
@@ -1321,24 +1339,240 @@ body {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .report-stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .report-title-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
     }
-    
+
     .export-group {
         width: 100%;
         justify-content: space-between;
         padding: 2px;
     }
-    
+
     .export-group button {
         flex: 1;
     }
+}
+
+/* --- Bulk Product Entry (Standardized Redesign) --- */
+.bulk-entry-container {
+    display: flex;
+    flex-direction: column;
+    /* subtract navbar + page padding + page-header section */
+    height: calc(100vh - var(--header-height) - 4px - 50px);
+    overflow: hidden;
+}
+
+.bulk-import-table-card {
+    padding: 0 !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--gray-200);
+}
+
+
+/* Excel Card — custom wrapper with full dual-axis scroll support */
+.excel-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    /* clips the grid — no page-level scroll */
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--box-shadow-sm);
+}
+
+/* Editable Grid Styles */
+.bulk-grid-wrapper {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    background: #fdfdfd;
+    overscroll-behavior: contain;
+}
+
+/* ── Scrollbar: Both axes identical ── */
+.bulk-grid-wrapper::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.bulk-grid-wrapper::-webkit-scrollbar-track,
+.bulk-grid-wrapper::-webkit-scrollbar-track:horizontal,
+.bulk-grid-wrapper::-webkit-scrollbar-track:vertical {
+    background: var(--gray-100);
+    border-radius: 0;
+}
+
+.bulk-grid-wrapper::-webkit-scrollbar-thumb,
+.bulk-grid-wrapper::-webkit-scrollbar-thumb:horizontal,
+.bulk-grid-wrapper::-webkit-scrollbar-thumb:vertical {
+    background: var(--gray-300);
+    border-radius: 6px;
+    border: 3px solid var(--gray-100);
+    min-width: 40px;
+    min-height: 40px;
+}
+
+.bulk-grid-wrapper::-webkit-scrollbar-thumb:hover,
+.bulk-grid-wrapper::-webkit-scrollbar-thumb:horizontal:hover,
+.bulk-grid-wrapper::-webkit-scrollbar-thumb:vertical:hover {
+    background: var(--gray-400);
+}
+
+/* Corner square where both bars meet */
+.bulk-grid-wrapper::-webkit-scrollbar-corner {
+    background: var(--gray-100);
+}
+
+.bulk-grid {
+    width: max-content;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+.bulk-grid th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--gray-50);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--gray-200);
+    border-right: 1px solid var(--gray-200);
+    white-space: nowrap;
+}
+
+.bulk-grid td {
+    padding: 0;
+    border-bottom: 1px solid var(--gray-100);
+    border-right: 1px solid var(--gray-100);
+}
+
+.bulk-grid tr:hover td {
+    background-color: rgba(79, 70, 229, 0.02);
+}
+
+.grid-input {
+    width: 100%;
+    height: 100%;
+    padding: 12px 16px;
+    border: 2px solid transparent;
+    background: transparent;
+    font-size: 14px;
+    color: var(--gray-800);
+    outline: none;
+    transition: all 0.1s;
+}
+
+.grid-input:focus {
+    background: white;
+    border-color: var(--primary-color);
+    box-shadow: inset 0 0 0 1px var(--primary-color);
+    z-index: 5;
+    position: relative;
+}
+
+.grid-select {
+    width: 100%;
+    height: 100%;
+    padding: 10px 12px;
+    border: 2px solid transparent;
+    background: transparent;
+    font-size: 14px;
+    color: var(--gray-800);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+}
+
+.grid-select:focus {
+    background: white;
+    border-color: var(--primary-color);
+}
+
+.sticky-col-first {
+    position: sticky;
+    left: 0;
+    z-index: 8;
+    background: var(--gray-50);
+}
+
+.sticky-col-first-header {
+    position: sticky;
+    left: 0;
+    z-index: 12 !important;
+}
+
+.grid-status-cell {
+    padding: 8px 16px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 48px;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-badge.success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.status-badge.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.bulk-card-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--gray-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fafafa;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    margin-top: auto;
+}
+
+.footer-actions-left {
+    display: flex;
+    gap: 12px;
+}
+
+.footer-actions-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
 }

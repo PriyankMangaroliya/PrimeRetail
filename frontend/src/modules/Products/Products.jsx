@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import Icons from '../../components/common/Icons';
 import MainLayout from '../../components/layout/MainLayout/MainLayout';
 import { useAuth } from '../../context/AuthContext';
@@ -19,6 +21,8 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 
 const Products = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
+
     const isOwner = user?.role_name === 'Store Owner';
     const isSuperAdmin = user?.role_name === 'Super Admin';
 
@@ -89,7 +93,7 @@ const Products = () => {
         tax_id: '',
         price: '',
         unit: 'Pcs',
-        min_stock: '0',
+        min_stock: '20',
         description: ''
     });
 
@@ -337,12 +341,19 @@ const Products = () => {
                     {isOwner && (
                         <div className="header-actions">
                             <Button
+                                variant="outline"
+                                onClick={() => navigate('/owner/products/bulk')}
+                            >
+                                <Icons.Upload size={20} /> Bulk Entry
+                            </Button>
+                            <Button
                                 variant="primary"
                                 onClick={() => handleOpenModal('add')}
                             >
                                 <Icons.Plus size={20} /> Add Product
                             </Button>
                         </div>
+
                     )}
                 </div>
 

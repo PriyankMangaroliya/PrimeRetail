@@ -7,9 +7,12 @@
     flex: 1;
     margin-left: var(--sidebar-width);
     background: var(--gray-100);
+    overflow-x: hidden;
+    /* prevent wide content from causing page-level scroll */
 }
 
 .page-content {
     padding: 24px;
     margin-top: var(--header-height);
+    overflow-x: hidden;
 }
