@@ -3,34 +3,35 @@ const db = require('../../config/database.config');
 const productModel = {
     // Create new product (Store Owner only)
     createProduct: (productData) => {
-        const { owner_id, product_name, sku, barcode, category_id, tax_id, price, unit, min_stock, created_by } = productData;
+        const { owner_id, product_name, sku, barcode, description, category_id, tax_id, price, unit, min_stock, created_by } = productData;
         const query = {
             text: `INSERT INTO product_master
-                   (owner_id, product_name, sku, barcode, category_id, tax_id, price, unit, min_stock, created_by, updated_by)
-                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10) RETURNING *`,
-            values: [owner_id, product_name, sku, barcode, category_id, tax_id, price, unit, min_stock || 0, created_by]
+                   (owner_id, product_name, sku, barcode, description, category_id, tax_id, price, unit, min_stock, created_by, updated_by)
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11) RETURNING *`,
+            values: [owner_id, product_name, sku, barcode, description, category_id, tax_id, price, unit, min_stock || 0, created_by]
         };
         return db.query(query);
     },
 
     // Update product (Store Owner only)
     updateProduct: (id, productData) => {
-        const { product_name, sku, barcode, category_id, tax_id, price, unit, min_stock, is_active, updated_by } = productData;
+        const { product_name, sku, barcode, description, category_id, tax_id, price, unit, min_stock, is_active, updated_by } = productData;
         const query = {
             text: `UPDATE product_master
                    SET product_name = COALESCE($1, product_name),
                        sku = COALESCE($2, sku),
                        barcode = COALESCE($3, barcode),
-                       category_id = COALESCE($4, category_id),
-                       tax_id = COALESCE($5, tax_id),
-                       price = COALESCE($6, price),
-                       unit = COALESCE($7, unit),
-                       min_stock = COALESCE($8, min_stock),
-                       is_active = COALESCE($9, is_active),
-                       updated_by = $10,
+                       description = COALESCE($4, description),
+                       category_id = COALESCE($5, category_id),
+                       tax_id = COALESCE($6, tax_id),
+                       price = COALESCE($7, price),
+                       unit = COALESCE($8, unit),
+                       min_stock = COALESCE($9, min_stock),
+                       is_active = COALESCE($10, is_active),
+                       updated_by = $11,
                        updated_at = CURRENT_TIMESTAMP
-                   WHERE id = $11 AND is_deleted = false RETURNING *`,
-            values: [product_name, sku, barcode, category_id, tax_id, price, unit, min_stock, is_active, updated_by, id]
+                   WHERE id = $12 AND is_deleted = false RETURNING *`,
+            values: [product_name, sku, barcode, description, category_id, tax_id, price, unit, min_stock, is_active, updated_by, id]
         };
         return db.query(query);
     },

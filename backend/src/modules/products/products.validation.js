@@ -52,6 +52,7 @@ const productValidation = {
         barcode: Joi.string().trim().max(100).allow(null, '').optional(),
         category_id: Joi.number().integer().positive().optional(),
         tax_id: Joi.number().integer().positive().allow(null).optional(),
+        description: Joi.string().trim().max(500).allow('', null).optional(),
         price: Joi.number().precision(2).min(0).optional().messages({
             'number.min': 'Price cannot be negative'
         }),

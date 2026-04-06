@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Icons from '../../components/common/Icons';
 import MainLayout from '../../components/layout/MainLayout/MainLayout';
-import {useAuth} from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import productApi from '../../api/product.api';
 import categoryApi from '../../api/category.api';
 import storeTaxApi from '../../api/storeTax.api';
@@ -18,7 +18,7 @@ import EmptyState from '../../components/common/EmptyState/EmptyState';
 
 
 const Products = () => {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const isOwner = user?.role_name === 'Store Owner';
     const isSuperAdmin = user?.role_name === 'Super Admin';
 
@@ -42,7 +42,7 @@ const Products = () => {
         description: ''
     });
     const [formErrors, setFormErrors] = useState({});
-    const [alert, setAlert] = useState({show: false, type: '', message: ''});
+    const [alert, setAlert] = useState({ show: false, type: '', message: '' });
     const [activeDropdown, setActiveDropdown] = useState(null);
 
     // Close dropdown on outside click
@@ -64,7 +64,7 @@ const Products = () => {
             const [prodRes, catRes, taxRes] = await Promise.all([
                 productApi.getAllProducts(),
                 categoryApi.getActiveCategories(),
-                isOwner ? storeTaxApi.getStoreTaxes() : Promise.resolve({data: []})
+                isOwner ? storeTaxApi.getStoreTaxes() : Promise.resolve({ data: [] })
             ]);
             setProducts(prodRes.data?.products || prodRes.data || []);
             setCategories(catRes.data || []);
@@ -77,8 +77,8 @@ const Products = () => {
     };
 
     const showAlert = (type, message) => {
-        setAlert({show: true, type, message});
-        setTimeout(() => setAlert({show: false, type: '', message: ''}), 5000);
+        setAlert({ show: true, type, message });
+        setTimeout(() => setAlert({ show: false, type: '', message: '' }), 5000);
     };
 
     const resetForm = () => ({
@@ -201,8 +201,8 @@ const Products = () => {
             render: (value) => `₹${parseFloat(value).toFixed(2)}`
         },
         {
-            title: 'Unit',
-            key: 'unit'
+            title: 'Min Stock',
+            key: 'min_stock'
         },
         ...(!isOwner ? [{
             title: 'Stock',
@@ -234,7 +234,7 @@ const Products = () => {
                             setActiveDropdown(activeDropdown === record.id ? null : record.id);
                         }}
                     >
-                        <Icons.Actions size={16}/>
+                        <Icons.Actions size={16} />
                     </button>
                     {activeDropdown === record.id && (
                         <div className="action-dropdown">
@@ -242,7 +242,7 @@ const Products = () => {
                                 handleOpenModal('view', record);
                                 setActiveDropdown(null);
                             }}>
-                                <Icons.View size={16}/> View
+                                <Icons.View size={16} /> View
                             </button>
                             {isOwner && (
                                 <>
@@ -251,14 +251,14 @@ const Products = () => {
                                         setActiveDropdown(null);
                                     }}>
                                         {record.is_active ? <><Icons.XCircle size={16}
-                                                                             color="#ef4444"/> Deactivate</> : <>
-                                            <Icons.CheckCircle size={16} color="#10b981"/> Activate</>}
+                                            color="#ef4444" /> Deactivate</> : <>
+                                            <Icons.CheckCircle size={16} color="#10b981" /> Activate</>}
                                     </button>
                                     <button className="action-item" onClick={() => {
                                         handleOpenModal('edit', record);
                                         setActiveDropdown(null);
                                     }}>
-                                        <Icons.Edit size={16}/> Edit
+                                        <Icons.Edit size={16} /> Edit
                                     </button>
                                     <button
                                         className="action-item delete-item"
@@ -267,7 +267,7 @@ const Products = () => {
                                             setActiveDropdown(null);
                                         }}
                                     >
-                                        <Icons.Delete size={16}/> Delete
+                                        <Icons.Delete size={16} /> Delete
                                     </button>
                                 </>
                             )}
@@ -283,7 +283,7 @@ const Products = () => {
             <MainLayout>
                 <div className="products-container">
                     <EmptyState
-                        icon={<Icons.Lock size={48}/>}
+                        icon={<Icons.Lock size={48} />}
                         title="Access Denied"
                         description="Super Admins do not have access to this module."
                     />
@@ -296,7 +296,7 @@ const Products = () => {
         return (
             <MainLayout>
                 <div className="page-loading">
-                    <Loader size="large"/>
+                    <Loader size="large" />
                 </div>
             </MainLayout>
         );
@@ -309,7 +309,7 @@ const Products = () => {
             .substring(0, 50);
 
         setFormData(prev => {
-            const updates = {product_name: name};
+            const updates = { product_name: name };
 
             // Auto-generate SKU if it was empty or matches the slug of the old name
             const oldSlug = prev.product_name.toUpperCase().replace(/[^A-Z0-9]/g, '_').substring(0, 50);
@@ -322,7 +322,7 @@ const Products = () => {
                 updates.barcode = slug;
             }
 
-            return {...prev, ...updates};
+            return { ...prev, ...updates };
         });
     };
 
@@ -340,7 +340,7 @@ const Products = () => {
                                 variant="primary"
                                 onClick={() => handleOpenModal('add')}
                             >
-                                <Icons.Plus size={20}/> Add Product
+                                <Icons.Plus size={20} /> Add Product
                             </Button>
                         </div>
                     )}
@@ -364,7 +364,7 @@ const Products = () => {
                         />
                     ) : (
                         <EmptyState
-                            icon={<Icons.Product size={48}/>}
+                            icon={<Icons.Product size={48} />}
                             title="No Products Found"
                             description="You haven't added any products yet. Add your first product to get started."
                             action={
@@ -408,7 +408,7 @@ const Products = () => {
                 >
                     {modalType === 'delete' ? (
                         <div className="delete-confirmation">
-                            <div className="delete-icon"><Icons.AlertTriangle size={48} color="var(--danger-color)"/>
+                            <div className="delete-icon"><Icons.AlertTriangle size={48} color="var(--danger-color)" />
                             </div>
                             <p>Are you sure you want to delete product <strong>{selectedProduct?.product_name}</strong>?
                             </p>
@@ -419,14 +419,14 @@ const Products = () => {
                         <div className="detail-view-container">
                             <div className="detail-main-info">
                                 <div className="detail-avatar-large">
-                                    <Icons.Product size={32}/>
+                                    <Icons.Product size={32} />
                                 </div>
                                 <div className="detail-title-group">
                                     <h2>{selectedProduct?.product_name}</h2>
                                     <div className="detail-meta">
                                         <Badge variant="primary" className="badge-code">#{selectedProduct?.sku}</Badge>
                                         <Badge variant={selectedProduct?.is_active ? 'success' : 'danger'}
-                                               className="badge-status">
+                                            className="badge-status">
                                             {selectedProduct?.is_active ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </div>
@@ -481,34 +481,34 @@ const Products = () => {
                                 <Input
                                     label="SKU / Item Code"
                                     value={formData.sku}
-                                    onChange={(e) => setFormData({...formData, sku: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
                                     placeholder="e.g. ELECTRONICS_01"
                                 />
                                 <Input
                                     label="Barcode (EAN/UPC)"
                                     value={formData.barcode}
-                                    onChange={(e) => setFormData({...formData, barcode: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
                                     placeholder="Scan or enter barcode"
                                 />
                                 <Select
                                     label="Category"
                                     required
                                     value={formData.category_id}
-                                    onChange={(e) => setFormData({...formData, category_id: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
                                     error={formErrors.category_id}
                                     options={[
-                                        {value: '', label: 'Select Category'},
-                                        ...categories.map(c => ({value: c.id, label: c.category_name}))
+                                        { value: '', label: 'Select Category' },
+                                        ...categories.map(c => ({ value: c.id, label: c.category_name }))
                                     ]}
                                 />
                                 <Select
                                     label="Tax Rule"
                                     required
                                     value={formData.tax_id}
-                                    onChange={(e) => setFormData({...formData, tax_id: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, tax_id: e.target.value })}
                                     error={formErrors.tax_id}
                                     options={[
-                                        {value: '', label: 'Select Tax'},
+                                        { value: '', label: 'Select Tax' },
                                         ...storeTaxes.filter(t => t.is_active).map(t => ({
                                             value: t.id,
                                             label: `${t.tax_name} (${t.tax_rate}%)`
@@ -520,14 +520,14 @@ const Products = () => {
                                     type="number"
                                     step="0.01"
                                     value={formData.price}
-                                    onChange={(e) => setFormData({...formData, price: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                                     error={formErrors.price}
                                     required
                                 />
                                 <Input
                                     label="Unit of Measure"
                                     value={formData.unit}
-                                    onChange={(e) => setFormData({...formData, unit: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                                     error={formErrors.unit}
                                     placeholder="e.g. Pcs, Kg, Box"
                                     required
@@ -537,14 +537,14 @@ const Products = () => {
                                     type="number"
                                     min="0"
                                     value={formData.min_stock}
-                                    onChange={(e) => setFormData({...formData, min_stock: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, min_stock: e.target.value })}
                                     placeholder="Alert level (e.g. 10)"
                                 />
                                 <div className="form-full-width">
                                     <Input
                                         label="Description"
                                         value={formData.description}
-                                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         placeholder="Add product details or specifications..."
                                     />
                                 </div>
