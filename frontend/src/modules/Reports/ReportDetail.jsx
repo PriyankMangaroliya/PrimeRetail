@@ -1909,6 +1909,7 @@ const ReportDetail = () => {
                             data={filteredData}
                             itemsPerPage={10}
                             searchable={false}
+                            enableDefaultSort={false}
                         />
                     ) : (
                         <EmptyState

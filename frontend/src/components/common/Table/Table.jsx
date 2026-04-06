@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Pagination from '../Pagination/Pagination';
+import Icons from '../Icons';
 import './Table.css';
 
 const Table = ({ 
@@ -9,17 +10,45 @@ const Table = ({
     searchable = true, 
     columnSearchable = false, 
     initialItemsPerPage = 10,
-    itemName = 'Items'
+    itemName = 'Items',
+    initialSort = null,
+    enableDefaultSort = true
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [columnSearch, setColumnSearch] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
+    
+    // Sort configuration: { key, direction }.
+    const [sortConfig, setSortConfig] = useState(() => {
+        if (initialSort) return initialSort;
+        
+        if (enableDefaultSort) {
+            // Default to first non-action/index column
+            const firstSortableColumn = columns.find(col => 
+                col.key !== 'actions' && col.key !== 'index' && col.title !== 'No'
+            );
+            return firstSortableColumn ? { key: firstSortableColumn.key, direction: 'asc' } : { key: '', direction: 'asc' };
+        }
+        
+        return { key: '', direction: 'asc' };
+    });
 
-    // Filter data based on search term and column search
-    const filteredData = useMemo(() => {
-        let result = data;
+    const handleSort = (key, column) => {
+        if (key === 'actions' || key === 'index' || column.title === 'No') return;
+        
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
 
+    // Filter and Sort data
+    const sortedFilteredData = useMemo(() => {
+        let result = [...data];
+
+        // 1. Search Filter
         if (searchTerm) {
             const lowerCaseTerm = searchTerm.toLowerCase();
             result = result.filter(row => {
@@ -32,6 +61,7 @@ const Table = ({
             });
         }
 
+        // 2. Column Search Filter
         if (columnSearchable && Object.keys(columnSearch).length > 0) {
             result = result.filter(row => {
                 return Object.entries(columnSearch).every(([key, term]) => {
@@ -46,23 +76,64 @@ const Table = ({
             });
         }
 
+        // 3. Sorting
+        if (sortConfig.key) {
+            result.sort((a, b) => {
+                const aValue = a[sortConfig.key];
+                const bValue = b[sortConfig.key];
+
+                if (aValue === bValue) return 0;
+                
+                // Handle null/undefined
+                if (aValue === null || aValue === undefined) return 1;
+                if (bValue === null || bValue === undefined) return -1;
+
+                // Handle numbers
+                if (typeof aValue === 'number' && typeof bValue === 'number') {
+                    return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue;
+                }
+
+                // Handle strings (case-insensitive)
+                const aStr = String(aValue).toLowerCase();
+                const bStr = String(bValue).toLowerCase();
+                
+                if (sortConfig.direction === 'asc') {
+                    return aStr.localeCompare(bStr);
+                } else {
+                    return bStr.localeCompare(aStr);
+                }
+            });
+        }
+
         return result;
-    }, [data, searchTerm, columnSearch, columns, columnSearchable]);
+    }, [data, searchTerm, columnSearch, columns, columnSearchable, sortConfig]);
 
     // Pagination logic
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const totalPages = Math.ceil(sortedFilteredData.length / itemsPerPage);
     const paginatedData = useMemo(() => {
         const startIndex = (currentPage - 1) * itemsPerPage;
-        return filteredData.slice(startIndex, startIndex + itemsPerPage);
-    }, [filteredData, currentPage, itemsPerPage]);
+        return sortedFilteredData.slice(startIndex, startIndex + itemsPerPage);
+    }, [sortedFilteredData, currentPage, itemsPerPage]);
 
-    // Reset page to 1 when search terms or data changes
+    // Reset page to 1 when filters or data changes (but not just sorting)
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, columnSearch, data]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
+    };
+
+    const renderSortIcon = (column) => {
+        if (column.key === 'actions' || column.key === 'index' || column.title === 'No') return null;
+        
+        if (sortConfig.key !== column.key) {
+            return <Icons.Sort size={14} className="sort-icon-neutral" />;
+        }
+        
+        return sortConfig.direction === 'asc' 
+            ? <Icons.SortUp size={14} className="sort-icon-active" />
+            : <Icons.SortDown size={14} className="sort-icon-active" />;
     };
 
     return (
@@ -82,9 +153,25 @@ const Table = ({
                 <table className="table">
                     <thead>
                     <tr>
-                        {columns.map((column, index) => (
-                            <th key={`header-title-${index}`}>{column.title}</th>
-                        ))}
+                        {columns.map((column, index) => {
+                            const isSortable = column.key !== 'actions' && column.key !== 'index' && column.title !== 'No';
+                            return (
+                                <th 
+                                    key={`header-title-${index}`}
+                                    onClick={() => handleSort(column.key, column)}
+                                    className={isSortable ? 'table-sortable-th' : ''}
+                                >
+                                    <div className="table-header-content">
+                                        <span>{column.title}</span>
+                                        {isSortable && (
+                                            <span className="sort-icon-container">
+                                                {renderSortIcon(column)}
+                                            </span>
+                                        )}
+                                    </div>
+                                </th>
+                            );
+                        })}
                     </tr>
                     {columnSearchable && (
                         <tr className="table-column-search-row">
@@ -134,7 +221,7 @@ const Table = ({
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
-                    totalItems={filteredData.length}
+                    totalItems={sortedFilteredData.length}
                     itemName={itemName}
                     itemsPerPage={itemsPerPage}
                     onItemsPerPageChange={(val) => {
@@ -147,4 +234,4 @@ const Table = ({
     );
 };
 
-export default Table;
+export default Table;
