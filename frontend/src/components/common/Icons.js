@@ -163,6 +163,7 @@ export const Icons = {
     Upload: Upload,
     Filter: Filter,
     Excel: FileSpreadsheet,
+    FileSpreadsheet: FileSpreadsheet,
     Image: FileImage,
     Help: HelpCircle,
     Notification: Bell,

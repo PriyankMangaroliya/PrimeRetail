@@ -1709,25 +1709,103 @@ const ReportDetail = () => {
 
     const handleExport = (type) => {
         const fileName = `${reportId}-analytics-${new Date().toISOString().split('T')[0]}`;
-        const exportData = filteredData.map(item => {
-            const flatObj = {};
 
-            // Add SKU at the beginning if present in the data item
-            if (item.sku) {
-                flatObj['SKU'] = item.sku;
+        // 1. Get Statistics (Left Side)
+        const stats = config.calcStats(filteredData).map(s => {
+            let val = s.value;
+            // If s.value is a React element (like a span/badge), extract children to get text
+            if (val && typeof val === 'object' && val.props && val.props.children) {
+                val = val.props.children;
             }
-
-            config.columns.forEach(col => {
-                const rawVal = item[col.key];
-                flatObj[col.title] = col.key === 'is_active' ? (rawVal ? 'Active' : 'Inactive') :
-                    ((col.key === 'created_at' || col.key === 'payment_date') ? new Date(rawVal).toLocaleDateString() : rawVal);
-            });
-            return flatObj;
+            return {
+                label: s.label,
+                value: (val !== undefined && val !== null ? val.toString() : '').replace('₹', '').trim()
+            };
         });
 
-        if (type === 'csv') ExportUtils.exportToCSV(exportData, fileName);
-        if (type === 'excel') ExportUtils.exportToExcel(exportData, fileName);
-        if (type === 'pdf') ExportUtils.exportToPDF(exportData, config.title, fileName);
+        // 2. Get Filters & Meta (Right Side)
+        const metadata = {
+            filters: [
+                {
+                    label: timeRange === 'today' ? 'Current Day' : 'Time Duration',
+                    value: timeRange === 'all' ? 'All Time' :
+                        timeRange === 'today' ? selectedDate :
+                            timeRange === 'thisMonth' ? selectedMonth :
+                                timeRange === 'selectYear' ? selectedYear :
+                                    timeRange === 'custom' ? `${customRange.start} to ${customRange.end}` : timeRange
+                }
+            ],
+            search: searchQuery || 'None',
+            exportedOn: new Date().toLocaleString()
+        };
+
+        if (config.extraFilters) {
+            config.extraFilters.forEach(f => {
+                const val = filterValues[f.key] || 'all';
+                const label = f.options.find(o => o.value === val)?.label || val;
+                metadata.filters.push({ label: f.label, value: label });
+            });
+        }
+
+        // 3. Pre-process data to include computed fields for summation (like total_value)
+        const enrichedData = filteredData.map(item => ({
+            ...item,
+            // Add total_value if it doesn't exist (used in Consolidated Stock)
+            total_value: item.total_value !== undefined ? item.total_value : (Number(item.quantity || 0) * Number(item.price || 0))
+        }));
+
+        // 4. Pre-format data rows to match web view (plain text)
+        const displayData = enrichedData.map(item => {
+            const displayRow = {};
+            config.columns.forEach(col => {
+                const val = item[col.key];
+
+                // Logic selector to mimic web rendering
+                let displayVal = val;
+
+                if (col.key === 'is_active') {
+                    displayVal = val ? 'Active' : 'Inactive';
+                } else if (['created_at', 'payment_date', 'updated_at'].includes(col.key)) {
+                    displayVal = val ? new Date(val).toLocaleDateString() : 'N/A';
+                } else if (['price', 'total_revenue', 'total_amount', 'amount', 'total_value', 'grand_total'].includes(col.key)) {
+                    displayVal = Number(val).toLocaleString();
+                } else if (col.key === 'tax_rate') {
+                    displayVal = `${Number(val).toFixed(2)}%`;
+                } else if (['total_sold', 'quantity', 'min_stock'].includes(col.key)) {
+                    displayVal = `${val} Units`;
+                } else if (col.key === 'store_name' && item.store_code) {
+                    displayVal = `${val} (${item.store_code})`;
+                } else if (col.key === 'warehouse_name' && item.warehouse_code) {
+                    displayVal = `${val} (${item.warehouse_code})`;
+                } else if (col.key === 'name' && item.email) {
+                    displayVal = `${val} (${item.email})`;
+                } else if (col.key === 'owner_name' && item.owner_email) {
+                    displayVal = `${val} (${item.owner_email})`;
+                } else if (col.key === 'store_count') {
+                    displayVal = `${val} ${val === 1 ? 'Store' : 'Stores'} / ${item.warehouse_count} Warehouses`;
+                } else if (col.key === 'movement_type') {
+                    displayVal = `${val.toUpperCase()} (${item.direction === 'OUT' ? 'OUTBOUND' : 'INBOUND'})`;
+                } else if (col.key === 'user_count') {
+                    displayVal = `${val} Total / ${item.active_user_count} Active`;
+                } else if (col.key === 'usage_count') {
+                    displayVal = `${val} Attachments`;
+                } else if (col.key === 'role_name' && item.description) {
+                    displayVal = `${val} (${item.description})`;
+                } else if (col.key === 'method_name' && item.description) {
+                    displayVal = `${val} (${item.description})`;
+                } else if (col.key === 'product_name' && item.sku) {
+                    displayVal = `${val} (SKU: ${item.sku})`;
+                }
+
+                displayRow[col.title] = displayVal !== undefined && displayVal !== null ? displayVal : '';
+            });
+            return displayRow;
+        });
+
+        // Pass enriched data (for summation) + formatted display rows (for table body)
+        if (type === 'csv') ExportUtils.exportToCSV(enrichedData, config.columns, config.title, fileName, stats, metadata, displayData);
+        if (type === 'excel') ExportUtils.exportToExcel(enrichedData, config.columns, config.title, fileName, stats, metadata, displayData);
+        if (type === 'pdf') ExportUtils.exportToPDF(enrichedData, config.columns, config.title, fileName, stats, metadata, displayData);
     };
 
     if (!config) return null;
@@ -1735,24 +1813,23 @@ const ReportDetail = () => {
     return (
         <MainLayout>
             <div className="reports-container">
-                {/* Premium Header */}
-                <div className="report-header-premium">
-                    <div className="report-title-row">
-                        <div className="report-title-group">
-                            <h1>{config.title}</h1>
-                            <p className="sub-text">{config.description}</p>
-                        </div>
-                        <div className="export-group" style={{ gap: '24px' }}>
-                            <Button style={{ margin: 2 }} variant="outline" size="small" onClick={() => handleExport('pdf')}>
-                                <Icons.FileText size={16} style={{ marginRight: '2px' }} /> PDF
-                            </Button>
-                            <Button style={{ margin: 2 }} variant="outline" size="small" onClick={() => handleExport('excel')}>
-                                <Icons.Excel size={16} style={{ marginRight: '2px' }} /> Excel
-                            </Button>
-                            <Button style={{ margin: 2 }} variant="outline" size="small" onClick={() => handleExport('csv')}>
-                                <Icons.Download size={16} style={{ marginRight: '2px' }} /> CSV
-                            </Button>
-                        </div>
+                {/* Standard Page Header */}
+                <div className="page-header">
+                    <div>
+                        <h1 className="page-title">{config.title}</h1>
+                        <p className="page-description">{config.description}</p>
+                    </div>
+                    <div className="header-actions">
+                        <Button variant="outline" size="small" onClick={() => handleExport('pdf')}>
+                            <Icons.FileText size={16} /> PDF
+                        </Button>
+                        <Button variant="outline" size="small" onClick={() => handleExport('excel')}>
+                            <Icons.Excel size={16} /> Excel
+                        </Button>
+                        <Button variant="outline" size="small" onClick={() => handleExport('csv')}>
+                            <Icons.FileSpreadsheet size={16} /> CSV
+                        </Button>
+                        {/* Back button removed per user request */}
                     </div>
                 </div>
 
@@ -1909,6 +1986,7 @@ const ReportDetail = () => {
                             data={filteredData}
                             itemsPerPage={10}
                             searchable={false}
+                            columnSearchable={true}
                             enableDefaultSort={false}
                         />
                     ) : (

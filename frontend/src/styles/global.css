@@ -1133,41 +1133,18 @@ body {
     line-height: 1.4;
 }
 
-/* Report Detail Layout (Premium) */
-.report-header-premium {
-    margin-bottom: 32px;
-}
-
-.report-breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--gray-400);
-    margin-bottom: 20px;
-}
-
-.report-breadcrumb span {
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.report-breadcrumb span:hover {
-    color: var(--primary-color);
-}
-
-.report-title-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-}
-
-.report-title-group h1 {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    color: var(--gray-900);
+.page-header h1,
+.page-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gray-800);
     margin-bottom: 8px;
+}
+
+.page-header p,
+.page-description {
+    color: var(--gray-500);
+    font-size: 14px;
 }
 
 /* Stats Grid (Summary Layer) */
