@@ -18,7 +18,7 @@ const sendEmail = async (options) => {
         });
 
         const mailOptions = {
-            from: process.env.SMTP_FROM || '"Prime Retail" <noreply@primeretail.com>',
+            from: process.env.SMTP_FROM,
             to: options.to,
             bcc: options.bcc,
             subject: options.subject,
@@ -30,7 +30,6 @@ const sendEmail = async (options) => {
         return info;
     } catch (error) {
         console.error('Email send error:', error);
-        // We don't throw error to avoid breaking the main request flow
         return null;
     }
 };

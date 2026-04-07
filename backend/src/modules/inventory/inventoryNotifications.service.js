@@ -145,7 +145,7 @@ const inventoryNotificationsService = {
             console.log(`Sending low stock email. To: ${ownerEmail || 'System Email (Owner Not Found)'}, BCC Count: ${bccRecipients.length}`);
 
             const mailOptions = {
-                to: ownerEmail || process.env.SMTP_FROM || 'noreply@primeretail.com',
+                to: ownerEmail || process.env.SMTP_FROM ,
                 subject,
                 html
             };
