@@ -30,7 +30,7 @@ const userModel = {
                  updated_by = $10,
                  updated_at = CURRENT_TIMESTAMP
              WHERE id = $11 AND is_deleted = false 
-             RETURNING id, role_id, store_id, warehouse_id, name, email, phone, profile_image, is_active`,
+             RETURNING id, role_id, store_id, warehouse_id, name, email, phone, profile_image, is_active, created_at`,
             values: [role_id, store_id, warehouse_id, name, email, phone, profile_image, is_active, password, updated_by, id]
         };
         return db.query(query);

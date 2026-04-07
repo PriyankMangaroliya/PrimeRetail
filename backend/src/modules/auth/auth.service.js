@@ -256,6 +256,113 @@ const authService = {
     // Logout
     logout: async (token) => {
         return { message: 'Logged out successfully' };
+    },
+
+    // Forgot password - Generate and send OTP
+    forgotPassword: async (email) => {
+        try {
+            // Check if user exists
+            const userResult = await userModel.getUserByEmail(email);
+            if (!userResult.rows.length) {
+                throw new Error('User with this email does not exist');
+            }
+
+            const userName = userResult.rows[0].name;
+
+            // Generate 6-digit OTP
+            const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+            const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
+
+            // Save OTP to database
+            const otpModel = require('./otp.model');
+            await otpModel.createOTP(email, otpCode, expiresAt);
+
+            // Send Real Email
+            const { sendEmail } = require('../../utils/mail.utils');
+            const emailHtml = `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
+                    <div style="background-color: #007bff; color: white; padding: 20px; text-align: center;">
+                        <h2 style="margin: 0;">PrimeRetail Security</h2>
+                    </div>
+                    <div style="padding: 20px; color: #333; line-height: 1.6;">
+                        <p>Hello <strong>${userName}</strong>,</p>
+                        <p>We received a request to reset your password. Use the verification code below to proceed:</p>
+                        <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 5px; margin: 20px 0;">
+                            <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #007bff;">${otpCode}</span>
+                        </div>
+                        <p style="color: #666; font-size: 14px;">This code is valid for <strong>10 minutes</strong>. If you did not request this, please ignore this email or contact support.</p>
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+                        <p style="font-size: 12px; color: #999; text-align: center;">© 2026 PrimeRetail System. All rights reserved.</p>
+                    </div>
+                </div>
+            `;
+
+            await sendEmail({
+                to: email,
+                subject: 'PrimeRetail - Password Reset OTP Code',
+                html: emailHtml
+            });
+
+            // MOCK: Still print to console for easier debugging
+            console.log(`\n--- [OTP DISPATCHED] ---`);
+            console.log(`To: ${email}`);
+            console.log(`OTP Code: ${otpCode}`);
+            console.log(`--------------------\n`);
+
+            return { message: 'OTP sent successfully to your email' };
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Verify OTP
+    verifyOTP: async (email, otpCode) => {
+        try {
+            const otpModel = require('./otp.model');
+
+            // Check if OTP matches and is not expired
+            const verifiedOTP = await otpModel.verifyOTP(email, otpCode);
+
+            if (!verifiedOTP.rows.length) {
+                throw new Error('Invalid or expired OTP');
+            }
+
+            return { message: 'OTP verified successfully' };
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Reset password using verified OTP
+    resetPassword: async (email, otpCode, newPassword) => {
+        try {
+            const otpModel = require('./otp.model');
+
+            // Check if OTP was verified very recently (within last 15 minutes)
+            const isVerified = await otpModel.checkIsVerified(email, otpCode);
+
+            if (!isVerified.rows.length) {
+                throw new Error('OTP verification session has expired or is invalid');
+            }
+
+            // Get user
+            const userResult = await userModel.getUserByEmail(email);
+            if (!userResult.rows.length) {
+                throw new Error('User not found');
+            }
+
+            const userId = userResult.rows[0].id;
+
+            // Hash new password
+            const hashedPassword = await authService.hashPassword(newPassword);
+
+            // Update password
+            await userModel.updateUserPassword(userId, hashedPassword, userId);
+
+            return { message: 'Password reset successfully' };
+        } catch (error) {
+            throw error;
+        }
     }
 };
 

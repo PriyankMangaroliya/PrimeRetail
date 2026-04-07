@@ -80,6 +80,53 @@ const authValidation = {
             'string.empty': 'Refresh token is required',
             'any.required': 'Refresh token is required'
         })
+    }),
+
+    // Forgot password validation
+    forgotPassword: Joi.object({
+        email: Joi.string().trim().email().required().messages({
+            'string.email': 'Please enter a valid email address',
+            'string.empty': 'Email is required',
+            'any.required': 'Email is required'
+        })
+    }),
+
+    // Verify OTP validation
+    verifyOTP: Joi.object({
+        email: Joi.string().trim().email().required().messages({
+            'string.email': 'Please enter a valid email address',
+            'string.empty': 'Email is required',
+            'any.required': 'Email is required'
+        }),
+        otp_code: Joi.string().length(6).required().messages({
+            'string.length': 'OTP must be exactly 6 characters',
+            'string.empty': 'OTP is required',
+            'any.required': 'OTP is required'
+        })
+    }),
+
+    // Reset password validation
+    resetPassword: Joi.object({
+        email: Joi.string().trim().email().required().messages({
+            'string.email': 'Please enter a valid email address',
+            'string.empty': 'Email is required',
+            'any.required': 'Email is required'
+        }),
+        otp_code: Joi.string().length(6).required().messages({
+            'string.length': 'OTP must be exactly 6 characters',
+            'string.empty': 'OTP is required',
+            'any.required': 'OTP is required'
+        }),
+        new_password: Joi.string().min(6).required().messages({
+            'string.min': 'New password must be at least 6 characters long',
+            'string.empty': 'New password is required',
+            'any.required': 'New password is required'
+        }),
+        confirm_password: Joi.string().valid(Joi.ref('new_password')).required().messages({
+            'any.only': 'Confirm password must match new password',
+            'string.empty': 'Confirm password is required',
+            'any.required': 'Confirm password is required'
+        })
     })
 };
 

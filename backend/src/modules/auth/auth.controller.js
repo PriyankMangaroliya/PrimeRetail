@@ -210,6 +210,79 @@ const authController = {
             console.error('Refresh Token Error:', error);
             return responseUtils.unauthorized(res, error.message || 'Invalid refresh token');
         }
+    },
+
+    // Forgot password controller
+    forgotPassword: async (req, res) => {
+        try {
+            // Validate request body
+            const { error, value } = authValidation.forgotPassword.validate(req.body);
+            if (error) {
+                return responseUtils.validationError(res, 'Validation failed', error.details);
+            }
+
+            const result = await authService.forgotPassword(value.email);
+
+            return responseUtils.success(res, 200, result.message);
+        } catch (error) {
+            console.error('Forgot Password Controller Error:', error);
+
+            if (error.message.includes('not exist')) {
+                return responseUtils.notFound(res, error.message);
+            }
+
+            return responseUtils.error(res, 500, error.message || 'Failed to send OTP');
+        }
+    },
+
+    // Verify OTP controller
+    verifyOTP: async (req, res) => {
+        try {
+            // Validate request body
+            const { error, value } = authValidation.verifyOTP.validate(req.body);
+            if (error) {
+                return responseUtils.validationError(res, 'Validation failed', error.details);
+            }
+
+            const result = await authService.verifyOTP(value.email, value.otp_code);
+
+            return responseUtils.success(res, 200, result.message);
+        } catch (error) {
+            console.error('Verify OTP Controller Error:', error);
+
+            if (error.message.includes('Invalid') || error.message.includes('expired')) {
+                return responseUtils.badRequest(res, error.message);
+            }
+
+            return responseUtils.error(res, 500, error.message || 'Failed to verify OTP');
+        }
+    },
+
+    // Reset password controller
+    resetPassword: async (req, res) => {
+        try {
+            // Validate request body
+            const { error, value } = authValidation.resetPassword.validate(req.body);
+            if (error) {
+                return responseUtils.validationError(res, 'Validation failed', error.details);
+            }
+
+            const result = await authService.resetPassword(value.email, value.otp_code, value.new_password);
+
+            return responseUtils.success(res, 200, result.message);
+        } catch (error) {
+            console.error('Reset Password Controller Error:', error);
+
+            if (error.message.includes('not found')) {
+                return responseUtils.notFound(res, error.message);
+            }
+
+            if (error.message.includes('session has expired') || error.message.includes('invalid')) {
+                return responseUtils.badRequest(res, error.message);
+            }
+
+            return responseUtils.error(res, 500, error.message || 'Failed to reset password');
+        }
     }
 };
 

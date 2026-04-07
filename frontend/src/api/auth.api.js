@@ -70,6 +70,36 @@ const authApi = {
             throw error.response?.data || error;
         }
     },
+
+    // Forgot password
+    forgotPassword: async (email) => {
+        try {
+            const response = await axios.post('/auth/forgot-password', { email });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
+    },
+
+    // Verify OTP
+    verifyOTP: async (email, otp_code) => {
+        try {
+            const response = await axios.post('/auth/verify-otp', { email, otp_code });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
+    },
+
+    // Reset password
+    resetPassword: async (resetData) => {
+        try {
+            const response = await axios.post('/auth/reset-password', resetData);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error;
+        }
+    },
 };
 
 export default authApi;

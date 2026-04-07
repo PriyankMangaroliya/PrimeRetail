@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Login from '../modules/Auth/Login';
+import ForgotPassword from '../modules/Auth/ForgotPassword';
 import PrivateRoute from './PrivateRoute';
 import SuperAdminDashboard from '../modules/Dashboard/SuperAdminDashboard';
 import Roles from '../modules/Roles/Roles';
@@ -64,6 +65,13 @@ const AppRoutes = () => {
             path="/login"
             element={
                 isAuthenticated ? <Navigate to={getDashboardRoute()} replace /> : <Login />
+            }
+        />
+
+        <Route
+            path="/forgot-password"
+            element={
+                isAuthenticated ? <Navigate to={getDashboardRoute()} replace /> : <ForgotPassword />
             }
         />
 

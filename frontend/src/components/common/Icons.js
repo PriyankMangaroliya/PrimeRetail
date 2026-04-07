@@ -29,6 +29,7 @@ import {
     CheckCircle,
     XCircle,
     Lock,
+    Key,
     Power,
     ChevronDown,
     MoreVertical,
@@ -79,6 +80,7 @@ import {
     TrendingUp,
     Printer,
     UploadCloud,
+    EyeOff,
     X as CloseIcon
 } from 'lucide-react';
 
@@ -139,8 +141,11 @@ export const Icons = {
     View: Eye,
     Add: Plus,
     Plus: Plus,
+    Key: Key,
     Delete: Trash2,
     Edit: Edit,
+    Eye: Eye,
+    EyeOff: EyeOff,
     Warning: AlertTriangle,
     Reset: RefreshCw,
     Success: CheckCircle,
