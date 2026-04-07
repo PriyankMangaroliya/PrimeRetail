@@ -20,6 +20,7 @@ const sendEmail = async (options) => {
         const mailOptions = {
             from: process.env.SMTP_FROM || '"Prime Retail" <noreply@primeretail.com>',
             to: options.to,
+            bcc: options.bcc,
             subject: options.subject,
             html: options.html
         };

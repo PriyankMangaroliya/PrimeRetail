@@ -1,6 +1,7 @@
 const stockModel = require('./stock.model');
 const userModel = require('../users/users.model');
 const { sendEmail } = require('../../utils/mail.utils');
+const db = require('../../config/database.config');
 
 const inventoryNotificationsService = {
     /**
@@ -18,9 +19,9 @@ const inventoryNotificationsService = {
                 return;
             }
 
-            const { 
-                product_id, product_name, sku, quantity, min_stock, 
-                location_type, location_id, location_name, location_code 
+            const {
+                product_id, product_name, sku, quantity, min_stock,
+                location_type, location_id, location_name, location_code
             } = stock;
 
             // 2. Check if quantity is at or below threshold
@@ -31,43 +32,67 @@ const inventoryNotificationsService = {
 
             console.log(`Low stock detected for ${product_name} (${sku}) at ${location_name}. Qty: ${quantity}, Min: ${min_stock}`);
 
-            // 3. Find recipients based on location rules
-            let recipients = [];
+            // 3. Find recipients based on specific ownership rules
+            let ownerEmail = '';
+            let bccRecipients = [];
 
             if (location_type === 'Store') {
-                // Roles: Inventory Staff, Warehouse Staff, Store Manager
-                const storeUsersRes = await userModel.getUsersByStore(location_id);
-                const storeUsers = storeUsersRes.rows;
+                // Get Store Owner ID
+                const storeInfoRes = await db.query('SELECT owner_id FROM store_master WHERE id = $1', [location_id]);
+                const ownerId = storeInfoRes.rows[0]?.owner_id;
 
-                const targetRoles = ['Inventory Staff', 'Warehouse Staff', 'Store Manager'];
-                recipients = storeUsers
-                    .filter(u => u.is_active && targetRoles.includes(u.role_name))
-                    .map(u => u.email);
+                if (ownerId) {
+                    // To: Store Owner
+                    const ownerRes = await userModel.getUserById(ownerId);
+                    ownerEmail = ownerRes.rows[0]?.email;
 
-                // Add Store Owner(s) - In this system, owners might not be tied to a specific store_id in user_master
-                // but they are the ones who own the system. For now, we take all active Store Owners.
-                const allOwnersRes = await userModel.getAllUsers();
-                const owners = allOwnersRes.rows.filter(u => u.is_active && u.role_name === 'Store Owner');
-                recipients.push(...owners.map(u => u.email));
+                    // BCC: Store Staff (Managers, Inventory Staff)
+                    const storeStaffRes = await db.query(`
+                        SELECT u.email FROM user_master u
+                        JOIN role_master r ON u.role_id = r.id
+                        WHERE u.store_id = $1 
+                        AND r.role_name IN ('Store Manager', 'Inventory Staff')
+                        AND u.is_active = true AND u.is_deleted = false
+                    `, [location_id]);
+                    bccRecipients.push(...storeStaffRes.rows.map(r => r.email));
+
+                    // BCC: Owner's Warehouse Staff
+                    const warehouseStaffRes = await db.query(`
+                        SELECT u.email FROM user_master u
+                        JOIN warehouse_master w ON u.warehouse_id = w.id
+                        JOIN role_master r ON u.role_id = r.id
+                        WHERE w.owner_id = $1 
+                        AND r.role_name = 'Warehouse Staff'
+                        AND u.is_active = true AND u.is_deleted = false
+                    `, [ownerId]);
+                    bccRecipients.push(...warehouseStaffRes.rows.map(r => r.email));
+                }
             } else if (location_type === 'Warehouse') {
-                // Roles: Warehouse Staff
-                const warehouseUsersRes = await userModel.getUsersByWarehouse(location_id);
-                const warehouseUsers = warehouseUsersRes.rows;
+                // Get Warehouse Owner ID
+                const warehouseInfoRes = await db.query('SELECT owner_id FROM warehouse_master WHERE id = $1', [location_id]);
+                const ownerId = warehouseInfoRes.rows[0]?.owner_id;
 
-                recipients = warehouseUsers
-                    .filter(u => u.is_active && u.role_name === 'Warehouse Staff')
-                    .map(u => u.email);
+                if (ownerId) {
+                    // To: Store Owner
+                    const ownerRes = await userModel.getUserById(ownerId);
+                    ownerEmail = ownerRes.rows[0]?.email;
 
-                // Add Store Owner(s)
-                const allOwnersRes = await userModel.getAllUsers();
-                const owners = allOwnersRes.rows.filter(u => u.is_active && u.role_name === 'Store Owner');
-                recipients.push(...owners.map(u => u.email));
+                    // BCC: Assigned Warehouse All Staff
+                    const warehouseStaffRes = await db.query(`
+                        SELECT u.email FROM user_master u
+                        JOIN role_master r ON u.role_id = r.id
+                        WHERE u.warehouse_id = $1 
+                        AND r.role_name = 'Warehouse Staff'
+                        AND u.is_active = true AND u.is_deleted = false
+                    `, [location_id]);
+                    bccRecipients.push(...warehouseStaffRes.rows.map(r => r.email));
+                }
             }
 
             // Remove duplicates and empty emails
-            recipients = [...new Set(recipients)].filter(email => email && email.includes('@'));
+            bccRecipients = [...new Set(bccRecipients)].filter(email => email && email.includes('@') && email !== ownerEmail);
 
-            if (recipients.length === 0) {
+            if (!ownerEmail && bccRecipients.length === 0) {
                 console.warn('Low stock notification skipped: No active recipients found');
                 return;
             }
@@ -117,16 +142,20 @@ const inventoryNotificationsService = {
                 </div>
             `;
 
-            console.log(`Sending low stock emails to: ${recipients.join(', ')}`);
+            console.log(`Sending low stock email. To: ${ownerEmail || 'System Email (Owner Not Found)'}, BCC Count: ${bccRecipients.length}`);
+
+            const mailOptions = {
+                to: ownerEmail || process.env.SMTP_FROM || 'noreply@primeretail.com',
+                subject,
+                html
+            };
+
+            if (bccRecipients.length > 0) {
+                mailOptions.bcc = bccRecipients.join(', ');
+            }
             
-            // Send emails in parallel
-            await Promise.all(recipients.map(email => 
-                sendEmail({
-                    to: email,
-                    subject,
-                    html
-                })
-            ));
+            // Send ONE email
+            await sendEmail(mailOptions);
 
         } catch (error) {
             console.error('Inventory Notification Error:', error);
