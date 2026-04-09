@@ -71,21 +71,6 @@ const Sidebar = () => {
         }
     }, [user]);
 
-    // const handleLogout = () => {
-    //     // Add logout logic here
-    //     navigate('/login');
-    // };
-    //
-    // const getUserInitials = () => {
-    //     if (!user?.name) return 'U';
-    //     return user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-    // };
-    //
-    // const getRoleDisplay = () => {
-    //     if (!user?.role_name) return 'User';
-    //     return user.role_name;
-    // };
-
     return (
         <div className="sidebar">
             <div className="sidebar-header">
@@ -94,7 +79,6 @@ const Sidebar = () => {
 
             <nav className="sidebar-nav">
                 <div className="nav-section">
-                    {/* <h3 className="nav-section-title">MAIN MENU</h3> */}
                     {menuItems.map(item => (
                         <NavLink
                             key={item.name}
@@ -113,22 +97,6 @@ const Sidebar = () => {
                     ))}
                 </div>
             </nav>
-
-            {/*<div className="sidebar-footer">*/}
-            {/*    <div className="user-info">*/}
-            {/*        <div className="user-avatar">*/}
-            {/*            {getUserInitials()}*/}
-            {/*        </div>*/}
-            {/*        <div className="user-details">*/}
-            {/*            <span className="user-name">{user?.name || 'User'}</span>*/}
-            {/*            <span className="user-role">{getRoleDisplay()}</span>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*    /!*<div className="logout-button" onClick={handleLogout}>*!/*/}
-            {/*    /!*    <span className="logout-icon">🚪</span>*!/*/}
-            {/*    /!*    <span className="logout-label">Logout</span>*!/*/}
-            {/*    /!*</div>*!/*/}
-            {/*</div>*/}
         </div>
     );
 };
